@@ -203,7 +203,7 @@ function Dashboard() {
               className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-[oklch(0.97_0.015_235)] p-5 text-center transition-all hover:-translate-y-0.5 hover:border-accent"
             >
               {(() => {
-                const Icon = CATEGORY_ICONS[i % CATEGORY_ICONS.length];
+                const Icon = CATEGORY_ICONS[i % CATEGORY_ICONS.length] ?? Tractor;
                 return <Icon className="h-6 w-6 text-accent" />;
               })()}
               <span className="text-sm font-semibold text-forest">{c.name}</span>

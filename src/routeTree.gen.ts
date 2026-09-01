@@ -24,9 +24,13 @@ import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppComprarRouteImport } from './routes/app.comprar'
 import { Route as AppFavoritosRouteImport } from './routes/app.favoritos'
+import { Route as AppMensagensRouteImport } from './routes/app.mensagens'
 import { Route as AppMeusAnunciosRouteImport } from './routes/app.meus-anuncios'
 import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
+import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
+import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
+import { Route as AppPublicarRouteImport } from './routes/app.publicar'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -104,6 +108,11 @@ const AppFavoritosRoute = AppFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMensagensRoute = AppMensagensRouteImport.update({
+  id: '/mensagens',
+  path: '/mensagens',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMeusAnunciosRoute = AppMeusAnunciosRouteImport.update({
   id: '/meus-anuncios',
   path: '/meus-anuncios',
@@ -114,9 +123,24 @@ const AppNegociacoesRoute = AppNegociacoesRouteImport.update({
   path: '/negociacoes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPerfilRoute = AppPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPropostasRoute = AppPropostasRouteImport.update({
   id: '/propostas',
   path: '/propostas',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPublicarRoute = AppPublicarRouteImport.update({
+  id: '/publicar',
+  path: '/publicar',
   getParentRoute: () => AppRoute,
 } as any)
 const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
@@ -140,9 +164,13 @@ export interface FileRoutesByFullPath {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
 }
@@ -160,9 +188,13 @@ export interface FileRoutesByTo {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app': typeof AppIndexRoute
 }
@@ -182,9 +214,13 @@ export interface FileRoutesById {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
+  '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
 }
@@ -205,9 +241,13 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
+    | '/app/notificacoes'
+    | '/app/perfil'
     | '/app/propostas'
+    | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -225,9 +265,13 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
+    | '/app/notificacoes'
+    | '/app/perfil'
     | '/app/propostas'
+    | '/app/publicar'
     | '/implementos/$slug'
     | '/app'
   id:
@@ -246,9 +290,13 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
+    | '/app/notificacoes'
+    | '/app/perfil'
     | '/app/propostas'
+    | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -376,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFavoritosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/mensagens': {
+      id: '/app/mensagens'
+      path: '/mensagens'
+      fullPath: '/app/mensagens'
+      preLoaderRoute: typeof AppMensagensRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/meus-anuncios': {
       id: '/app/meus-anuncios'
       path: '/meus-anuncios'
@@ -390,11 +445,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNegociacoesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/notificacoes': {
+      id: '/app/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/app/notificacoes'
+      preLoaderRoute: typeof AppNotificacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/perfil': {
+      id: '/app/perfil'
+      path: '/perfil'
+      fullPath: '/app/perfil'
+      preLoaderRoute: typeof AppPerfilRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/propostas': {
       id: '/app/propostas'
       path: '/propostas'
       fullPath: '/app/propostas'
       preLoaderRoute: typeof AppPropostasRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/publicar': {
+      id: '/app/publicar'
+      path: '/publicar'
+      fullPath: '/app/publicar'
+      preLoaderRoute: typeof AppPublicarRouteImport
       parentRoute: typeof AppRoute
     }
     '/implementos/$slug': {
@@ -410,18 +486,26 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppComprarRoute: typeof AppComprarRoute
   AppFavoritosRoute: typeof AppFavoritosRoute
+  AppMensagensRoute: typeof AppMensagensRoute
   AppMeusAnunciosRoute: typeof AppMeusAnunciosRoute
   AppNegociacoesRoute: typeof AppNegociacoesRoute
+  AppNotificacoesRoute: typeof AppNotificacoesRoute
+  AppPerfilRoute: typeof AppPerfilRoute
   AppPropostasRoute: typeof AppPropostasRoute
+  AppPublicarRoute: typeof AppPublicarRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppComprarRoute: AppComprarRoute,
   AppFavoritosRoute: AppFavoritosRoute,
+  AppMensagensRoute: AppMensagensRoute,
   AppMeusAnunciosRoute: AppMeusAnunciosRoute,
   AppNegociacoesRoute: AppNegociacoesRoute,
+  AppNotificacoesRoute: AppNotificacoesRoute,
+  AppPerfilRoute: AppPerfilRoute,
   AppPropostasRoute: AppPropostasRoute,
+  AppPublicarRoute: AppPublicarRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

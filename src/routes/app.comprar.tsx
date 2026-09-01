@@ -44,10 +44,10 @@ function Comprar() {
     queryKey: ["listings", "comprar", search],
     queryFn: () =>
       fetchApprovedListings({
-        search: search.q,
-        category: search.categoria,
-        state: search.estado,
-        condition: search.condicao,
+        ...(search.q ? { search: search.q } : {}),
+        ...(search.categoria ? { category: search.categoria } : {}),
+        ...(search.estado ? { state: search.estado } : {}),
+        ...(search.condicao ? { condition: search.condicao } : {}),
       }),
   });
 

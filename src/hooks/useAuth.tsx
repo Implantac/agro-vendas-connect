@@ -60,9 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     void (async () => {
       try {
-        console.log("[auth] getSession start");
         const { data } = await supabase.auth.getSession();
-        console.log("[auth] getSession done", Boolean(data.session));
         setSession(data.session);
         if (data.session?.user) await loadProfile(data.session.user.id);
       } finally {

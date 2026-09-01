@@ -34,8 +34,20 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
 import { cn } from "@/lib/utils";
 
+type AppRoute =
+  | "/app"
+  | "/app/comprar"
+  | "/app/negociacoes"
+  | "/app/propostas"
+  | "/app/favoritos"
+  | "/app/meus-anuncios"
+  | "/app/publicar"
+  | "/app/mensagens"
+  | "/app/notificacoes"
+  | "/app/perfil";
+
 interface NavItem {
-  to: string;
+  to: AppRoute;
   icon: typeof LayoutDashboard;
   label: string;
   exact?: boolean;

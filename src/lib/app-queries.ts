@@ -59,9 +59,14 @@ export async function respondProposal(
   actorId: string,
   counterAmount?: number,
 ) {
-  const updates: Record<string, unknown> = { status: action };
-  if (action === "countered" && counterAmount) updates.amount = counterAmount;
-  const { error } = await supabase.from("proposals").update(updates).eq("id", proposalId);
+  const { error } = await supabase
+    .from("proposals")
+    .update(
+      action === "countered" && counterAmount
+        ? { status: action, amount: counterAmount }
+        : { status: action },
+    )
+    .eq("id", proposalId);
   if (error) throw error;
   await supabase.from("proposal_events").insert({
     proposal_id: proposalId,

@@ -28,7 +28,7 @@ export interface ListingCardData {
 
 export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; index?: number }) {
   const { profile } = useAuth();
-  const [gateOpen, setGateOpen] = useState(false);
+  const navigate = useNavigate();
   const isMember = profile?.status === "approved";
 
   const media = listing.listing_media?.slice().sort((a, b) => a.sort_order - b.sort_order) ?? [];
@@ -38,7 +38,10 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
     if (isMember) return;
     event.preventDefault();
     event.stopPropagation();
-    setGateOpen(true);
+    void navigate({
+      to: "/entrar",
+      search: { redirect: `/implementos/${listing.slug}` },
+    });
   }
 
   const GatedLink = ({
@@ -128,11 +131,6 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
         </div>
       </div>
 
-      <MembershipGateDialog
-        open={gateOpen}
-        onOpenChange={setGateOpen}
-        listingTitle={listing.title}
-      />
     </article>
   );
 }

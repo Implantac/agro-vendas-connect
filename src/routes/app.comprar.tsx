@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { PackageSearch, Search, SlidersHorizontal, X } from "lucide-react";
+import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 import { z } from "zod";
 import { AppPage } from "@/components/app/AppLayout";
 import { CatalogFilterSidebar, type CatalogFilterValues } from "@/components/app/CatalogFilterSidebar";
 import { ListingCard } from "@/components/catalog/ListingCard";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Select,
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCatalogFacets } from "@/lib/queries";
-import { useAuth } from "@/hooks/useAuth";
 import { BRAZILIAN_STATES, CONDITION_LABELS } from "@/lib/format";
 
 const searchSchema = z.object({

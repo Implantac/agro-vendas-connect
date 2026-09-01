@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ShieldCheck, BadgeCheck, MessagesSquare } from "lucide-react";
 import { PublicLayout, PageHeader } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/catalog/ListingCard";
 import { Input } from "@/components/ui/input";

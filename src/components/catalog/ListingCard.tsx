@@ -1,12 +1,11 @@
-import { useState, type MouseEvent, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { type MouseEvent, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { MapPin, Clock, Calendar, Heart, Gauge, Lock } from "lucide-react";
 import fallback1 from "@/assets/maquina-1.jpg";
 import fallback2 from "@/assets/maquina-2.jpg";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
-import { MembershipGateDialog } from "@/components/catalog/MembershipGateDialog";
 
 const FALLBACKS = [fallback1, fallback2];
 

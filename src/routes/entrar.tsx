@@ -10,7 +10,9 @@ import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/entrar")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    ...(typeof search["redirect"] === "string" && search["redirect"].startsWith("/")
+      ? { redirect: search["redirect"] }
+      : {}),
   }),
   head: () => ({
     meta: [

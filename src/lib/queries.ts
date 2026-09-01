@@ -39,6 +39,8 @@ export interface CatalogFilters {
   state?: string;
   minPrice?: number;
   maxPrice?: number;
+  brands?: string[];
+  year?: number;
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
@@ -58,6 +60,9 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.state) query = query.eq("state", filters.state);
   if (filters.minPrice) query = query.gte("price", filters.minPrice);
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
+  if (filters.brands?.length) query = query.in("brand", filters.brands);
+  if (filters.year) query = query.eq("manufacture_year", filters.year);
+
 
   if (filters.sort === "price_asc") query = query.order("price", { ascending: true, nullsFirst: false });
   else if (filters.sort === "price_desc")
@@ -97,4 +102,56 @@ export async function fetchLegalDocument(docType: string) {
     .maybeSingle();
   if (error) throw error;
   return data;
+}
+
+export interface CatalogFacets {
+  categories: { slug: string; name: string; count: number }[];
+  brands: { name: string; count: number }[];
+  years: number[];
+  maxPrice: number;
+  total: number;
+}
+
+export async function fetchCatalogFacets(): Promise<CatalogFacets> {
+  const { data, error } = await supabase
+    .from("listings")
+    .select("id,brand,manufacture_year,price,categories(name,slug)")
+    .eq("status", "approved");
+  if (error) throw error;
+  const rows = (data ?? []) as {
+    brand: string | null;
+    manufacture_year: number | null;
+    price: number | null;
+    categories: { name: string; slug: string } | null;
+  }[];
+
+  const catMap = new Map<string, { slug: string; name: string; count: number }>();
+  const brandMap = new Map<string, number>();
+  const yearSet = new Set<number>();
+  let maxPrice = 0;
+
+  for (const r of rows) {
+    if (r.categories?.slug) {
+      const entry = catMap.get(r.categories.slug) ?? {
+        slug: r.categories.slug,
+        name: r.categories.name,
+        count: 0,
+      };
+      entry.count += 1;
+      catMap.set(r.categories.slug, entry);
+    }
+    if (r.brand) brandMap.set(r.brand, (brandMap.get(r.brand) ?? 0) + 1);
+    if (r.manufacture_year) yearSet.add(r.manufacture_year);
+    if (r.price && r.price > maxPrice) maxPrice = r.price;
+  }
+
+  return {
+    categories: [...catMap.values()].sort((a, b) => b.count - a.count),
+    brands: [...brandMap.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count),
+    years: [...yearSet].sort((a, b) => b - a),
+    maxPrice: Math.max(100000, Math.ceil(maxPrice / 50000) * 50000),
+    total: rows.length,
+  };
 }

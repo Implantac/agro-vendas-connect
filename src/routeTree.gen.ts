@@ -21,6 +21,7 @@ import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cook
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
 const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
   id: '/implementos/$slug',
   path: '/implementos/$slug',
@@ -91,7 +97,7 @@ const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
@@ -103,10 +109,10 @@ export interface FileRoutesByFullPath {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
   '/cadastro': typeof CadastroRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
@@ -118,11 +124,12 @@ export interface FileRoutesByTo {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
@@ -134,6 +141,7 @@ export interface FileRoutesById {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,10 +159,10 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/implementos/$slug'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
     | '/cadastro'
     | '/catalogo'
     | '/central-de-ajuda'
@@ -166,6 +174,7 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/implementos/$slug'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -181,11 +190,12 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/implementos/$slug'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
   CadastroRoute: typeof CadastroRoute
   CatalogoRoute: typeof CatalogoRoute
   CentralDeAjudaRoute: typeof CentralDeAjudaRoute
@@ -285,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/implementos/$slug': {
       id: '/implementos/$slug'
       path: '/implementos/$slug'
@@ -295,9 +312,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
   CadastroRoute: CadastroRoute,
   CatalogoRoute: CatalogoRoute,
   CentralDeAjudaRoute: CentralDeAjudaRoute,

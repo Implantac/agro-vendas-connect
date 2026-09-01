@@ -1,8 +1,9 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Search, Bell } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,15 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [term, setTerm] = useState("");
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
+
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    void navigate({ to: "/catalogo", search: { q: term || undefined } });
+    setOpen(false);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -37,9 +46,27 @@ export function SiteHeader() {
           ))}
         </nav>
 
+        <form onSubmit={submitSearch} className="hidden max-w-sm flex-1 lg:block">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              className="h-10 pl-9"
+              placeholder="Buscar trator, colheitadeira, marca..."
+              aria-label="Buscar implementos"
+            />
+          </div>
+        </form>
+
         <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <>
+              <Button asChild variant="ghost" size="icon" aria-label="Notificações">
+                <Link to="/app">
+                  <Bell className="h-4 w-4" />
+                </Link>
+              </Button>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/app">
                   <LayoutDashboard className="mr-1.5 h-4 w-4" /> Meu painel
@@ -73,6 +100,18 @@ export function SiteHeader() {
 
       <div className={cn("border-t border-border bg-background lg:hidden", open ? "block" : "hidden")}>
         <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
+          <form onSubmit={submitSearch} className="mb-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                className="h-10 pl-9"
+                placeholder="Buscar implementos"
+                aria-label="Buscar implementos"
+              />
+            </div>
+          </form>
           {NAV.map((item) => (
             <Link
               key={item.to}

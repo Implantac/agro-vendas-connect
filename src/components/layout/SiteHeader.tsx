@@ -46,9 +46,27 @@ export function SiteHeader() {
           ))}
         </nav>
 
+        <form onSubmit={submitSearch} className="hidden max-w-sm flex-1 lg:block">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              className="h-10 pl-9"
+              placeholder="Buscar trator, colheitadeira, marca..."
+              aria-label="Buscar implementos"
+            />
+          </div>
+        </form>
+
         <div className="hidden items-center gap-2 lg:flex">
           {user ? (
             <>
+              <Button asChild variant="ghost" size="icon" aria-label="Notificações">
+                <Link to="/app">
+                  <Bell className="h-4 w-4" />
+                </Link>
+              </Button>
               <Button asChild variant="ghost" size="sm">
                 <Link to="/app">
                   <LayoutDashboard className="mr-1.5 h-4 w-4" /> Meu painel

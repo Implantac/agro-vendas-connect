@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2 } from "lucide-react";
+import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2, Lock } from "lucide-react";
 import fallback from "@/assets/maquina-1.jpg";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,14 @@ export const Route = createFileRoute("/implementos/$slug")({
 
 function ListingDetail() {
   const { slug } = Route.useParams();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", slug],
     queryFn: () => fetchListingBySlug(slug),
   });
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
+
     return (
       <PublicLayout>
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
@@ -61,6 +62,44 @@ function ListingDetail() {
       </PublicLayout>
     );
   }
+
+  if (profile?.status !== "approved") {
+    const teaser = listing as unknown as { title: string };
+    return (
+      <PublicLayout>
+        <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
+            <Lock className="h-6 w-6 text-forest" />
+          </div>
+          <h1 className="font-display text-2xl font-bold text-forest">
+            {user ? "Cadastro em análise" : "Acesso exclusivo para membros"}
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {user
+              ? "Assim que sua adesão for aprovada você poderá ver os detalhes deste implemento e negociar com o vendedor."
+              : `Para ver a ficha completa de “${teaser.title}” e interagir com o vendedor, contrate o serviço e torne-se membro do DDP AGRO.`}
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            {!user && (
+              <>
+                <Button asChild className="bg-forest hover:bg-forest/90">
+                  <Link to="/cadastro">Quero ser membro</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/entrar">Já sou membro</Link>
+                </Button>
+              </>
+            )}
+            <Button asChild variant="ghost">
+              <Link to="/catalogo">Voltar ao catálogo</Link>
+            </Button>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+
 
   const l = listing as unknown as {
     id: string;

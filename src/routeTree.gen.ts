@@ -23,6 +23,9 @@ import { Route as SegurancaRouteImport } from './routes/seguranca'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppComprarRouteImport } from './routes/app.comprar'
+import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
+import { Route as AppDesempenhoRouteImport } from './routes/app.desempenho'
+import { Route as AppEmpresaRouteImport } from './routes/app.empresa'
 import { Route as AppFavoritosRouteImport } from './routes/app.favoritos'
 import { Route as AppMensagensRouteImport } from './routes/app.mensagens'
 import { Route as AppMeusAnunciosRouteImport } from './routes/app.meus-anuncios'
@@ -30,6 +33,7 @@ import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
 import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
+import { Route as AppPropostasRecebidasRouteImport } from './routes/app.propostas-recebidas'
 import { Route as AppPublicarRouteImport } from './routes/app.publicar'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 
@@ -103,6 +107,21 @@ const AppComprarRoute = AppComprarRouteImport.update({
   path: '/comprar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDesempenhoRoute = AppDesempenhoRouteImport.update({
+  id: '/desempenho',
+  path: '/desempenho',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmpresaRoute = AppEmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFavoritosRoute = AppFavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -138,6 +157,11 @@ const AppPropostasRoute = AppPropostasRouteImport.update({
   path: '/propostas',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPropostasRecebidasRoute = AppPropostasRecebidasRouteImport.update({
+  id: '/propostas-recebidas',
+  path: '/propostas-recebidas',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPublicarRoute = AppPublicarRouteImport.update({
   id: '/publicar',
   path: '/publicar',
@@ -163,6 +187,9 @@ export interface FileRoutesByFullPath {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/desempenho': typeof AppDesempenhoRoute
+  '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
@@ -170,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
@@ -187,6 +215,9 @@ export interface FileRoutesByTo {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/desempenho': typeof AppDesempenhoRoute
+  '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
@@ -194,6 +225,7 @@ export interface FileRoutesByTo {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app': typeof AppIndexRoute
@@ -213,6 +245,9 @@ export interface FileRoutesById {
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/desempenho': typeof AppDesempenhoRoute
+  '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
@@ -220,6 +255,7 @@ export interface FileRoutesById {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
@@ -240,6 +276,9 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
+    | '/app/configuracoes'
+    | '/app/desempenho'
+    | '/app/empresa'
     | '/app/favoritos'
     | '/app/mensagens'
     | '/app/meus-anuncios'
@@ -247,6 +286,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/perfil'
     | '/app/propostas'
+    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
@@ -264,6 +304,9 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
+    | '/app/configuracoes'
+    | '/app/desempenho'
+    | '/app/empresa'
     | '/app/favoritos'
     | '/app/mensagens'
     | '/app/meus-anuncios'
@@ -271,6 +314,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/perfil'
     | '/app/propostas'
+    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app'
@@ -289,6 +333,9 @@ export interface FileRouteTypes {
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
+    | '/app/configuracoes'
+    | '/app/desempenho'
+    | '/app/empresa'
     | '/app/favoritos'
     | '/app/mensagens'
     | '/app/meus-anuncios'
@@ -296,6 +343,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/perfil'
     | '/app/propostas'
+    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
@@ -417,6 +465,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComprarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/configuracoes': {
+      id: '/app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/desempenho': {
+      id: '/app/desempenho'
+      path: '/desempenho'
+      fullPath: '/app/desempenho'
+      preLoaderRoute: typeof AppDesempenhoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/empresa': {
+      id: '/app/empresa'
+      path: '/empresa'
+      fullPath: '/app/empresa'
+      preLoaderRoute: typeof AppEmpresaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/favoritos': {
       id: '/app/favoritos'
       path: '/favoritos'
@@ -466,6 +535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPropostasRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/propostas-recebidas': {
+      id: '/app/propostas-recebidas'
+      path: '/propostas-recebidas'
+      fullPath: '/app/propostas-recebidas'
+      preLoaderRoute: typeof AppPropostasRecebidasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/publicar': {
       id: '/app/publicar'
       path: '/publicar'
@@ -485,6 +561,9 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppComprarRoute: typeof AppComprarRoute
+  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
+  AppDesempenhoRoute: typeof AppDesempenhoRoute
+  AppEmpresaRoute: typeof AppEmpresaRoute
   AppFavoritosRoute: typeof AppFavoritosRoute
   AppMensagensRoute: typeof AppMensagensRoute
   AppMeusAnunciosRoute: typeof AppMeusAnunciosRoute
@@ -492,12 +571,16 @@ interface AppRouteChildren {
   AppNotificacoesRoute: typeof AppNotificacoesRoute
   AppPerfilRoute: typeof AppPerfilRoute
   AppPropostasRoute: typeof AppPropostasRoute
+  AppPropostasRecebidasRoute: typeof AppPropostasRecebidasRoute
   AppPublicarRoute: typeof AppPublicarRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppComprarRoute: AppComprarRoute,
+  AppConfiguracoesRoute: AppConfiguracoesRoute,
+  AppDesempenhoRoute: AppDesempenhoRoute,
+  AppEmpresaRoute: AppEmpresaRoute,
   AppFavoritosRoute: AppFavoritosRoute,
   AppMensagensRoute: AppMensagensRoute,
   AppMeusAnunciosRoute: AppMeusAnunciosRoute,
@@ -505,6 +588,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificacoesRoute: AppNotificacoesRoute,
   AppPerfilRoute: AppPerfilRoute,
   AppPropostasRoute: AppPropostasRoute,
+  AppPropostasRecebidasRoute: AppPropostasRecebidasRoute,
   AppPublicarRoute: AppPublicarRoute,
   AppIndexRoute: AppIndexRoute,
 }

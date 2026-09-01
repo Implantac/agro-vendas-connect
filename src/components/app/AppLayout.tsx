@@ -1,4 +1,4 @@
-import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -30,121 +30,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppRole } from "@/features/auth/useAppRole";
+import {
+  BOTTOM_NAV_BY_ROLE,
+  DEFAULT_ROUTE_BY_MODE,
+  NAV_BY_ROLE,
+  SELLER_ONLY_ROUTES,
+  type AppMode,
+  type NavGroup,
+  type NavItem,
+} from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
-import { SidebarCatalogFilters } from "@/components/app/SidebarCatalogFilters";
+import { BuyerFilterPanel } from "@/components/app/BuyerFilterPanel";
+import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";
-
-type AppRoute =
-  | "/app"
-  | "/app/comprar"
-  | "/app/negociacoes"
-  | "/app/propostas"
-  | "/app/favoritos"
-  | "/app/meus-anuncios"
-  | "/app/publicar"
-  | "/app/mensagens"
-  | "/app/notificacoes"
-  | "/app/perfil";
-
-interface NavItem {
-  to: AppRoute;
-  icon: typeof LayoutDashboard;
-  label: string;
-  exact?: boolean;
-  highlight?: boolean;
-}
-
-const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
-  {
-    label: "Início",
-    items: [{ to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true }],
-  },
-  {
-    label: "Negócios",
-    items: [
-      { to: "/app/comprar", icon: Search, label: "Comprar máquinas" },
-      { to: "/app/negociacoes", icon: Handshake, label: "Minhas negociações" },
-      { to: "/app/propostas", icon: Gauge, label: "Propostas" },
-      { to: "/app/favoritos", icon: Heart, label: "Favoritos" },
-    ],
-  },
-  {
-    label: "Vendas",
-    items: [
-      { to: "/app/meus-anuncios", icon: ListChecks, label: "Meus anúncios" },
-      { to: "/app/publicar", icon: PlusCircle, label: "Publicar anúncio" },
-    ],
-  },
-  {
-    label: "Comunicação",
-    items: [
-      { to: "/app/mensagens", icon: MessageSquare, label: "Mensagens" },
-      { to: "/app/notificacoes", icon: Bell, label: "Notificações" },
-    ],
-  },
-  {
-    label: "Conta",
-    items: [
-      { to: "/app/perfil", icon: User, label: "Meu perfil" },
-    ],
-  },
-];
-
-const BUYER_NAV_GROUPS: { label: string; items: NavItem[] }[] = [
-  {
-    label: "Início",
-    items: [{ to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true }],
-  },
-  {
-    label: "Comprar",
-    items: [
-      { to: "/app/comprar", icon: Search, label: "Comprar máquinas" },
-      { to: "/app/favoritos", icon: Heart, label: "Favoritos" },
-    ],
-  },
-  {
-    label: "Negociações",
-    items: [
-      { to: "/app/propostas", icon: Gauge, label: "Minhas propostas" },
-      { to: "/app/negociacoes", icon: Handshake, label: "Negociações" },
-    ],
-  },
-  {
-    label: "Comunicação",
-    items: [
-      { to: "/app/mensagens", icon: MessageSquare, label: "Mensagens" },
-      { to: "/app/notificacoes", icon: Bell, label: "Notificações" },
-    ],
-  },
-  {
-    label: "Conta",
-    items: [{ to: "/app/perfil", icon: User, label: "Meu perfil" }],
-  },
-];
-
-const BUYER_BOTTOM_NAV: NavItem[] = [
-  { to: "/app", icon: Home, label: "Início", exact: true },
-  { to: "/app/comprar", icon: Search, label: "Buscar", highlight: true },
-  { to: "/app/favoritos", icon: Heart, label: "Favoritos" },
-  { to: "/app/mensagens", icon: MessageSquare, label: "Chat" },
-  { to: "/app/perfil", icon: User, label: "Perfil" },
-] as const;
-
-const BOTTOM_NAV: NavItem[] = [
-  { to: "/app", icon: Home, label: "Início", exact: true },
-  { to: "/app/comprar", icon: Search, label: "Buscar" },
-  { to: "/app/publicar", icon: PlusCircle, label: "Vender", highlight: true },
-  { to: "/app/mensagens", icon: MessageSquare, label: "Chat" },
-  { to: "/app/perfil", icon: User, label: "Perfil" },
-] as const;
 
 export function AppLayout() {
   const { user, profile, loading, signOut } = useAuth();
+  const { mode, setMode, canSwitchRoles } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [search, setSearch] = useState("");
+  const { filters, setFilters } = useCatalogFilters();
 
   const { data: unread = 0 } = useQuery({
     queryKey: ["notifications", "unread", user?.id],
@@ -157,6 +66,15 @@ export function AppLayout() {
     if (!loading && !user) void navigate({ to: "/entrar", search: { redirect: "/app" } });
   }, [loading, user, navigate]);
 
+  const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
+
+  useEffect(() => {
+    if (mode !== "vendedor" && isSellerOnlyRoute) {
+      toast.info("Esta área é exclusiva do modo vendedor.");
+      void navigate({ to: "/app", replace: true });
+    }
+  }, [mode, isSellerOnlyRoute, navigate]);
+
   if (loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -165,22 +83,21 @@ export function AppLayout() {
     );
   }
 
-  function submitSearch(e: FormEvent) {
-    e.preventDefault();
-    void navigate({ to: "/app/comprar", search: search ? { q: search } : {} });
-    setMobileMenu(false);
-  }
-
   async function handleSignOut() {
     await signOut();
     void navigate({ to: "/", replace: true });
   }
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
-  const isBuyer = profile?.role === "buyer";
-  const navGroups = isBuyer ? BUYER_NAV_GROUPS : NAV_GROUPS;
-  const showFilters = isBuyer || pathname.startsWith("/app/comprar");
-  const bottomNav = isBuyer ? BUYER_BOTTOM_NAV : BOTTOM_NAV;
+  const navGroups = NAV_BY_ROLE[mode];
+  const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
+  const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
+
+  function switchMode(next: AppMode) {
+    if (next === mode) return;
+    setMode(next);
+    void navigate({ to: DEFAULT_ROUTE_BY_MODE[next] });
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -206,19 +123,46 @@ export function AppLayout() {
             </span>
           </Link>
 
-          <form onSubmit={submitSearch} className="mx-auto hidden w-full max-w-xl md:block">
+          <div className="mx-auto hidden w-full max-w-xl md:block">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                type="search"
+                value={filters.q ?? ""}
+                onChange={(e) => setFilters({ q: e.target.value || undefined })}
                 placeholder="Buscar máquinas, marcas, modelos..."
+                aria-label="Buscar máquinas"
                 className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
               />
             </div>
-          </form>
+          </div>
 
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-2">
+            {canSwitchRoles ? (
+              <div
+                role="tablist"
+                aria-label="Alternar modo"
+                className="hidden items-center rounded-md border border-border bg-secondary/60 p-0.5 sm:flex"
+              >
+                {(["comprador", "vendedor"] as const).map((value) => (
+                  <button
+                    key={value}
+                    role="tab"
+                    aria-selected={mode === value}
+                    onClick={() => switchMode(value)}
+                    className={cn(
+                      "rounded px-3 py-1 text-xs font-semibold transition-colors",
+                      mode === value ? "bg-card text-forest shadow-sm" : "text-muted-foreground",
+                    )}
+                  >
+                    {value === "comprador" ? "Comprar" : "Vender"}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
+              {mode === "comprador" ? "Modo comprador" : "Modo vendedor"}
+            </span>
             <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">
               <Link to="/central-de-ajuda">
                 <HelpCircle className="h-5 w-5" />
@@ -310,17 +254,6 @@ export function AppLayout() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <form onSubmit={submitSearch} className="border-b border-border p-3 md:hidden">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar máquinas..."
-                  className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none focus:border-accent"
-                />
-              </div>
-            </form>
             <SidebarNav
               groups={navGroups}
               showFilters={showFilters}
@@ -340,7 +273,7 @@ export function AppLayout() {
       <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-border bg-card lg:hidden">
         {bottomNav.map((item) => {
           const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-          if (item.highlight) {
+          if (item.variant === "primary") {
             return (
               <Link
                 key={item.to}
@@ -380,7 +313,7 @@ function SidebarNav({
   pathname,
   onNavigate,
 }: {
-  groups: { label: string; items: NavItem[] }[];
+  groups: NavGroup[];
   showFilters: boolean;
   pathname: string;
   onNavigate: () => void;
@@ -403,12 +336,19 @@ function SidebarNav({
                       onClick={onNavigate}
                       className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        active
-                          ? "bg-secondary text-forest"
-                          : "text-muted-foreground hover:bg-secondary/60 hover:text-forest",
+                        item.variant === "primary"
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          : active
+                            ? "bg-secondary text-forest"
+                            : "text-muted-foreground hover:bg-secondary/60 hover:text-forest",
                       )}
                     >
-                      <item.icon className={cn("h-4 w-4", active ? "text-accent" : "")} />
+                      <item.icon
+                        className={cn(
+                          "h-4 w-4",
+                          item.variant === "primary" ? "" : active ? "text-accent" : "",
+                        )}
+                      />
                       {item.label}
                     </Link>
                   </li>
@@ -420,7 +360,7 @@ function SidebarNav({
       </nav>
       {showFilters && (
         <section aria-label="Filtros do catálogo" className="overflow-y-auto border-t border-border">
-          <SidebarCatalogFilters onNavigate={onNavigate} />
+          <BuyerFilterPanel onApplied={onNavigate} />
         </section>
       )}
       <div className="border-t border-border px-5 py-4">

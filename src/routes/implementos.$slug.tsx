@@ -30,13 +30,14 @@ export const Route = createFileRoute("/implementos/$slug")({
 
 function ListingDetail() {
   const { slug } = Route.useParams();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", slug],
     queryFn: () => fetchListingBySlug(slug),
   });
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
+
     return (
       <PublicLayout>
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6">

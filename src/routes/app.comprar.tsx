@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { PackageSearch, Search, SlidersHorizontal, X } from "lucide-react";
+import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 import { z } from "zod";
 import { AppPage } from "@/components/app/AppLayout";
 import { CatalogFilterSidebar, type CatalogFilterValues } from "@/components/app/CatalogFilterSidebar";
 import { ListingCard } from "@/components/catalog/ListingCard";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Select,
@@ -16,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCatalogFacets } from "@/lib/queries";
-import { useAuth } from "@/hooks/useAuth";
 import { BRAZILIAN_STATES, CONDITION_LABELS } from "@/lib/format";
 
 const searchSchema = z.object({
@@ -47,8 +45,6 @@ export const Route = createFileRoute("/app/comprar")({
 function Comprar() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { profile } = useAuth();
-  const isBuyer = profile?.role === "buyer";
 
   const brands = search.marcas ? search.marcas.split(",").filter(Boolean) : [];
 
@@ -88,9 +84,35 @@ function Comprar() {
     void navigate({ search: next });
   }
 
-  const sidebar = (
-    <CatalogFilterSidebar facets={facets} values={values} onChange={applyFilters} />
-  );
+  const chips: { key: string; label: string; clear: () => void }[] = [];
+  if (search.q) chips.push({ key: "q", label: `Busca: ${search.q}`, clear: () => void navigate({ search: { ...search, q: undefined } }) });
+  if (search.categoria)
+    chips.push({ key: "categoria", label: search.categoria, clear: () => applyFilters({ categoria: undefined }) });
+  for (const b of brands)
+    chips.push({
+      key: `marca-${b}`,
+      label: b,
+      clear: () => applyFilters({ marcas: brands.filter((x) => x !== b) }),
+    });
+  if (search.precoMin || search.precoMax)
+    chips.push({
+      key: "preco",
+      label: `Preço: ${search.precoMin ? `R$ ${search.precoMin.toLocaleString("pt-BR")}` : "R$ 0"} – ${search.precoMax ? `R$ ${search.precoMax.toLocaleString("pt-BR")}` : "sem limite"}`,
+      clear: () => applyFilters({ precoMin: undefined, precoMax: undefined }),
+    });
+  if (search.ano) chips.push({ key: "ano", label: `A partir de ${search.ano}`, clear: () => applyFilters({ ano: undefined }) });
+  if (search.condicao)
+    chips.push({
+      key: "condicao",
+      label: CONDITION_LABELS[search.condicao as keyof typeof CONDITION_LABELS] ?? search.condicao,
+      clear: () => void navigate({ search: { ...search, condicao: undefined } }),
+    });
+  if (search.estado)
+    chips.push({
+      key: "estado",
+      label: search.estado,
+      clear: () => void navigate({ search: { ...search, estado: undefined } }),
+    });
 
   return (
     <AppPage>
@@ -103,120 +125,107 @@ function Comprar() {
             Explore máquinas e implementos de vendedores verificados.
           </p>
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="lg:hidden">
-              <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtros
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto p-0">
-            <SheetHeader className="border-b border-border px-5 py-4">
-              <SheetTitle className="font-display text-forest">Filtros</SheetTitle>
-            </SheetHeader>
-            <div className="p-4">
-              <CatalogFilterSidebar facets={facets} values={values} onChange={applyFilters} className="border-0" />
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      <div className={isBuyer ? "mt-6" : "mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]"}>
-        {/* Sidebar de filtros (desktop) — comprador já tem os filtros no menu lateral */}
-        {!isBuyer && (
-          <div className="hidden lg:block">
-            <div className="sticky top-20">{sidebar}</div>
-          </div>
-        )}
-
-        <div>
-          {/* Busca e filtros rápidos */}
-          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-4">
-            <form
-              className="relative min-w-52 flex-1"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const value = new FormData(e.currentTarget).get("q") as string;
-                void navigate({ search: { ...search, q: value || undefined } });
-              }}
-            >
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                name="q"
-                defaultValue={search.q ?? ""}
-                placeholder="Buscar por máquina, marca ou modelo..."
-                className="pl-9"
-              />
-            </form>
-            <Select
-              value={search.condicao ?? ""}
-              onValueChange={(v) =>
-                void navigate({ search: { ...search, condicao: v || undefined } })
-              }
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Condição" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(CONDITION_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={search.estado ?? ""}
-              onValueChange={(v) =>
-                void navigate({ search: { ...search, estado: v || undefined } })
-              }
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {BRAZILIAN_STATES.map((uf) => (
-                  <SelectItem key={uf} value={uf}>
-                    {uf}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={() => void navigate({ search: {} })}>
-                <X className="mr-1 h-4 w-4" /> Limpar
+        <div className="flex items-center gap-2">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm" className="lg:hidden">
+                <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtros
               </Button>
-            )}
-          </div>
-
-          <p className="mb-4 mt-6 text-sm text-muted-foreground">
-            {listings.length} {listings.length === 1 ? "resultado" : "resultados"}
-          </p>
-
-          {isLoading ? (
-            <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-secondary/60" />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto p-0">
+              <SheetHeader className="border-b border-border px-5 py-4">
+                <SheetTitle className="font-display text-forest">Filtros</SheetTitle>
+              </SheetHeader>
+              <div className="p-4">
+                <CatalogFilterSidebar
+                  facets={facets}
+                  values={values}
+                  onChange={applyFilters}
+                  className="border-0"
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+          <Select
+            value={search.condicao ?? ""}
+            onValueChange={(v) => void navigate({ search: { ...search, condicao: v || undefined } })}
+          >
+            <SelectTrigger className="h-9 w-36">
+              <SelectValue placeholder="Condição" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(CONDITION_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
               ))}
-            </div>
-          ) : listings.length === 0 ? (
-            <div className="flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
-              <PackageSearch className="h-10 w-10 text-muted-foreground/50" />
-              <h2 className="mt-4 font-display text-lg font-semibold text-forest">
-                Nenhum resultado encontrado
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Ajuste os filtros ou limpe a busca para ver mais anúncios.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
-              {listings.map((l, i) => (
-                <ListingCard key={l.id} listing={l as never} index={i} />
+            </SelectContent>
+          </Select>
+          <Select
+            value={search.estado ?? ""}
+            onValueChange={(v) => void navigate({ search: { ...search, estado: v || undefined } })}
+          >
+            <SelectTrigger className="h-9 w-28">
+              <SelectValue placeholder="Estado" />
+            </SelectTrigger>
+            <SelectContent>
+              {BRAZILIAN_STATES.map((uf) => (
+                <SelectItem key={uf} value={uf}>
+                  {uf}
+                </SelectItem>
               ))}
-            </div>
-          )}
+            </SelectContent>
+          </Select>
         </div>
       </div>
+
+      {chips.length > 0 && (
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          {chips.map((chip) => (
+            <button
+              key={chip.key}
+              onClick={chip.clear}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-medium text-forest transition-colors hover:bg-secondary"
+            >
+              {chip.label}
+              <X className="h-3 w-3" />
+            </button>
+          ))}
+          {hasFilters && (
+            <Button variant="ghost" size="sm" onClick={() => void navigate({ search: {} })}>
+              Limpar tudo
+            </Button>
+          )}
+        </div>
+      )}
+
+      <p className="mb-4 mt-6 text-sm text-muted-foreground">
+        {listings.length} {listings.length === 1 ? "resultado" : "resultados"}
+      </p>
+
+      {isLoading ? (
+        <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(250px,1fr))]">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-secondary/60" />
+          ))}
+        </div>
+      ) : listings.length === 0 ? (
+        <div className="flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
+          <PackageSearch className="h-10 w-10 text-muted-foreground/50" />
+          <h2 className="mt-4 font-display text-lg font-semibold text-forest">
+            Nenhum resultado encontrado
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Ajuste os filtros ou limpe a busca para ver mais anúncios.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(250px,1fr))]">
+          {listings.map((l, i) => (
+            <ListingCard key={l.id} listing={l as never} index={i} />
+          ))}
+        </div>
+      )}
     </AppPage>
   );
 }

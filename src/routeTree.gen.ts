@@ -24,6 +24,7 @@ import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppComprarRouteImport } from './routes/app.comprar'
 import { Route as AppFavoritosRouteImport } from './routes/app.favoritos'
+import { Route as AppMeusAnunciosRouteImport } from './routes/app.meus-anuncios'
 import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
@@ -103,6 +104,11 @@ const AppFavoritosRoute = AppFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMeusAnunciosRoute = AppMeusAnunciosRouteImport.update({
+  id: '/meus-anuncios',
+  path: '/meus-anuncios',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppNegociacoesRoute = AppNegociacoesRouteImport.update({
   id: '/negociacoes',
   path: '/negociacoes',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/propostas': typeof AppPropostasRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/propostas': typeof AppPropostasRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/propostas': typeof AppPropostasRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/propostas'
     | '/implementos/$slug'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/propostas'
     | '/implementos/$slug'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/favoritos'
+    | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/propostas'
     | '/implementos/$slug'
@@ -364,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFavoritosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/meus-anuncios': {
+      id: '/app/meus-anuncios'
+      path: '/meus-anuncios'
+      fullPath: '/app/meus-anuncios'
+      preLoaderRoute: typeof AppMeusAnunciosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/negociacoes': {
       id: '/app/negociacoes'
       path: '/negociacoes'
@@ -391,6 +410,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppComprarRoute: typeof AppComprarRoute
   AppFavoritosRoute: typeof AppFavoritosRoute
+  AppMeusAnunciosRoute: typeof AppMeusAnunciosRoute
   AppNegociacoesRoute: typeof AppNegociacoesRoute
   AppPropostasRoute: typeof AppPropostasRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -399,6 +419,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppComprarRoute: AppComprarRoute,
   AppFavoritosRoute: AppFavoritosRoute,
+  AppMeusAnunciosRoute: AppMeusAnunciosRoute,
   AppNegociacoesRoute: AppNegociacoesRoute,
   AppPropostasRoute: AppPropostasRoute,
   AppIndexRoute: AppIndexRoute,

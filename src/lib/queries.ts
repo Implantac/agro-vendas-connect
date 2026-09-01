@@ -39,6 +39,8 @@ export interface CatalogFilters {
   state?: string;
   minPrice?: number;
   maxPrice?: number;
+  brands?: string[];
+  year?: number;
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
@@ -58,6 +60,9 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.state) query = query.eq("state", filters.state);
   if (filters.minPrice) query = query.gte("price", filters.minPrice);
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
+  if (filters.brands?.length) query = query.in("brand", filters.brands);
+  if (filters.year) query = query.eq("manufacture_year", filters.year);
+
 
   if (filters.sort === "price_asc") query = query.order("price", { ascending: true, nullsFirst: false });
   else if (filters.sort === "price_desc")

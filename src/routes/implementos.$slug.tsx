@@ -36,8 +36,7 @@ function ListingDetail() {
     queryFn: () => fetchListingBySlug(slug),
   });
 
-  if (isLoading || authLoading) {
-
+  if (authLoading) {
     return (
       <PublicLayout>
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
@@ -49,6 +48,16 @@ function ListingDetail() {
 
   if (!user) {
     return <Navigate to="/entrar" search={{ redirect: `/implementos/${slug}` }} replace />;
+  }
+
+  if (isLoading) {
+    return (
+      <PublicLayout>
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
+          <p className="text-sm text-muted-foreground">Carregando implemento...</p>
+        </div>
+      </PublicLayout>
+    );
   }
 
   if (!listing) {

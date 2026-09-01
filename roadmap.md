@@ -36,3 +36,10 @@
 ## Fase 6 — Pagamentos e produção
 - [ ] Estrutura de gateway (Asaas) com feature flag
 - [ ] Webhooks, auditoria, documentação
+
+## Área logada (concluído)
+- [x] Layout logado: header fixo, busca global, notificações, sidebar agrupada, bottom nav mobile
+- [x] Dashboard: resumo, oportunidades, categorias, negociações, atividade, segurança
+- [x] Comprar (catálogo interno com filtros), Negociações, Propostas (aceitar/recusar/contraproposta)
+- [x] Favoritos, Meus anúncios (pausar/reativar/excluir), Publicar (wizard 5 passos → in_review)
+- [x] Mensagens com realtime, Notificações, Perfil editável

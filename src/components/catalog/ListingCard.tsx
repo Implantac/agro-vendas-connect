@@ -1,12 +1,11 @@
-import { useState, type MouseEvent, type ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { type MouseEvent, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { MapPin, Clock, Calendar, Heart, Gauge, Lock } from "lucide-react";
 import fallback1 from "@/assets/maquina-1.jpg";
 import fallback2 from "@/assets/maquina-2.jpg";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
-import { MembershipGateDialog } from "@/components/catalog/MembershipGateDialog";
 
 const FALLBACKS = [fallback1, fallback2];
 
@@ -29,7 +28,7 @@ export interface ListingCardData {
 
 export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; index?: number }) {
   const { profile } = useAuth();
-  const [gateOpen, setGateOpen] = useState(false);
+  const navigate = useNavigate();
   const isMember = profile?.status === "approved";
 
   const media = listing.listing_media?.slice().sort((a, b) => a.sort_order - b.sort_order) ?? [];
@@ -39,7 +38,10 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
     if (isMember) return;
     event.preventDefault();
     event.stopPropagation();
-    setGateOpen(true);
+    void navigate({
+      to: "/entrar",
+      search: { redirect: `/implementos/${listing.slug}` },
+    });
   }
 
   const GatedLink = ({
@@ -129,11 +131,6 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
         </div>
       </div>
 
-      <MembershipGateDialog
-        open={gateOpen}
-        onOpenChange={setGateOpen}
-        listingTitle={listing.title}
-      />
     </article>
   );
 }

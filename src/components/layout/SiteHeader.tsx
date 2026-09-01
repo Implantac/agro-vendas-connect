@@ -100,6 +100,18 @@ export function SiteHeader() {
 
       <div className={cn("border-t border-border bg-background lg:hidden", open ? "block" : "hidden")}>
         <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
+          <form onSubmit={submitSearch} className="mb-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                className="h-10 pl-9"
+                placeholder="Buscar implementos"
+                aria-label="Buscar implementos"
+              />
+            </div>
+          </form>
           {NAV.map((item) => (
             <Link
               key={item.to}

@@ -76,6 +76,20 @@ function Catalogo() {
         description="Todos os anúncios passam por moderação técnica antes de serem publicados."
       />
 
+      <div className="border-y border-border bg-secondary/40">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-2 px-4 py-3 text-xs font-medium text-forest sm:px-6">
+          <span className="inline-flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-accent" /> Vendedores verificados
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <BadgeCheck className="h-4 w-4 text-accent" /> Anúncios moderados
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <MessagesSquare className="h-4 w-4 text-accent" /> Propostas e chat na plataforma
+          </span>
+        </div>
+      </div>
+
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[280px_1fr]">
         <aside className="space-y-6 rounded-md border border-border bg-card p-5 lg:sticky lg:top-24 lg:self-start">
           <div className="flex items-center gap-2 text-forest">

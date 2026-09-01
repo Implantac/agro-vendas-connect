@@ -179,6 +179,7 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const isBuyer = profile?.role === "buyer";
   const navGroups = isBuyer ? BUYER_NAV_GROUPS : NAV_GROUPS;
+  const showFilters = isBuyer || pathname.startsWith("/app/comprar");
   const bottomNav = isBuyer ? BUYER_BOTTOM_NAV : BOTTOM_NAV;
 
   return (
@@ -283,10 +284,10 @@ export function AppLayout() {
       </header>
 
       {/* Sidebar desktop */}
-      <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-60 flex-col border-r border-border bg-card lg:flex">
+      <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-60 flex-col overflow-y-auto border-r border-border bg-card lg:flex">
         <SidebarNav
           groups={navGroups}
-          showFilters={isBuyer}
+          showFilters={showFilters}
           pathname={pathname}
           onNavigate={() => setMobileMenu(false)}
         />
@@ -296,7 +297,7 @@ export function AppLayout() {
       {mobileMenu && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-forest/40" onClick={() => setMobileMenu(false)} />
-          <div className="absolute bottom-0 left-0 top-0 flex w-72 flex-col bg-card shadow-xl">
+          <div className="absolute bottom-0 left-0 top-0 flex w-72 flex-col overflow-y-auto bg-card shadow-xl">
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
               <span className="font-display text-base font-bold text-forest">
                 DDP <span className="text-accent">AGRO</span>
@@ -322,7 +323,7 @@ export function AppLayout() {
             </form>
             <SidebarNav
               groups={navGroups}
-              showFilters={isBuyer}
+              showFilters={showFilters}
               pathname={pathname}
               onNavigate={() => setMobileMenu(false)}
             />
@@ -386,7 +387,7 @@ function SidebarNav({
 }) {
   return (
     <>
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-5">
+      <nav className={cn("space-y-5 px-3 py-5", showFilters ? "shrink-0" : "flex-1")}>
         {groups.map((group) => (
           <div key={group.label}>
             <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">

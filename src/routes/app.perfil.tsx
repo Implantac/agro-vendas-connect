@@ -198,7 +198,7 @@ function Perfil() {
               <div>
                 <dt className="text-muted-foreground">Tipo de pessoa</dt>
                 <dd className="font-medium text-forest">
-                  {profile?.person_type === "company" ? "Pessoa jurídica" : "Pessoa física"}
+                  {profile?.person_type === "pj" ? "Pessoa jurídica" : "Pessoa física"}
                 </dd>
               </div>
               <div>

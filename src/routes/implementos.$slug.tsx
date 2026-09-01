@@ -47,6 +47,10 @@ function ListingDetail() {
     );
   }
 
+  if (!user) {
+    return <Navigate to="/entrar" search={{ redirect: `/implementos/${slug}` }} replace />;
+  }
+
   if (!listing) {
     return (
       <PublicLayout>
@@ -61,10 +65,6 @@ function ListingDetail() {
         </div>
       </PublicLayout>
     );
-  }
-
-  if (!user) {
-    return <Navigate to="/entrar" search={{ redirect: `/implementos/${slug}` }} replace />;
   }
 
   if (profile?.status !== "approved") {

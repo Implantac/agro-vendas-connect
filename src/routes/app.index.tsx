@@ -4,6 +4,12 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
+  Cog,
+  Droplets,
+  Sprout,
+  Tractor,
+  Truck,
+  Wheat,
   Handshake,
   Heart,
   HeartHandshake,
@@ -32,7 +38,7 @@ export const Route = createFileRoute("/app/")({
   component: Dashboard,
 });
 
-const CATEGORY_ICONS = ["🚜", "🌾", "🌱", "💦", "⚙️", "🚜"];
+const CATEGORY_ICONS = [Tractor, Wheat, Sprout, Droplets, Cog, Truck];
 
 const TRUST_ITEMS = [
   "Vendedor aprovado",
@@ -131,7 +137,7 @@ function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
-            Olá, {firstName} 👋
+            Olá, {firstName}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Aqui está um resumo dos seus negócios no DDP AGRO.
@@ -196,7 +202,10 @@ function Dashboard() {
               search={{ categoria: c.slug }}
               className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-[oklch(0.97_0.015_235)] p-5 text-center transition-all hover:-translate-y-0.5 hover:border-accent"
             >
-              <span className="text-2xl">{CATEGORY_ICONS[i % CATEGORY_ICONS.length]}</span>
+              {(() => {
+                const Icon = CATEGORY_ICONS[i % CATEGORY_ICONS.length];
+                return <Icon className="h-6 w-6 text-accent" />;
+              })()}
               <span className="text-sm font-semibold text-forest">{c.name}</span>
               <span className="inline-flex items-center gap-1 text-xs font-medium text-accent">
                 Ver máquinas <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />

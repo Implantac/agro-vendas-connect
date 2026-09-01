@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2 } from "lucide-react";
+import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2, Lock } from "lucide-react";
 import fallback from "@/assets/maquina-1.jpg";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";

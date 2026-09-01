@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCatalogFacets } from "@/lib/queries";
+import { useAuth } from "@/hooks/useAuth";
 import { BRAZILIAN_STATES, CONDITION_LABELS } from "@/lib/format";
 
 const searchSchema = z.object({
@@ -46,6 +47,8 @@ export const Route = createFileRoute("/app/comprar")({
 function Comprar() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+  const { profile } = useAuth();
+  const isBuyer = profile?.role === "buyer";
 
   const brands = search.marcas ? search.marcas.split(",").filter(Boolean) : [];
 
@@ -117,11 +120,13 @@ function Comprar() {
         </Sheet>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        {/* Sidebar de filtros (desktop) */}
-        <div className="hidden lg:block">
-          <div className="sticky top-20">{sidebar}</div>
-        </div>
+      <div className={isBuyer ? "mt-6" : "mt-6 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]"}>
+        {/* Sidebar de filtros (desktop) — comprador já tem os filtros no menu lateral */}
+        {!isBuyer && (
+          <div className="hidden lg:block">
+            <div className="sticky top-20">{sidebar}</div>
+          </div>
+        )}
 
         <div>
           {/* Busca e filtros rápidos */}

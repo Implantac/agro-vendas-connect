@@ -1,9 +1,12 @@
+import { useState, type MouseEvent, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { MapPin, Clock, Calendar, Heart, Gauge } from "lucide-react";
+import { MapPin, Clock, Calendar, Heart, Gauge, Lock } from "lucide-react";
 import fallback1 from "@/assets/maquina-1.jpg";
 import fallback2 from "@/assets/maquina-2.jpg";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
+import { useAuth } from "@/hooks/useAuth";
+import { MembershipGateDialog } from "@/components/catalog/MembershipGateDialog";
 
 const FALLBACKS = [fallback1, fallback2];
 
@@ -25,16 +28,43 @@ export interface ListingCardData {
 }
 
 export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; index?: number }) {
+  const { profile } = useAuth();
+  const [gateOpen, setGateOpen] = useState(false);
+  const isMember = profile?.status === "approved";
+
   const media = listing.listing_media?.slice().sort((a, b) => a.sort_order - b.sort_order) ?? [];
   const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? FALLBACKS[index % FALLBACKS.length];
 
+  function guard(event: MouseEvent) {
+    if (isMember) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setGateOpen(true);
+  }
+
+  const GatedLink = ({
+    className,
+    children,
+    ariaLabel,
+  }: {
+    className?: string;
+    children: ReactNode;
+    ariaLabel?: string;
+  }) => (
+    <Link
+      to="/implementos/$slug"
+      params={{ slug: listing.slug }}
+      onClick={guard}
+      aria-label={ariaLabel}
+      className={className}
+    >
+      {children}
+    </Link>
+  );
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-[0_12px_30px_-18px_oklch(0.3_0.055_158/0.6)]">
-      <Link
-        to="/implementos/$slug"
-        params={{ slug: listing.slug }}
-        className="relative block aspect-4/3 overflow-hidden bg-secondary"
-      >
+      <GatedLink className="relative block aspect-4/3 overflow-hidden bg-secondary">
         <img
           src={cover}
           alt={listing.title}
@@ -44,16 +74,17 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
         <span className="absolute left-3 top-3 rounded-sm bg-forest/90 px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
           {CONDITION_LABELS[listing.condition] ?? listing.condition}
         </span>
-      </Link>
+        {!isMember && (
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-sm bg-background/90 px-2 py-1 text-[11px] font-semibold text-forest">
+            <Lock className="h-3 w-3" /> Só para membros
+          </span>
+        )}
+      </GatedLink>
 
       <div className="flex flex-1 flex-col gap-2.5 p-4">
-        <Link
-          to="/implementos/$slug"
-          params={{ slug: listing.slug }}
-          className="font-display text-base font-semibold leading-snug text-forest hover:underline"
-        >
+        <GatedLink className="font-display text-base font-semibold leading-snug text-forest hover:underline">
           {listing.title}
-        </Link>
+        </GatedLink>
 
         <p className="text-xs text-muted-foreground">
           {[listing.categories?.name, listing.brand].filter(Boolean).join(" • ")}
@@ -88,23 +119,22 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
 
         <div className="flex items-center gap-2 pt-1">
           <Button asChild size="sm" className="flex-1 bg-forest hover:bg-forest/90">
-            <Link to="/implementos/$slug" params={{ slug: listing.slug }}>
-              Enviar proposta
-            </Link>
+            <GatedLink>{isMember ? "Enviar proposta" : "Ser membro para negociar"}</GatedLink>
           </Button>
-          <Button
-            asChild
-            size="sm"
-            variant="outline"
-            aria-label="Favoritar implemento"
-            className="px-3"
-          >
-            <Link to="/implementos/$slug" params={{ slug: listing.slug }}>
+          <Button asChild size="sm" variant="outline" className="px-3">
+            <GatedLink ariaLabel="Favoritar implemento">
               <Heart className="h-4 w-4" />
-            </Link>
+            </GatedLink>
           </Button>
         </div>
       </div>
+
+      <MembershipGateDialog
+        open={gateOpen}
+        onOpenChange={setGateOpen}
+        listingTitle={listing.title}
+      />
     </article>
   );
 }
+

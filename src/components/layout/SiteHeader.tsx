@@ -16,7 +16,15 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [term, setTerm] = useState("");
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
+
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    void navigate({ to: "/catalogo", search: { q: term || undefined } });
+    setOpen(false);
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">

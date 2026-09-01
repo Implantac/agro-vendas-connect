@@ -77,11 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "DDP AGRO | Máquinas e implementos agrícolas" },
+      {
+        name: "description",
+        content:
+          "Plataforma fechada de compra e venda de tratores, colheitadeiras e implementos agrícolas entre membros verificados.",
+      },
+      { name: "author", content: "DDP AGRO" },
+      { property: "og:title", content: "DDP AGRO | Máquinas e implementos agrícolas" },
+      {
+        property: "og:description",
+        content: "Negócios agrícolas começam com confiança.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },

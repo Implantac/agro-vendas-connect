@@ -9,6 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/entrar")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Entrar | DDP AGRO" },
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/entrar")({
 
 function Entrar() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,6 +40,10 @@ function Entrar() {
     setLoading(false);
     if (error) {
       toast.error("Não foi possível entrar", { description: error.message });
+      return;
+    }
+    if (redirect && redirect.startsWith("/")) {
+      window.location.href = redirect;
       return;
     }
     void navigate({ to: "/app" });

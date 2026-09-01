@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
 
 interface CatalogSearch {
-  q?: string;
-  categoria?: string;
-  condicao?: string;
-  uf?: string;
-  ordem?: "recent" | "price_asc" | "price_desc";
+  q?: string | undefined;
+  categoria?: string | undefined;
+  condicao?: string | undefined;
+  uf?: string | undefined;
+  ordem?: "recent" | "price_asc" | "price_desc" | undefined;
 }
 
 export const Route = createFileRoute("/catalogo")({

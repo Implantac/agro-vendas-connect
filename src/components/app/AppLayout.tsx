@@ -416,12 +416,12 @@ function SidebarNav({
             </ul>
           </div>
         ))}
-        {showFilters && (
-          <div className="-mx-3">
-            <SidebarCatalogFilters onNavigate={onNavigate} />
-          </div>
-        )}
       </nav>
+      {showFilters && (
+        <section aria-label="Filtros do catálogo" className="overflow-y-auto border-t border-border">
+          <SidebarCatalogFilters onNavigate={onNavigate} />
+        </section>
+      )}
       <div className="border-t border-border px-5 py-4">
         <p className="font-display text-xs font-bold text-forest">DDP AGRO</p>
         <p className="text-[11px] text-muted-foreground">Marketplace fechado</p>

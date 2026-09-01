@@ -11,8 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as CentralDeAjudaRouteImport } from './routes/central-de-ajuda'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,14 +30,39 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CentralDeAjudaRoute = CentralDeAjudaRouteImport.update({
+  id: '/central-de-ajuda',
+  path: '/central-de-ajuda',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
   id: '/como-funciona',
   path: '/como-funciona',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
+  id: '/politica-de-cookies',
+  path: '/politica-de-cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SegurancaRoute = SegurancaRouteImport.update({
   id: '/seguranca',
   path: '/seguranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
@@ -44,45 +74,89 @@ const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/contato': typeof ContatoRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/contato': typeof ContatoRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/contato': typeof ContatoRoute
+  '/politica-de-cookies': typeof PoliticaDeCookiesRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/catalogo' | '/como-funciona' | '/seguranca' | '/implementos/$slug'
+    | '/'
+    | '/catalogo'
+    | '/central-de-ajuda'
+    | '/como-funciona'
+    | '/contato'
+    | '/politica-de-cookies'
+    | '/politica-de-privacidade'
+    | '/seguranca'
+    | '/termos-de-uso'
+    | '/implementos/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/catalogo' | '/como-funciona' | '/seguranca' | '/implementos/$slug'
+  to:
+    | '/'
+    | '/catalogo'
+    | '/central-de-ajuda'
+    | '/como-funciona'
+    | '/contato'
+    | '/politica-de-cookies'
+    | '/politica-de-privacidade'
+    | '/seguranca'
+    | '/termos-de-uso'
+    | '/implementos/$slug'
   id:
     | '__root__'
     | '/'
     | '/catalogo'
+    | '/central-de-ajuda'
     | '/como-funciona'
+    | '/contato'
+    | '/politica-de-cookies'
+    | '/politica-de-privacidade'
     | '/seguranca'
+    | '/termos-de-uso'
     | '/implementos/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogoRoute: typeof CatalogoRoute
+  CentralDeAjudaRoute: typeof CentralDeAjudaRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
+  ContatoRoute: typeof ContatoRoute
+  PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
+  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   SegurancaRoute: typeof SegurancaRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
 }
 
@@ -102,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/central-de-ajuda': {
+      id: '/central-de-ajuda'
+      path: '/central-de-ajuda'
+      fullPath: '/central-de-ajuda'
+      preLoaderRoute: typeof CentralDeAjudaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/como-funciona': {
       id: '/como-funciona'
       path: '/como-funciona'
@@ -109,11 +190,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComoFuncionaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-cookies': {
+      id: '/politica-de-cookies'
+      path: '/politica-de-cookies'
+      fullPath: '/politica-de-cookies'
+      preLoaderRoute: typeof PoliticaDeCookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/seguranca': {
       id: '/seguranca'
       path: '/seguranca'
       fullPath: '/seguranca'
       preLoaderRoute: typeof SegurancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/implementos/$slug': {
@@ -129,8 +238,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogoRoute: CatalogoRoute,
+  CentralDeAjudaRoute: CentralDeAjudaRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
+  ContatoRoute: ContatoRoute,
+  PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
+  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   SegurancaRoute: SegurancaRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
 }
 export const routeTree = rootRouteImport

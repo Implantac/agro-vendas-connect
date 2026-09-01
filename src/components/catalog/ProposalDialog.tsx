@@ -93,7 +93,7 @@ export function ProposalDialog({
       type: "proposal_received",
       title: "Nova proposta recebida",
       message: `Você recebeu uma proposta para ${listingTitle}.`,
-      action_url: "/app/vendedor/propostas",
+      action_url: "/app/propostas",
     });
 
     setSaving(false);

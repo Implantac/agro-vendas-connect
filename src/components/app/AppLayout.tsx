@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
+import { SidebarCatalogFilters } from "@/components/app/SidebarCatalogFilters";
 import { cn } from "@/lib/utils";
 
 type AppRoute =
@@ -90,6 +91,46 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   },
 ];
 
+const BUYER_NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: "Início",
+    items: [{ to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true }],
+  },
+  {
+    label: "Comprar",
+    items: [
+      { to: "/app/comprar", icon: Search, label: "Comprar máquinas" },
+      { to: "/app/favoritos", icon: Heart, label: "Favoritos" },
+    ],
+  },
+  {
+    label: "Negociações",
+    items: [
+      { to: "/app/propostas", icon: Gauge, label: "Minhas propostas" },
+      { to: "/app/negociacoes", icon: Handshake, label: "Negociações" },
+    ],
+  },
+  {
+    label: "Comunicação",
+    items: [
+      { to: "/app/mensagens", icon: MessageSquare, label: "Mensagens" },
+      { to: "/app/notificacoes", icon: Bell, label: "Notificações" },
+    ],
+  },
+  {
+    label: "Conta",
+    items: [{ to: "/app/perfil", icon: User, label: "Meu perfil" }],
+  },
+];
+
+const BUYER_BOTTOM_NAV: NavItem[] = [
+  { to: "/app", icon: Home, label: "Início", exact: true },
+  { to: "/app/comprar", icon: Search, label: "Buscar", highlight: true },
+  { to: "/app/favoritos", icon: Heart, label: "Favoritos" },
+  { to: "/app/mensagens", icon: MessageSquare, label: "Chat" },
+  { to: "/app/perfil", icon: User, label: "Perfil" },
+] as const;
+
 const BOTTOM_NAV: NavItem[] = [
   { to: "/app", icon: Home, label: "Início", exact: true },
   { to: "/app/comprar", icon: Search, label: "Buscar" },
@@ -136,6 +177,9 @@ export function AppLayout() {
   }
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
+  const isBuyer = profile?.role === "buyer";
+  const navGroups = isBuyer ? BUYER_NAV_GROUPS : NAV_GROUPS;
+  const bottomNav = isBuyer ? BUYER_BOTTOM_NAV : BOTTOM_NAV;
 
   return (
     <div className="min-h-screen bg-background">
@@ -240,7 +284,12 @@ export function AppLayout() {
 
       {/* Sidebar desktop */}
       <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-60 flex-col border-r border-border bg-card lg:flex">
-        <SidebarNav pathname={pathname} onNavigate={() => setMobileMenu(false)} />
+        <SidebarNav
+          groups={navGroups}
+          showFilters={isBuyer}
+          pathname={pathname}
+          onNavigate={() => setMobileMenu(false)}
+        />
       </aside>
 
       {/* Sidebar mobile */}
@@ -271,7 +320,12 @@ export function AppLayout() {
                 />
               </div>
             </form>
-            <SidebarNav pathname={pathname} onNavigate={() => setMobileMenu(false)} />
+            <SidebarNav
+              groups={navGroups}
+              showFilters={isBuyer}
+              pathname={pathname}
+              onNavigate={() => setMobileMenu(false)}
+            />
           </div>
         </div>
       )}
@@ -283,7 +337,7 @@ export function AppLayout() {
 
       {/* Bottom nav mobile */}
       <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-border bg-card lg:hidden">
-        {BOTTOM_NAV.map((item) => {
+        {bottomNav.map((item) => {
           const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
           if (item.highlight) {
             return (
@@ -319,11 +373,21 @@ export function AppLayout() {
   );
 }
 
-function SidebarNav({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
+function SidebarNav({
+  groups,
+  showFilters,
+  pathname,
+  onNavigate,
+}: {
+  groups: { label: string; items: NavItem[] }[];
+  showFilters: boolean;
+  pathname: string;
+  onNavigate: () => void;
+}) {
   return (
     <>
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-5">
-        {NAV_GROUPS.map((group) => (
+        {groups.map((group) => (
           <div key={group.label}>
             <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {group.label}
@@ -352,6 +416,11 @@ function SidebarNav({ pathname, onNavigate }: { pathname: string; onNavigate: ()
             </ul>
           </div>
         ))}
+        {showFilters && (
+          <div className="-mx-3">
+            <SidebarCatalogFilters onNavigate={onNavigate} />
+          </div>
+        )}
       </nav>
       <div className="border-t border-border px-5 py-4">
         <p className="font-display text-xs font-bold text-forest">DDP AGRO</p>

@@ -34,7 +34,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
 import { cn } from "@/lib/utils";
 
-const NAV_GROUPS = [
+interface NavItem {
+  to: string;
+  icon: typeof LayoutDashboard;
+  label: string;
+  exact?: boolean;
+  highlight?: boolean;
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "Início",
     items: [{ to: "/app", icon: LayoutDashboard, label: "Dashboard", exact: true }],
@@ -68,9 +76,9 @@ const NAV_GROUPS = [
       { to: "/app/perfil", icon: User, label: "Meu perfil" },
     ],
   },
-] as const;
+];
 
-const BOTTOM_NAV = [
+const BOTTOM_NAV: NavItem[] = [
   { to: "/app", icon: Home, label: "Início", exact: true },
   { to: "/app/comprar", icon: Search, label: "Buscar" },
   { to: "/app/publicar", icon: PlusCircle, label: "Vender", highlight: true },

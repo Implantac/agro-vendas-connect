@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as SegurancaRouteImport } from './routes/seguranca'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +25,16 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
+  id: '/como-funciona',
+  path: '/como-funciona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SegurancaRoute = SegurancaRouteImport.update({
+  id: '/seguranca',
+  path: '/seguranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
   id: '/implementos/$slug',
   path: '/implementos/$slug',
@@ -32,30 +44,45 @@ const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/seguranca': typeof SegurancaRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/seguranca': typeof SegurancaRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/seguranca': typeof SegurancaRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/catalogo' | '/implementos/$slug'
+  fullPaths:
+    '/' | '/catalogo' | '/como-funciona' | '/seguranca' | '/implementos/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/catalogo' | '/implementos/$slug'
-  id: '__root__' | '/' | '/catalogo' | '/implementos/$slug'
+  to: '/' | '/catalogo' | '/como-funciona' | '/seguranca' | '/implementos/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/catalogo'
+    | '/como-funciona'
+    | '/seguranca'
+    | '/implementos/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogoRoute: typeof CatalogoRoute
+  ComoFuncionaRoute: typeof ComoFuncionaRoute
+  SegurancaRoute: typeof SegurancaRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
 }
 
@@ -75,6 +102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/como-funciona': {
+      id: '/como-funciona'
+      path: '/como-funciona'
+      fullPath: '/como-funciona'
+      preLoaderRoute: typeof ComoFuncionaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seguranca': {
+      id: '/seguranca'
+      path: '/seguranca'
+      fullPath: '/seguranca'
+      preLoaderRoute: typeof SegurancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/implementos/$slug': {
       id: '/implementos/$slug'
       path: '/implementos/$slug'
@@ -88,6 +129,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogoRoute: CatalogoRoute,
+  ComoFuncionaRoute: ComoFuncionaRoute,
+  SegurancaRoute: SegurancaRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
 }
 export const routeTree = rootRouteImport

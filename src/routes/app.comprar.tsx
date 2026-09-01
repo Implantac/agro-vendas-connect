@@ -45,8 +45,6 @@ export const Route = createFileRoute("/app/comprar")({
 function Comprar() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { profile } = useAuth();
-  const isBuyer = profile?.role === "buyer";
 
   const brands = search.marcas ? search.marcas.split(",").filter(Boolean) : [];
 

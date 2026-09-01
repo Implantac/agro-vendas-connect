@@ -196,8 +196,10 @@ function Perfil() {
             </p>
             <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-muted-foreground">Documento</dt>
-                <dd className="font-medium text-forest">{profile?.document ?? "—"}</dd>
+                <dt className="text-muted-foreground">Tipo de pessoa</dt>
+                <dd className="font-medium text-forest">
+                  {profile?.person_type === "company" ? "Pessoa jurídica" : "Pessoa física"}
+                </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">Tipo de conta</dt>

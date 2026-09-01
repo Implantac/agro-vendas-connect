@@ -126,7 +126,7 @@ export async function fetchConversations(userId: string) {
   const { data, error } = await supabase
     .from("conversations")
     .select(
-      "*, listings(title,slug,price,listing_media(url,is_cover,sort_order)), messages(content,created_at,sender_id,read_at)",
+      "*, listings(title,slug,price,listing_media(url,is_cover,sort_order)), messages(content,created_at,sender_id)",
     )
     .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
     .order("updated_at", { ascending: false });

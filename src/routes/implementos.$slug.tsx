@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2, Lock } from "lucide-react";
 import fallback from "@/assets/maquina-1.jpg";
@@ -63,33 +63,23 @@ function ListingDetail() {
     );
   }
 
+  if (!user) {
+    return <Navigate to="/entrar" search={{ redirect: `/implementos/${slug}` }} replace />;
+  }
+
   if (profile?.status !== "approved") {
-    const teaser = listing as unknown as { title: string };
     return (
       <PublicLayout>
         <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
           <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
             <Lock className="h-6 w-6 text-forest" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-forest">
-            {user ? "Cadastro em análise" : "Acesso exclusivo para membros"}
-          </h1>
+          <h1 className="font-display text-2xl font-bold text-forest">Cadastro em análise</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            {user
-              ? "Assim que sua adesão for aprovada você poderá ver os detalhes deste implemento e negociar com o vendedor."
-              : `Para ver a ficha completa de “${teaser.title}” e interagir com o vendedor, contrate o serviço e torne-se membro do DDP AGRO.`}
+            Assim que sua adesão for aprovada você poderá ver os detalhes deste implemento e
+            negociar com o vendedor.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            {!user && (
-              <>
-                <Button asChild className="bg-forest hover:bg-forest/90">
-                  <Link to="/cadastro">Quero ser membro</Link>
-                </Button>
-                <Button asChild variant="outline">
-                  <Link to="/entrar">Já sou membro</Link>
-                </Button>
-              </>
-            )}
             <Button asChild variant="ghost">
               <Link to="/catalogo">Voltar ao catálogo</Link>
             </Button>

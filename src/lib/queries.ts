@@ -41,6 +41,8 @@ export interface CatalogFilters {
   maxPrice?: number;
   brands?: string[];
   year?: number;
+  yearMin?: number;
+  yearMax?: number;
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
@@ -62,6 +64,8 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
   if (filters.brands?.length) query = query.in("brand", filters.brands);
   if (filters.year) query = query.eq("manufacture_year", filters.year);
+  if (filters.yearMin) query = query.gte("manufacture_year", filters.yearMin);
+  if (filters.yearMax) query = query.lte("manufacture_year", filters.yearMax);
 
 
   if (filters.sort === "price_asc") query = query.order("price", { ascending: true, nullsFirst: false });
@@ -104,54 +108,39 @@ export async function fetchLegalDocument(docType: string) {
   return data;
 }
 
-export interface CatalogFacets {
-  categories: { slug: string; name: string; count: number }[];
-  brands: { name: string; count: number }[];
-  years: number[];
-  maxPrice: number;
-  total: number;
+export interface CatalogFacetRow {
+  id: string;
+  brand: string | null;
+  manufacture_year: number | null;
+  price: number | null;
+  condition: "new" | "semi_new" | "used";
+  state: string | null;
+  title: string;
+  model: string | null;
+  categorySlug: string | null;
+  categoryName: string | null;
 }
 
-export async function fetchCatalogFacets(): Promise<CatalogFacets> {
+/** Base de dados usada para calcular contagens cruzadas de facetas. */
+export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
   const { data, error } = await supabase
     .from("listings")
-    .select("id,brand,manufacture_year,price,categories(name,slug)")
+    .select("id,title,model,brand,manufacture_year,price,condition,state,categories(name,slug)")
     .eq("status", "approved");
   if (error) throw error;
-  const rows = (data ?? []) as {
-    brand: string | null;
-    manufacture_year: number | null;
-    price: number | null;
-    categories: { name: string; slug: string } | null;
-  }[];
-
-  const catMap = new Map<string, { slug: string; name: string; count: number }>();
-  const brandMap = new Map<string, number>();
-  const yearSet = new Set<number>();
-  let maxPrice = 0;
-
-  for (const r of rows) {
-    if (r.categories?.slug) {
-      const entry = catMap.get(r.categories.slug) ?? {
-        slug: r.categories.slug,
-        name: r.categories.name,
-        count: 0,
-      };
-      entry.count += 1;
-      catMap.set(r.categories.slug, entry);
-    }
-    if (r.brand) brandMap.set(r.brand, (brandMap.get(r.brand) ?? 0) + 1);
-    if (r.manufacture_year) yearSet.add(r.manufacture_year);
-    if (r.price && r.price > maxPrice) maxPrice = r.price;
-  }
-
-  return {
-    categories: [...catMap.values()].sort((a, b) => b.count - a.count),
-    brands: [...brandMap.entries()]
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count),
-    years: [...yearSet].sort((a, b) => b - a),
-    maxPrice: Math.max(100000, Math.ceil(maxPrice / 50000) * 50000),
-    total: rows.length,
-  };
+  return (data ?? []).map((r) => {
+    const row = r as typeof r & { categories: { name: string; slug: string } | null };
+    return {
+      id: row.id,
+      title: row.title,
+      model: row.model,
+      brand: row.brand,
+      manufacture_year: row.manufacture_year,
+      price: row.price,
+      condition: row.condition,
+      state: row.state,
+      categorySlug: row.categories?.slug ?? null,
+      categoryName: row.categories?.name ?? null,
+    };
+  });
 }

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PackageSearch, SlidersHorizontal, X } from "lucide-react";
 import { z } from "zod";
 import { AppPage } from "@/components/app/AppLayout";
-import { CatalogFilterSidebar, type CatalogFilterValues } from "@/components/app/CatalogFilterSidebar";
+import { BuyerFilterPanel } from "@/components/app/BuyerFilterPanel";
 import { ListingCard } from "@/components/catalog/ListingCard";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -14,21 +14,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { fetchApprovedListings, fetchCatalogFacets } from "@/lib/queries";
-import { BRAZILIAN_STATES, CONDITION_LABELS } from "@/lib/format";
+import { fetchApprovedListings } from "@/lib/queries";
+import { CONDITION_LABELS } from "@/lib/format";
+import { countActiveFilters, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import { useState } from "react";
 
 const searchSchema = z.object({
   q: z.string().optional(),
   categoria: z.string().optional(),
-  estado: z.string().optional(),
-  condicao: z.string().optional(),
   marcas: z.string().optional(),
-  precoMin: z.coerce.number().optional(),
-  precoMax: z.coerce.number().optional(),
-  ano: z.coerce.number().optional(),
+  preco_min: z.coerce.number().optional(),
+  preco_max: z.coerce.number().optional(),
+  ano_min: z.coerce.number().optional(),
+  ano_max: z.coerce.number().optional(),
+  condicao: z.string().optional(),
+  uf: z.string().optional(),
+  sort: z.string().optional(),
+  page: z.coerce.number().optional(),
 });
-
-type CatalogSearch = z.infer<typeof searchSchema>;
 
 export const Route = createFileRoute("/app/comprar")({
   validateSearch: (s) => searchSchema.parse(s),
@@ -42,136 +45,118 @@ export const Route = createFileRoute("/app/comprar")({
   component: Comprar,
 });
 
+const SORT_OPTIONS = [
+  { value: "relevancia", label: "Relevância" },
+  { value: "price_asc", label: "Menor preço" },
+  { value: "price_desc", label: "Maior preço" },
+  { value: "year_desc", label: "Ano (mais novo)" },
+];
+
+const PAGE_SIZE = 12;
+
 function Comprar() {
-  const search = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const { filters, setFilters, clearAll } = useCatalogFilters();
+  const [mobileFilters, setMobileFilters] = useState(false);
 
-  const brands = search.marcas ? search.marcas.split(",").filter(Boolean) : [];
-
-  const { data: facets } = useQuery({ queryKey: ["catalog-facets"], queryFn: fetchCatalogFacets });
-  const { data: listings = [], isLoading } = useQuery({
-    queryKey: ["listings", "comprar", search],
+  const { data: allListings = [], isLoading } = useQuery({
+    queryKey: ["listings", "comprar", filters],
     queryFn: () =>
       fetchApprovedListings({
-        ...(search.q ? { search: search.q } : {}),
-        ...(search.categoria ? { category: search.categoria } : {}),
-        ...(search.estado ? { state: search.estado } : {}),
-        ...(search.condicao ? { condition: search.condicao } : {}),
-        ...(brands.length ? { brands } : {}),
-        ...(search.precoMin ? { minPrice: search.precoMin } : {}),
-        ...(search.precoMax ? { maxPrice: search.precoMax } : {}),
-        ...(search.ano ? { year: search.ano } : {}),
+        ...(filters.q ? { search: filters.q } : {}),
+        ...(filters.categoria ? { category: filters.categoria } : {}),
+        ...(filters.uf ? { state: filters.uf } : {}),
+        ...(filters.condicao ? { condition: filters.condicao } : {}),
+        ...(filters.marcas.length ? { brands: filters.marcas } : {}),
+        ...(filters.preco_min !== undefined ? { minPrice: filters.preco_min } : {}),
+        ...(filters.preco_max !== undefined ? { maxPrice: filters.preco_max } : {}),
+        ...(filters.ano_min !== undefined ? { yearMin: filters.ano_min } : {}),
+        ...(filters.ano_max !== undefined ? { yearMax: filters.ano_max } : {}),
+        ...(filters.sort === "price_asc" || filters.sort === "price_desc"
+          ? { sort: filters.sort }
+          : {}),
       }),
   });
 
-  const hasFilters = Object.values(search).some((v) => v !== undefined && v !== "");
+  const sorted =
+    filters.sort === "year_desc"
+      ? [...allListings].sort(
+          (a, b) => (b.manufacture_year ?? 0) - (a.manufacture_year ?? 0),
+        )
+      : allListings;
 
-  const values: CatalogFilterValues = {
-    categoria: search.categoria,
-    marcas: brands,
-    precoMin: search.precoMin,
-    precoMax: search.precoMax,
-    ano: search.ano,
-  };
+  const total = sorted.length;
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(Math.max(1, filters.page), pageCount);
+  const listings = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const activeCount = countActiveFilters(filters);
 
-  function applyFilters(patch: Partial<CatalogFilterValues>) {
-    const next: CatalogSearch = { ...search };
-    if ("categoria" in patch) next.categoria = patch.categoria;
-    if ("marcas" in patch) next.marcas = patch.marcas?.length ? patch.marcas.join(",") : undefined;
-    if ("precoMin" in patch) next.precoMin = patch.precoMin;
-    if ("precoMax" in patch) next.precoMax = patch.precoMax;
-    if ("ano" in patch) next.ano = patch.ano;
-    void navigate({ search: next });
-  }
-
-  const chips: { key: string; label: string; clear: () => void }[] = [];
-  if (search.q) chips.push({ key: "q", label: `Busca: ${search.q}`, clear: () => void navigate({ search: { ...search, q: undefined } }) });
-  if (search.categoria)
-    chips.push({ key: "categoria", label: search.categoria, clear: () => applyFilters({ categoria: undefined }) });
-  for (const b of brands)
+  const chips: { key: string; label: string; remove: () => void }[] = [];
+  if (filters.q) chips.push({ key: "q", label: `Busca: ${filters.q}`, remove: () => setFilters({ q: undefined }) });
+  if (filters.categoria)
+    chips.push({ key: "categoria", label: filters.categoria, remove: () => setFilters({ categoria: undefined }) });
+  for (const brand of filters.marcas)
     chips.push({
-      key: `marca-${b}`,
-      label: b,
-      clear: () => applyFilters({ marcas: brands.filter((x) => x !== b) }),
+      key: `marca-${brand}`,
+      label: brand,
+      remove: () => setFilters({ marcas: filters.marcas.filter((b) => b !== brand) }),
     });
-  if (search.precoMin || search.precoMax)
+  if (filters.preco_min !== undefined || filters.preco_max !== undefined)
     chips.push({
       key: "preco",
-      label: `Preço: ${search.precoMin ? `R$ ${search.precoMin.toLocaleString("pt-BR")}` : "R$ 0"} – ${search.precoMax ? `R$ ${search.precoMax.toLocaleString("pt-BR")}` : "sem limite"}`,
-      clear: () => applyFilters({ precoMin: undefined, precoMax: undefined }),
+      label: `Preço: ${filters.preco_min ? `R$ ${filters.preco_min.toLocaleString("pt-BR")}` : "R$ 0"} – ${filters.preco_max ? `R$ ${filters.preco_max.toLocaleString("pt-BR")}` : "sem limite"}`,
+      remove: () => setFilters({ preco_min: undefined, preco_max: undefined }),
     });
-  if (search.ano) chips.push({ key: "ano", label: `A partir de ${search.ano}`, clear: () => applyFilters({ ano: undefined }) });
-  if (search.condicao)
+  if (filters.ano_min !== undefined || filters.ano_max !== undefined)
+    chips.push({
+      key: "ano",
+      label: `Ano: ${filters.ano_min ?? "—"} a ${filters.ano_max ?? "—"}`,
+      remove: () => setFilters({ ano_min: undefined, ano_max: undefined }),
+    });
+  if (filters.condicao)
     chips.push({
       key: "condicao",
-      label: CONDITION_LABELS[search.condicao as keyof typeof CONDITION_LABELS] ?? search.condicao,
-      clear: () => void navigate({ search: { ...search, condicao: undefined } }),
+      label: CONDITION_LABELS[filters.condicao as keyof typeof CONDITION_LABELS] ?? filters.condicao,
+      remove: () => setFilters({ condicao: undefined }),
     });
-  if (search.estado)
-    chips.push({
-      key: "estado",
-      label: search.estado,
-      clear: () => void navigate({ search: { ...search, estado: undefined } }),
-    });
+  if (filters.uf) chips.push({ key: "uf", label: filters.uf, remove: () => setFilters({ uf: undefined }) });
 
   return (
     <AppPage>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
-            Comprar máquinas
-          </h1>
+          <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Comprar máquinas</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Explore máquinas e implementos de vendedores verificados.
+            Encontre máquinas agrícolas para o seu negócio.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Sheet>
+        <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+          <Sheet open={mobileFilters} onOpenChange={setMobileFilters}>
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="lg:hidden">
-                <SlidersHorizontal className="mr-2 h-4 w-4" /> Filtros
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                Filtros{activeCount > 0 ? ` (${activeCount})` : ""}
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto p-0">
+            <SheetContent side="left" className="w-[88vw] max-w-sm overflow-y-auto p-0">
               <SheetHeader className="border-b border-border px-5 py-4">
                 <SheetTitle className="font-display text-forest">Filtros</SheetTitle>
               </SheetHeader>
-              <div className="p-4">
-                <CatalogFilterSidebar
-                  facets={facets}
-                  values={values}
-                  onChange={applyFilters}
-                  className="border-0"
-                />
-              </div>
+              <BuyerFilterPanel showResultsButton onApplied={() => setMobileFilters(false)} />
             </SheetContent>
           </Sheet>
-          <Select
-            value={search.condicao ?? ""}
-            onValueChange={(v) => void navigate({ search: { ...search, condicao: v || undefined } })}
-          >
-            <SelectTrigger className="h-9 w-36">
-              <SelectValue placeholder="Condição" />
+
+          <span className="text-sm text-muted-foreground">
+            {isLoading ? "Carregando..." : `${total} ${total === 1 ? "resultado" : "resultados"}`}
+          </span>
+
+          <Select value={filters.sort} onValueChange={(v) => setFilters({ sort: v })}>
+            <SelectTrigger className="h-9 w-44">
+              <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
             <SelectContent>
-              {Object.entries(CONDITION_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={search.estado ?? ""}
-            onValueChange={(v) => void navigate({ search: { ...search, estado: v || undefined } })}
-          >
-            <SelectTrigger className="h-9 w-28">
-              <SelectValue placeholder="Estado" />
-            </SelectTrigger>
-            <SelectContent>
-              {BRAZILIAN_STATES.map((uf) => (
-                <SelectItem key={uf} value={uf}>
-                  {uf}
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -180,51 +165,76 @@ function Comprar() {
       </div>
 
       {chips.length > 0 && (
-        <div className="mt-5 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           {chips.map((chip) => (
             <button
               key={chip.key}
-              onClick={chip.clear}
+              onClick={chip.remove}
               className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-medium text-forest transition-colors hover:bg-secondary"
             >
               {chip.label}
               <X className="h-3 w-3" />
             </button>
           ))}
-          {hasFilters && (
-            <Button variant="ghost" size="sm" onClick={() => void navigate({ search: {} })}>
-              Limpar tudo
-            </Button>
-          )}
+          <Button variant="ghost" size="sm" onClick={clearAll}>
+            Limpar todos
+          </Button>
         </div>
       )}
 
-      <p className="mb-4 mt-6 text-sm text-muted-foreground">
-        {listings.length} {listings.length === 1 ? "resultado" : "resultados"}
-      </p>
-
       {isLoading ? (
-        <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(250px,1fr))]">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="mt-6 grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
+          {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-secondary/60" />
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
+        <div className="mt-10 flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
           <PackageSearch className="h-10 w-10 text-muted-foreground/50" />
           <h2 className="mt-4 font-display text-lg font-semibold text-forest">
-            Nenhum resultado encontrado
+            Nenhuma máquina encontrada com esses filtros
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Ajuste os filtros ou limpe a busca para ver mais anúncios.
+            Tente ajustar ou limpar os filtros para ver mais resultados.
           </p>
+          <Button variant="outline" className="mt-4" onClick={clearAll}>
+            Limpar filtros
+          </Button>
         </div>
       ) : (
-        <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(250px,1fr))]">
-          {listings.map((l, i) => (
-            <ListingCard key={l.id} listing={l as never} index={i} />
-          ))}
-        </div>
+        <>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Mostrando {(page - 1) * PAGE_SIZE + 1}–{(page - 1) * PAGE_SIZE + listings.length} de {total}
+          </p>
+          <div className="mt-3 grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
+            {listings.map((l, i) => (
+              <ListingCard key={l.id} listing={l as never} index={i} />
+            ))}
+          </div>
+          {pageCount > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => setFilters({ page: page - 1 })}
+              >
+                Anterior
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Página {page} de {pageCount}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= pageCount}
+                onClick={() => setFilters({ page: page + 1 })}
+              >
+                Próxima
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </AppPage>
   );

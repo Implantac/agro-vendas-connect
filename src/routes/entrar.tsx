@@ -52,6 +52,7 @@ function Entrar() {
   }
 
   async function google() {
+    if (redirect) sessionStorage.setItem("ddp:redirect", redirect);
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
@@ -70,6 +71,19 @@ function Entrar() {
         <p className="mt-2 text-sm text-muted-foreground">
           Área restrita a membros do DDP AGRO.
         </p>
+
+        {redirect && (
+          <div className="mt-6 rounded-md border border-accent/40 bg-secondary/60 p-4 text-sm text-forest">
+            <p className="font-semibold">Conteúdo exclusivo para membros</p>
+            <p className="mt-1 text-muted-foreground">
+              Para acessar este produto e interagir com o vendedor, entre na sua conta ou{" "}
+              <Link to="/cadastro" className="font-medium text-forest underline">
+                cadastre-se
+              </Link>{" "}
+              para contratar o serviço.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={submit} className="mt-8 space-y-4">
           <div className="space-y-2">

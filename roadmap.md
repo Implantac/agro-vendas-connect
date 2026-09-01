@@ -1,20 +1,21 @@
 # DDP AGRO — Roadmap
 
 ## Fase 0 — Fundação
-- [ ] Ativar Lovable Cloud (auth, DB, storage)
-- [ ] Design system exclusivo (paleta verde mata/campo, argila, areia; Sora/Manrope + Inter)
-- [ ] Logo, símbolo, favicon
+- [x] Ativar Lovable Cloud (auth, DB, storage)
+- [x] Design system exclusivo (paleta verde mata/campo, argila, areia; Sora/Manrope + Inter)
+- [x] Logo, símbolo, favicon
 
 ## Fase 1 — Público
-- [ ] Landing /
-- [ ] /catalogo com filtros e busca
-- [ ] /implementos/:slug
-- [ ] /como-funciona, /seguranca, /contato, /central-de-ajuda
-- [ ] Páginas legais (termos, privacidade, cookies)
+- [x] Landing /
+- [x] /catalogo com filtros e busca
+- [x] /implementos/:slug
+- [x] /como-funciona, /seguranca, /contato, /central-de-ajuda
+- [x] Páginas legais (termos, privacidade, cookies)
 
 ## Fase 2 — Auth e aprovação
-- [ ] /cadastro (comprador/vendedor), /entrar, recuperação de senha
-- [ ] Perfis, papéis em tabela separada, status de aprovação
+- [x] /cadastro (comprador/vendedor) e /entrar (e-mail + Google)
+- [ ] Recuperação de senha
+- [x] Perfis, papéis em tabela separada, status de aprovação (banco + painel /app)
 - [ ] /aguardando-aprovacao, /cadastro-rejeitado, /aceite-atualizado
 - [ ] Termos versionados + registro de aceite
 

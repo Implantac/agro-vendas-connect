@@ -143,20 +143,18 @@ export function AppLayout() {
           </Link>
 
           {showSearch && (
-            <div className="mx-auto hidden w-full max-w-xl md:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="search"
-                  value={filters.q ?? ""}
-                  onChange={(e) => setFilters({ q: e.target.value || undefined })}
-                  placeholder="Buscar máquinas, marcas, modelos..."
-                  aria-label="Buscar máquinas"
-                  className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
-                />
+            <>
+              <div className="mx-auto hidden w-full max-w-xl md:block">
+                <HeaderSearch value={filters.q ?? ""} onSearch={(q) => setFilters({ q: q || undefined })} />
               </div>
-            </div>
+              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar máquinas">
+                <Link to="/app/comprar">
+                  <Search className="h-5 w-5" />
+                </Link>
+              </Button>
+            </>
           )}
+
 
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">

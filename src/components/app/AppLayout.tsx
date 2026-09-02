@@ -181,7 +181,9 @@ export function AppLayout() {
 
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
-              {MODE_LABEL[mode]}
+              {isSuperAdmin && viewMode !== "admin"
+                ? `Admin · visão ${MODE_LABEL[viewMode].toLowerCase()}`
+                : MODE_LABEL[viewMode]}
             </span>
 
             <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">

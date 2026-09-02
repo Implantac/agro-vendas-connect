@@ -49,7 +49,7 @@ import { cn } from "@/lib/utils";
 
 export function AppLayout() {
   const { user, profile, loading, signOut } = useAuth();
-  const { mode, setMode, canSwitchRoles } = useAppRole();
+  const { mode, setMode, canSwitchRoles, ready } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -69,11 +69,12 @@ export function AppLayout() {
   const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
   useEffect(() => {
+    if (!ready) return;
     if (mode !== "vendedor" && isSellerOnlyRoute) {
       toast.info("Esta área é exclusiva do modo vendedor.");
       void navigate({ to: "/app", replace: true });
     }
-  }, [mode, isSellerOnlyRoute, navigate]);
+  }, [ready, mode, isSellerOnlyRoute, navigate]);
 
   if (loading || !user) {
     return (

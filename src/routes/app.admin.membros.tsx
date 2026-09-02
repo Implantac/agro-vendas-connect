@@ -102,7 +102,28 @@ function AdminMembers() {
                   {m.city ? ` • ${m.city}/${m.state ?? ""}` : ""}
                 </p>
               </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-muted-foreground">Perfil:</span>
+                <div className="flex overflow-hidden rounded-full border border-border">
+                  {ROLES.map((r) => (
+                    <button
+                      key={r.value}
+                      disabled={roleMutation.isPending || m.role === r.value}
+                      onClick={() => roleMutation.mutate({ id: m.id, role: r.value })}
+                      className={cn(
+                        "px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-default",
+                        m.role === r.value
+                          ? "bg-forest text-primary-foreground"
+                          : "text-muted-foreground hover:bg-secondary hover:text-forest",
+                      )}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="flex gap-2">
+
                 <Button
                   size="sm"
                   disabled={mutation.isPending || m.status === "approved"}

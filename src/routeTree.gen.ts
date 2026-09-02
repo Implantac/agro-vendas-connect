@@ -37,6 +37,7 @@ import { Route as AppPropostasRecebidasRouteImport } from './routes/app.proposta
 import { Route as AppPublicarRouteImport } from './routes/app.publicar'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
+import { Route as AppAdminAnunciosRouteImport } from './routes/app.admin.anuncios'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
 
 const IndexRoute = IndexRouteImport.update({
@@ -179,6 +180,11 @@ const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminAnunciosRoute = AppAdminAnunciosRouteImport.update({
+  id: '/admin/anuncios',
+  path: '/admin/anuncios',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminMembrosRoute = AppAdminMembrosRouteImport.update({
   id: '/admin/membros',
   path: '/admin/membros',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/': typeof AppAdminIndexRoute
 }
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin': typeof AppAdminIndexRoute
 }
@@ -275,6 +283,7 @@ export interface FileRoutesById {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/': typeof AppAdminIndexRoute
 }
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
+    | '/app/admin/anuncios'
     | '/app/admin/membros'
     | '/app/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app'
+    | '/app/admin/anuncios'
     | '/app/admin/membros'
     | '/app/admin'
   id:
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
+    | '/app/admin/anuncios'
     | '/app/admin/membros'
     | '/app/admin/'
   fileRoutesById: FileRoutesById
@@ -587,6 +599,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/anuncios': {
+      id: '/app/admin/anuncios'
+      path: '/admin/anuncios'
+      fullPath: '/app/admin/anuncios'
+      preLoaderRoute: typeof AppAdminAnunciosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/membros': {
       id: '/app/admin/membros'
       path: '/admin/membros'
@@ -612,6 +631,7 @@ interface AppRouteChildren {
   AppPropostasRecebidasRoute: typeof AppPropostasRecebidasRoute
   AppPublicarRoute: typeof AppPublicarRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminAnunciosRoute: typeof AppAdminAnunciosRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
@@ -631,6 +651,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPropostasRecebidasRoute: AppPropostasRecebidasRoute,
   AppPublicarRoute: AppPublicarRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminAnunciosRoute: AppAdminAnunciosRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
 }

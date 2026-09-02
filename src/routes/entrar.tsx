@@ -123,12 +123,22 @@ function Entrar() {
           Continuar com Google
         </Button>
 
-        <p className="mt-8 text-sm text-muted-foreground">
-          Ainda não é membro?{" "}
-          <Link to="/cadastro" className="font-medium text-forest underline">
-            Solicitar acesso
-          </Link>
-        </p>
+        <div className="mt-8 rounded-lg border border-border bg-secondary/40 p-5">
+          <p className="font-display text-base font-semibold text-forest">Ainda não é membro?</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            O DDP AGRO é um marketplace fechado: cada comprador e vendedor passa por verificação
+            antes de negociar.
+          </p>
+          <Button asChild className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link to="/cadastro">Solicitar membresia</Link>
+          </Button>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Já solicitou?{" "}
+            <Link to="/aguardando-aprovacao" className="font-medium text-forest underline">
+              Acompanhar análise
+            </Link>
+          </p>
+        </div>
       </div>
     </PublicLayout>
   );

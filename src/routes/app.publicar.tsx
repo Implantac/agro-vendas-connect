@@ -18,7 +18,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchCategories } from "@/lib/queries";
-import { BRAZILIAN_STATES, CONDITION_LABELS, formatBRL } from "@/lib/format";
+import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/publicar")({
@@ -255,8 +255,8 @@ function Publicar() {
               </div>
               <div className="space-y-2">
                 <Label>Condição *</Label>
-                <div className="grid grid-cols-3 gap-3">
-                  {Object.entries(CONDITION_LABELS).map(([value, label]) => (
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(SALE_CONDITION_LABELS).map(([value, label]) => (
                     <button
                       key={value}
                       type="button"

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ export function ProposalDialog({
   suggestedAmount: number | null;
 }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(suggestedAmount ? String(suggestedAmount) : "");
   const [message, setMessage] = useState("");
@@ -102,6 +104,7 @@ export function ProposalDialog({
     toast.success("Proposta enviada", {
       description: "Acompanhe a negociação no seu painel.",
     });
+    void navigate({ to: "/app/negociacao/$id", params: { id: proposal.id } });
   }
 
   return (

@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CONDITION_LABELS } from "@/lib/format";
+import { SALE_CONDITION_LABELS as CONDITION_LABELS } from "@/lib/format";
 import { useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";
 

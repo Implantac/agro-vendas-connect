@@ -50,3 +50,6 @@
 - [x] Guards por papel (rotas de vendedor, comprador e /app/admin/*)
 - [x] Admin Shell: Command Center, Membros, Anúncios (moderação), Auditoria
 - [ ] Sprint 2 Comprador / 3 Vendedor / 4 Admin avançado / 5 Negociação unificada / 6 Membership
+- [x] Sprint 5 — Negociação unificada em /app/negociacao/:id (proposta + contraproposta + chat + histórico auditável)
+- [x] Sprint 6 — Membresia: /aguardando-aprovacao, /cadastro-rejeitado, guard por status e CTA "Solicitar membresia" no login
+- [x] Regra da plataforma: anúncios apenas usados/seminovos (wizard e filtros)

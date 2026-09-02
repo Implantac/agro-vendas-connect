@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AguardandoAprovacaoRouteImport } from './routes/aguardando-aprovacao'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as CadastroRejeitadoRouteImport } from './routes/cadastro-rejeitado'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CentralDeAjudaRouteImport } from './routes/central-de-ajuda'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
@@ -40,10 +42,16 @@ import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminAnunciosRouteImport } from './routes/app.admin.anuncios'
 import { Route as AppAdminAuditoriaRouteImport } from './routes/app.admin.auditoria'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
+import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AguardandoAprovacaoRoute = AguardandoAprovacaoRouteImport.update({
+  id: '/aguardando-aprovacao',
+  path: '/aguardando-aprovacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -54,6 +62,11 @@ const AppRoute = AppRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRejeitadoRoute = CadastroRejeitadoRouteImport.update({
+  id: '/cadastro-rejeitado',
+  path: '/cadastro-rejeitado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoRoute = CatalogoRouteImport.update({
@@ -196,11 +209,18 @@ const AppAdminMembrosRoute = AppAdminMembrosRouteImport.update({
   path: '/admin/membros',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNegociacaoIdRoute = AppNegociacaoIdRouteImport.update({
+  id: '/negociacao/$id',
+  path: '/negociacao/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -228,11 +248,14 @@ export interface FileRoutesByFullPath {
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -260,13 +283,16 @@ export interface FileRoutesByTo {
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin': typeof AppAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -294,14 +320,17 @@ export interface FileRoutesById {
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -329,11 +358,14 @@ export interface FileRouteTypes {
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
     | '/app/admin/membros'
+    | '/app/negociacao/$id'
     | '/app/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aguardando-aprovacao'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -361,12 +393,15 @@ export interface FileRouteTypes {
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
     | '/app/admin/membros'
+    | '/app/negociacao/$id'
     | '/app/admin'
   id:
     | '__root__'
     | '/'
+    | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -394,13 +429,16 @@ export interface FileRouteTypes {
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
     | '/app/admin/membros'
+    | '/app/negociacao/$id'
     | '/app/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AguardandoAprovacaoRoute: typeof AguardandoAprovacaoRoute
   AppRoute: typeof AppRouteWithChildren
   CadastroRoute: typeof CadastroRoute
+  CadastroRejeitadoRoute: typeof CadastroRejeitadoRoute
   CatalogoRoute: typeof CatalogoRoute
   CentralDeAjudaRoute: typeof CentralDeAjudaRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
@@ -422,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aguardando-aprovacao': {
+      id: '/aguardando-aprovacao'
+      path: '/aguardando-aprovacao'
+      fullPath: '/aguardando-aprovacao'
+      preLoaderRoute: typeof AguardandoAprovacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -434,6 +479,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-rejeitado': {
+      id: '/cadastro-rejeitado'
+      path: '/cadastro-rejeitado'
+      fullPath: '/cadastro-rejeitado'
+      preLoaderRoute: typeof CadastroRejeitadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogo': {
@@ -632,6 +684,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMembrosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/negociacao/$id': {
+      id: '/app/negociacao/$id'
+      path: '/negociacao/$id'
+      fullPath: '/app/negociacao/$id'
+      preLoaderRoute: typeof AppNegociacaoIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -653,6 +712,7 @@ interface AppRouteChildren {
   AppAdminAnunciosRoute: typeof AppAdminAnunciosRoute
   AppAdminAuditoriaRoute: typeof AppAdminAuditoriaRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
+  AppNegociacaoIdRoute: typeof AppNegociacaoIdRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
 
@@ -674,6 +734,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminAnunciosRoute: AppAdminAnunciosRoute,
   AppAdminAuditoriaRoute: AppAdminAuditoriaRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
+  AppNegociacaoIdRoute: AppNegociacaoIdRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
 }
 
@@ -681,8 +742,10 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AguardandoAprovacaoRoute: AguardandoAprovacaoRoute,
   AppRoute: AppRouteWithChildren,
   CadastroRoute: CadastroRoute,
+  CadastroRejeitadoRoute: CadastroRejeitadoRoute,
   CatalogoRoute: CatalogoRoute,
   CentralDeAjudaRoute: CentralDeAjudaRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,

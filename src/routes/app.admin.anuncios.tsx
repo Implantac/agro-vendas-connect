@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { fetchAdminListings, moderateListing } from "@/lib/admin-queries";
+import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,21 @@ const FILTERS = [
 
 function AdminListings() {
   const [status, setStatus] = useState<string>("in_review");
+  const { filters } = useCatalogFilters();
+  const term = (filters.q ?? "").trim().toLowerCase();
   const qc = useQueryClient();
 
-  const { data: listings = [], isLoading } = useQuery({
+  const { data: allListings = [], isLoading } = useQuery({
     queryKey: ["admin", "listings", status],
     queryFn: () => fetchAdminListings(status || undefined),
   });
+
+  const listings = term
+    ? allListings.filter((l) =>
+        [l.title, l.city, l.state].filter(Boolean).join(" ").toLowerCase().includes(term),
+      )
+    : allListings;
+
 
   const mutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: "approved" | "rejected" | "archived" }) =>

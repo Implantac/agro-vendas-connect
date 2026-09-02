@@ -114,7 +114,8 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const navGroups = NAV_BY_ROLE[mode];
   const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
-  const showSearch = mode !== "admin";
+  const showSearch = true;
+  const searchTarget = mode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
   const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
 
 
@@ -145,15 +146,20 @@ export function AppLayout() {
           {showSearch && (
             <>
               <div className="mx-auto hidden w-full max-w-xl md:block">
-                <HeaderSearch value={filters.q ?? ""} onSearch={(q) => setFilters({ q: q || undefined })} />
+                <HeaderSearch
+                  value={filters.q ?? ""}
+                  placeholder={mode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
+                  onSearch={(q) => setFilters({ q: q || undefined })}
+                />
               </div>
-              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar máquinas">
-                <Link to="/app/comprar">
+              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar">
+                <Link to={searchTarget}>
                   <Search className="h-5 w-5" />
                 </Link>
               </Button>
             </>
           )}
+
 
 
           <div className="ml-auto flex items-center gap-2">
@@ -381,7 +387,11 @@ export function AppPage({ children }: { children: ReactNode }) {
 export { ClipboardList };
 
 /** Busca do header: digita livremente e só navega ao parar de digitar (ou no Enter). */
-function HeaderSearch({ value, onSearch }: { value: string; onSearch: (q: string) => void }) {
+function HeaderSearch({
+  value,
+  onSearch,
+  placeholder = "Buscar máquinas, marcas, modelos...",
+}: { value: string; onSearch: (q: string) => void; placeholder?: string }) {
   const [term, setTerm] = useState(value);
 
   useEffect(() => setTerm(value), [value]);
@@ -407,8 +417,8 @@ function HeaderSearch({ value, onSearch }: { value: string; onSearch: (q: string
         type="search"
         value={term}
         onChange={(e) => setTerm(e.target.value)}
-        placeholder="Buscar máquinas, marcas, modelos..."
-        aria-label="Buscar máquinas"
+        placeholder={placeholder}
+        aria-label="Buscar"
         className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
       />
     </form>

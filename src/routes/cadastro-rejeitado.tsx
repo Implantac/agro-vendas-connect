@@ -20,7 +20,7 @@ export const Route = createFileRoute("/cadastro-rejeitado")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: RejectedRegistration;
+  component: RejectedRegistration,
 });
 
 function RejectedRegistration() {

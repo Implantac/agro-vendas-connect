@@ -22,6 +22,7 @@ import { AppPage } from "@/components/app/AppLayout";
 import { ListingCard } from "@/components/catalog/ListingCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useAppRole } from "@/features/auth/useAppRole";
 import { fetchDashboardCounts, fetchMyProposals, fetchNotifications } from "@/lib/app-queries";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
 import { CONDITION_LABELS, formatBRL, PROPOSAL_STATUS_LABELS } from "@/lib/format";
@@ -51,6 +52,8 @@ const TRUST_ITEMS = [
 
 function Dashboard() {
   const { user, profile } = useAuth();
+  const { mode } = useAppRole();
+  const isSeller = mode === "vendedor" || mode === "admin";
   const firstName = profile?.full_name?.split(" ")[0] ?? "membro";
 
   const { data: counts } = useQuery({
@@ -74,7 +77,7 @@ function Dashboard() {
     enabled: Boolean(user),
   });
 
-  const summaryCards = [
+  const allCards = [
     {
       icon: Handshake,
       title: "Minhas negociações",
@@ -104,6 +107,10 @@ function Dashboard() {
       to: "/app/favoritos",
     },
   ];
+
+  const summaryCards = allCards.filter(
+    (card) => isSeller || (card.to !== "/app/meus-anuncios" && card.to !== "/app/propostas"),
+  );
 
   return (
     <AppPage>
@@ -144,14 +151,20 @@ function Dashboard() {
           </p>
         </div>
         <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-          <Link to="/app/publicar">
-            <PlusCircle className="mr-2 h-4 w-4" /> Publicar anúncio
-          </Link>
+          {isSeller ? (
+            <Link to="/app/publicar">
+              <PlusCircle className="mr-2 h-4 w-4" /> Publicar anúncio
+            </Link>
+          ) : (
+            <Link to="/app/comprar">
+              <Tractor className="mr-2 h-4 w-4" /> Buscar máquinas
+            </Link>
+          )}
         </Button>
       </div>
 
       {/* Cards de resumo */}
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-7 grid gap-4 sm:grid-cols-2 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
         {summaryCards.map((card) => (
           <Link
             key={card.title}

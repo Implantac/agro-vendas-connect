@@ -81,12 +81,23 @@ export function AppLayout() {
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
+  // Admin é superusuário: navega livremente pelas telas de comprador e vendedor.
+  const isSuperAdmin = mode === "admin";
+  const viewMode: AppMode = isSuperAdmin
+    ? isSellerOnlyRoute
+      ? "vendedor"
+      : isBuyerOnlyRoute
+        ? "comprador"
+        : "admin"
+    : mode;
+
   useEffect(() => {
     if (!ready) return;
     const blocked =
-      (mode !== "vendedor" && isSellerOnlyRoute) ||
-      (mode !== "admin" && isAdminOnlyRoute) ||
-      (mode !== "comprador" && isBuyerOnlyRoute);
+      !isSuperAdmin &&
+      ((mode !== "vendedor" && isSellerOnlyRoute) ||
+        isAdminOnlyRoute ||
+        (mode !== "comprador" && isBuyerOnlyRoute));
     if (blocked) {
       toast.info("Esta área não pertence ao seu perfil de acesso.");
       void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
@@ -96,7 +107,7 @@ export function AppLayout() {
     if (mode === "admin" && pathname === "/app") {
       void navigate({ to: "/app/admin", replace: true });
     }
-  }, [ready, mode, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
+  }, [ready, mode, isSuperAdmin, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
 
   if (loading || !user) {
     return (
@@ -112,11 +123,14 @@ export function AppLayout() {
   }
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
-  const navGroups = NAV_BY_ROLE[mode];
-  const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
+  const navGroups = isSuperAdmin
+    ? [...NAV_BY_ROLE[viewMode], ...(viewMode === "admin" ? ADMIN_VIEWS_GROUP : ADMIN_BACK_GROUP)]
+    : NAV_BY_ROLE[mode];
+  const showFilters = viewMode === "comprador" && pathname.startsWith("/app/comprar");
   const showSearch = true;
-  const searchTarget = mode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
-  const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
+  const searchTarget = viewMode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
+  const bottomNav = BOTTOM_NAV_BY_ROLE[viewMode];
+
 
 
   return (

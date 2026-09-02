@@ -34,13 +34,16 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
 import {
+  ADMIN_BACK_GROUP,
   ADMIN_ONLY_ROUTES,
+  ADMIN_VIEWS_GROUP,
   BOTTOM_NAV_BY_ROLE,
   BUYER_ONLY_ROUTES,
   HOME_ROUTE_BY_MODE,
   MODE_LABEL,
   NAV_BY_ROLE,
   SELLER_ONLY_ROUTES,
+  type AppMode,
   type NavGroup,
 } from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";

@@ -1,58 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import type { AppMode } from "@/config/navigation";
 
-const STORAGE_KEY = "ddp_agro:ui_mode";
-
-function readStoredMode(): AppMode | null {
-  if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  return raw === "comprador" || raw === "vendedor" ? raw : null;
-}
-
 /**
- * Papel do usuário no app.
- * profiles.role: buyer -> comprador (papel único)
- *                seller -> vendedor (papel único)
- *                admin  -> ambos (pode alternar entre os modos)
+ * Experiência ativa do usuário — derivada exclusivamente do papel.
+ * profiles.role: buyer -> comprador | seller -> vendedor | admin -> admin (shell próprio).
+ * Não existe toggle "Comprar | Vender": cada papel tem seu shell.
  */
 export function useAppRole() {
-  const { profile } = useAuth();
+  const { profile, isAdmin } = useAuth();
   const role = profile?.role;
-  const canSwitchRoles = role === "admin";
-  const fixedMode: AppMode = role === "seller" ? "vendedor" : "comprador";
-
-  const [storedMode, setStoredMode] = useState<AppMode | null>(null);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    setStoredMode(readStoredMode());
-    setHydrated(true);
-  }, []);
-
-  const mode: AppMode = canSwitchRoles ? (storedMode ?? "comprador") : fixedMode;
-
-  const setMode = useCallback(
-    (next: AppMode) => {
-      if (!canSwitchRoles) return;
-      setStoredMode(next);
-      try {
-        window.localStorage.setItem(STORAGE_KEY, next);
-      } catch {
-        /* fallback silencioso */
-      }
-    },
-    [canSwitchRoles],
-  );
+  const mode: AppMode = isAdmin || role === "admin" ? "admin" : role === "seller" ? "vendedor" : "comprador";
 
   return {
     role,
     mode,
-    /** false até o modo salvo ser lido do navegador (evita guards prematuros). */
-    ready: hydrated && Boolean(role),
-    setMode,
-    canSwitchRoles,
+    /** false até o perfil carregar (evita guards prematuros). */
+    ready: Boolean(role),
     isBuyer: mode === "comprador",
     isSeller: mode === "vendedor",
+    isAdminShell: mode === "admin",
   };
 }

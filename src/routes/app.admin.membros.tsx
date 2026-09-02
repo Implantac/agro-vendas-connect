@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
-import { fetchAdminMembers, setMemberStatus } from "@/lib/admin-queries";
+import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/admin/membros")({

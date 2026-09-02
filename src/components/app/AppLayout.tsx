@@ -379,3 +379,38 @@ export function AppPage({ children }: { children: ReactNode }) {
 }
 
 export { ClipboardList };
+
+/** Busca do header: digita livremente e só navega ao parar de digitar (ou no Enter). */
+function HeaderSearch({ value, onSearch }: { value: string; onSearch: (q: string) => void }) {
+  const [term, setTerm] = useState(value);
+
+  useEffect(() => setTerm(value), [value]);
+
+  useEffect(() => {
+    if (term === value) return;
+    const id = setTimeout(() => onSearch(term), 400);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [term]);
+
+  return (
+    <form
+      role="search"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSearch(term);
+      }}
+      className="relative"
+    >
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <input
+        type="search"
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        placeholder="Buscar máquinas, marcas, modelos..."
+        aria-label="Buscar máquinas"
+        className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
+      />
+    </form>
+  );
+}

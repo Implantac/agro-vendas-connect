@@ -146,15 +146,20 @@ export function AppLayout() {
           {showSearch && (
             <>
               <div className="mx-auto hidden w-full max-w-xl md:block">
-                <HeaderSearch value={filters.q ?? ""} onSearch={(q) => setFilters({ q: q || undefined })} />
+                <HeaderSearch
+                  value={filters.q ?? ""}
+                  placeholder={mode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
+                  onSearch={(q) => setFilters({ q: q || undefined })}
+                />
               </div>
-              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar máquinas">
-                <Link to="/app/comprar">
+              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar">
+                <Link to={searchTarget}>
                   <Search className="h-5 w-5" />
                 </Link>
               </Button>
             </>
           )}
+
 
 
           <div className="ml-auto flex items-center gap-2">

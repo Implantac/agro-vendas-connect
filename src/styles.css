@@ -196,3 +196,7 @@
 @utility text-balance-tight {
   text-wrap: balance;
 }
+
+#lovable-badge {
+  display: none !important;
+}

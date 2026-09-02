@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
-import { fetchAdminMembers, setMemberStatus } from "@/lib/admin-queries";
+import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/admin/membros")({
@@ -26,6 +26,13 @@ const FILTERS = [
   { value: "", label: "Todos" },
 ] as const;
 
+const ROLES = [
+  { value: "buyer", label: "Comprador" },
+  { value: "seller", label: "Vendedor" },
+  { value: "admin", label: "Administrador" },
+] as const;
+
+
 function AdminMembers() {
   const [status, setStatus] = useState<string>("pending");
   const qc = useQueryClient();
@@ -44,6 +51,17 @@ function AdminMembers() {
     },
     onError: (e: Error) => toast.error("Não foi possível atualizar.", { description: e.message }),
   });
+
+  const roleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: "buyer" | "seller" | "admin" }) =>
+      setMemberRole(id, role),
+    onSuccess: () => {
+      toast.success("Perfil de acesso atualizado.");
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) => toast.error("Não foi possível alterar o perfil.", { description: e.message }),
+  });
+
 
   return (
     <AppPage>
@@ -84,7 +102,28 @@ function AdminMembers() {
                   {m.city ? ` • ${m.city}/${m.state ?? ""}` : ""}
                 </p>
               </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-muted-foreground">Perfil:</span>
+                <div className="flex overflow-hidden rounded-full border border-border">
+                  {ROLES.map((r) => (
+                    <button
+                      key={r.value}
+                      disabled={roleMutation.isPending || m.role === r.value}
+                      onClick={() => roleMutation.mutate({ id: m.id, role: r.value })}
+                      className={cn(
+                        "px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-default",
+                        m.role === r.value
+                          ? "bg-forest text-primary-foreground"
+                          : "text-muted-foreground hover:bg-secondary hover:text-forest",
+                      )}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="flex gap-2">
+
                 <Button
                   size="sm"
                   disabled={mutation.isPending || m.status === "approved"}

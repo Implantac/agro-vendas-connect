@@ -110,3 +110,12 @@ export async function fetchAuditLogs() {
   if (error) throw error;
   return data ?? [];
 }
+
+/** Admin: define o papel do membro (comprador, vendedor ou administrador). */
+export async function setMemberRole(userId: string, role: "buyer" | "seller" | "admin") {
+  const { error } = await supabase.rpc("admin_set_member_role", {
+    _user_id: userId,
+    _role: role,
+  });
+  if (error) throw error;
+}

@@ -34,13 +34,16 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
 import {
+  ADMIN_BACK_GROUP,
   ADMIN_ONLY_ROUTES,
+  ADMIN_VIEWS_GROUP,
   BOTTOM_NAV_BY_ROLE,
   BUYER_ONLY_ROUTES,
   HOME_ROUTE_BY_MODE,
   MODE_LABEL,
   NAV_BY_ROLE,
   SELLER_ONLY_ROUTES,
+  type AppMode,
   type NavGroup,
 } from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
@@ -81,12 +84,23 @@ export function AppLayout() {
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
+  // Admin é superusuário: navega livremente pelas telas de comprador e vendedor.
+  const isSuperAdmin = mode === "admin";
+  const viewMode: AppMode = isSuperAdmin
+    ? isSellerOnlyRoute
+      ? "vendedor"
+      : isBuyerOnlyRoute
+        ? "comprador"
+        : "admin"
+    : mode;
+
   useEffect(() => {
     if (!ready) return;
     const blocked =
-      (mode !== "vendedor" && isSellerOnlyRoute) ||
-      (mode !== "admin" && isAdminOnlyRoute) ||
-      (mode !== "comprador" && isBuyerOnlyRoute);
+      !isSuperAdmin &&
+      ((mode !== "vendedor" && isSellerOnlyRoute) ||
+        isAdminOnlyRoute ||
+        (mode !== "comprador" && isBuyerOnlyRoute));
     if (blocked) {
       toast.info("Esta área não pertence ao seu perfil de acesso.");
       void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
@@ -96,7 +110,7 @@ export function AppLayout() {
     if (mode === "admin" && pathname === "/app") {
       void navigate({ to: "/app/admin", replace: true });
     }
-  }, [ready, mode, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
+  }, [ready, mode, isSuperAdmin, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
 
   if (loading || !user) {
     return (
@@ -112,11 +126,14 @@ export function AppLayout() {
   }
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
-  const navGroups = NAV_BY_ROLE[mode];
-  const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
+  const navGroups = isSuperAdmin
+    ? [...NAV_BY_ROLE[viewMode], ...(viewMode === "admin" ? ADMIN_VIEWS_GROUP : ADMIN_BACK_GROUP)]
+    : NAV_BY_ROLE[mode];
+  const showFilters = viewMode === "comprador" && pathname.startsWith("/app/comprar");
   const showSearch = true;
-  const searchTarget = mode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
-  const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
+  const searchTarget = viewMode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
+  const bottomNav = BOTTOM_NAV_BY_ROLE[viewMode];
+
 
 
   return (
@@ -148,7 +165,7 @@ export function AppLayout() {
               <div className="mx-auto hidden w-full max-w-xl md:block">
                 <HeaderSearch
                   value={filters.q ?? ""}
-                  placeholder={mode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
+                  placeholder={viewMode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
                   onSearch={(q) => setFilters({ q: q || undefined })}
                 />
               </div>
@@ -164,7 +181,9 @@ export function AppLayout() {
 
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
-              {MODE_LABEL[mode]}
+              {isSuperAdmin && viewMode !== "admin"
+                ? `Admin · visão ${MODE_LABEL[viewMode].toLowerCase()}`
+                : MODE_LABEL[viewMode]}
             </span>
 
             <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">

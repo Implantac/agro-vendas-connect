@@ -194,3 +194,22 @@ export const MODE_LABEL: Record<AppMode, string> = {
   vendedor: "Vendedor",
   admin: "Administrador",
 };
+
+/** Admin no command center: atalhos para as telas de comprador e vendedor. */
+export const ADMIN_VIEWS_GROUP: NavGroup[] = [
+  {
+    label: "Ver como",
+    items: [
+      { to: "/app/comprar", label: "Área do comprador", icon: Search },
+      { to: "/app/meus-anuncios", label: "Área do vendedor", icon: Store },
+    ],
+  },
+];
+
+/** Admin dentro das telas de comprador/vendedor: volta ao command center. */
+export const ADMIN_BACK_GROUP: NavGroup[] = [
+  {
+    label: "Administração",
+    items: [{ to: "/app/admin", label: "Voltar ao command center", icon: ShieldCheck }],
+  },
+];

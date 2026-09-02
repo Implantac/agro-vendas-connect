@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCategories, fetchCatalogFacetRows } from "@/lib/queries";
-import { formatCurrency } from "@/lib/format";
+import { formatBRL } from "@/lib/format";
 
 interface CatalogSearch {
   q?: string | undefined;
@@ -141,8 +141,8 @@ function Catalogo() {
   if (search.uf) chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined } });
   if (search.preco_min !== undefined || search.preco_max !== undefined)
     chips.push({
-      label: `Preço ${search.preco_min ? formatCurrency(search.preco_min) : "0"} – ${
-        search.preco_max ? formatCurrency(search.preco_max) : "sem limite"
+      label: `Preço ${search.preco_min ? formatBRL(search.preco_min) : "0"} – ${
+        search.preco_max ? formatBRL(search.preco_max) : "sem limite"
       }`,
       clear: { preco_min: undefined, preco_max: undefined },
     });

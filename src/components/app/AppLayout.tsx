@@ -34,13 +34,14 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
 import {
+  ADMIN_ONLY_ROUTES,
   BOTTOM_NAV_BY_ROLE,
-  DEFAULT_ROUTE_BY_MODE,
+  BUYER_ONLY_ROUTES,
+  HOME_ROUTE_BY_MODE,
+  MODE_LABEL,
   NAV_BY_ROLE,
   SELLER_ONLY_ROUTES,
-  type AppMode,
   type NavGroup,
-  type NavItem,
 } from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
 import { BuyerFilterPanel } from "@/components/app/BuyerFilterPanel";
@@ -49,7 +50,7 @@ import { cn } from "@/lib/utils";
 
 export function AppLayout() {
   const { user, profile, loading, signOut } = useAuth();
-  const { mode, setMode, canSwitchRoles, ready } = useAppRole();
+  const { mode, ready } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -67,14 +68,25 @@ export function AppLayout() {
   }, [loading, user, navigate]);
 
   const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
+  const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
+  const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
   useEffect(() => {
     if (!ready) return;
-    if (mode !== "vendedor" && isSellerOnlyRoute) {
-      toast.info("Esta área é exclusiva do modo vendedor.");
-      void navigate({ to: "/app", replace: true });
+    const blocked =
+      (mode !== "vendedor" && isSellerOnlyRoute) ||
+      (mode !== "admin" && isAdminOnlyRoute) ||
+      (mode !== "comprador" && isBuyerOnlyRoute);
+    if (blocked) {
+      toast.info("Esta área não pertence ao seu perfil de acesso.");
+      void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
+      return;
     }
-  }, [ready, mode, isSellerOnlyRoute, navigate]);
+    // Admin entra direto no command center.
+    if (mode === "admin" && pathname === "/app") {
+      void navigate({ to: "/app/admin", replace: true });
+    }
+  }, [ready, mode, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
 
   if (loading || !user) {
     return (
@@ -92,13 +104,9 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const navGroups = NAV_BY_ROLE[mode];
   const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
+  const showSearch = mode !== "admin";
   const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
 
-  function switchMode(next: AppMode) {
-    if (next === mode) return;
-    setMode(next);
-    void navigate({ to: DEFAULT_ROUTE_BY_MODE[next] });
-  }
 
   return (
     <div className="min-h-screen bg-background">

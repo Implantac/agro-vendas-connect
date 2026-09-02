@@ -76,10 +76,14 @@ export async function setListingStatus(
   status: "draft" | "in_review" | "approved" | "rejected" | "paused" | "archived",
   moderationNotes?: string | null,
 ) {
-  const patch: Record<string, unknown> = { status };
-  if (status === "approved") patch.published_at = new Date().toISOString();
-  if (moderationNotes !== undefined) patch.moderation_notes = moderationNotes;
-  const { error } = await supabase.from("listings").update(patch).eq("id", listingId);
+  const { error } = await supabase
+    .from("listings")
+    .update({
+      status,
+      ...(status === "approved" ? { published_at: new Date().toISOString() } : {}),
+      ...(moderationNotes !== undefined ? { moderation_notes: moderationNotes } : {}),
+    })
+    .eq("id", listingId);
   if (error) throw error;
 }
 

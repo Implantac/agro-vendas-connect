@@ -67,6 +67,16 @@ export function AppLayout() {
     if (!loading && !user) void navigate({ to: "/entrar", search: { redirect: "/app" } });
   }, [loading, user, navigate]);
 
+  // Membresia: somente membros aprovados acessam a área logada.
+  const memberStatus = profile?.status;
+  useEffect(() => {
+    if (loading || !user || !memberStatus || memberStatus === "approved") return;
+    void navigate({
+      to: memberStatus === "pending" ? "/aguardando-aprovacao" : "/cadastro-rejeitado",
+      replace: true,
+    });
+  }, [loading, user, memberStatus, navigate]);
+
   const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));

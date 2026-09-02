@@ -23,9 +23,11 @@ export function useAppRole() {
   const fixedMode: AppMode = role === "seller" ? "vendedor" : "comprador";
 
   const [storedMode, setStoredMode] = useState<AppMode | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setStoredMode(readStoredMode());
+    setHydrated(true);
   }, []);
 
   const mode: AppMode = canSwitchRoles ? (storedMode ?? "comprador") : fixedMode;
@@ -46,6 +48,8 @@ export function useAppRole() {
   return {
     role,
     mode,
+    /** false até o modo salvo ser lido do navegador (evita guards prematuros). */
+    ready: hydrated && Boolean(role),
     setMode,
     canSwitchRoles,
     isBuyer: mode === "comprador",

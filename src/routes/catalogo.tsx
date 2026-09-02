@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCategories, fetchCatalogFacetRows } from "@/lib/queries";
 import { formatBRL } from "@/lib/format";
+import { useAuth } from "@/hooks/useAuth";
+
 
 interface CatalogSearch {
   q?: string | undefined;

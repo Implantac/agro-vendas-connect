@@ -102,7 +102,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-card">
+      <header id="app-header" data-app-header="true" className="fixed inset-x-0 top-0 z-40 h-16 shrink-0 border-b border-border bg-card">
         <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
           <button
             className="rounded-md p-2 text-forest hover:bg-secondary lg:hidden"
@@ -111,13 +111,13 @@ export function AppLayout() {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link to="/app" className="flex items-center gap-2.5">
+          <Link to="/app" data-brand="header" className="flex items-center gap-2.5">
             <Logo className="h-8 w-8" />
             <span className="leading-tight">
               <span className="block font-display text-base font-bold tracking-tight text-forest">
                 DDP <span className="text-accent">AGRO</span>
               </span>
-              <span className="hidden text-[10px] uppercase tracking-widest text-muted-foreground sm:block">
+              <span className="hidden truncate text-[10px] uppercase tracking-widest text-muted-foreground lg:block">
                 Marketplace de Máquinas Agrícolas
               </span>
             </span>

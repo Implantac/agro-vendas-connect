@@ -126,7 +126,7 @@ function Comprar() {
         <div>
           <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Comprar máquinas</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Encontre máquinas agrícolas para o seu negócio.
+            Encontre tratores, colheitadeiras e implementos para o seu negócio.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 sm:justify-end">

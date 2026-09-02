@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings } from "@/lib/queries";
 import { CONDITION_LABELS } from "@/lib/format";
-import { countActiveFilters, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import { countActiveFilters, useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { useState } from "react";
 
 const searchSchema = z.object({
@@ -57,6 +57,7 @@ const PAGE_SIZE = 12;
 function Comprar() {
   const { filters, setFilters, clearAll } = useCatalogFilters();
   const [mobileFilters, setMobileFilters] = useState(false);
+  const facets = useCatalogFacets(filters);
 
   const { data: allListings = [], isLoading } = useQuery({
     queryKey: ["listings", "comprar", filters],

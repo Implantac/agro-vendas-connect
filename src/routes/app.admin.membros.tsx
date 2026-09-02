@@ -26,6 +26,13 @@ const FILTERS = [
   { value: "", label: "Todos" },
 ] as const;
 
+const ROLES = [
+  { value: "buyer", label: "Comprador" },
+  { value: "seller", label: "Vendedor" },
+  { value: "admin", label: "Administrador" },
+] as const;
+
+
 function AdminMembers() {
   const [status, setStatus] = useState<string>("pending");
   const qc = useQueryClient();

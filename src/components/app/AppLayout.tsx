@@ -132,46 +132,27 @@ export function AppLayout() {
             </span>
           </Link>
 
-          <div className="mx-auto hidden w-full max-w-xl md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={filters.q ?? ""}
-                onChange={(e) => setFilters({ q: e.target.value || undefined })}
-                placeholder="Buscar máquinas, marcas, modelos..."
-                aria-label="Buscar máquinas"
-                className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
-              />
+          {showSearch && (
+            <div className="mx-auto hidden w-full max-w-xl md:block">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="search"
+                  value={filters.q ?? ""}
+                  onChange={(e) => setFilters({ q: e.target.value || undefined })}
+                  placeholder="Buscar máquinas, marcas, modelos..."
+                  aria-label="Buscar máquinas"
+                  className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="ml-auto flex items-center gap-2">
-            {canSwitchRoles ? (
-              <div
-                role="tablist"
-                aria-label="Alternar modo"
-                className="hidden items-center rounded-md border border-border bg-secondary/60 p-0.5 sm:flex"
-              >
-                {(["comprador", "vendedor"] as const).map((value) => (
-                  <button
-                    key={value}
-                    role="tab"
-                    aria-selected={mode === value}
-                    onClick={() => switchMode(value)}
-                    className={cn(
-                      "rounded px-3 py-1 text-xs font-semibold transition-colors",
-                      mode === value ? "bg-card text-forest shadow-sm" : "text-muted-foreground",
-                    )}
-                  >
-                    {value === "comprador" ? "Comprar" : "Vender"}
-                  </button>
-                ))}
-              </div>
-            ) : null}
             <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
-              {mode === "comprador" ? "Modo comprador" : "Modo vendedor"}
+              {MODE_LABEL[mode]}
             </span>
+
             <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">
               <Link to="/central-de-ajuda">
                 <HelpCircle className="h-5 w-5" />

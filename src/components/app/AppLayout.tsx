@@ -165,7 +165,7 @@ export function AppLayout() {
               <div className="mx-auto hidden w-full max-w-xl md:block">
                 <HeaderSearch
                   value={filters.q ?? ""}
-                  placeholder={mode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
+                  placeholder={viewMode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
                   onSearch={(q) => setFilters({ q: q || undefined })}
                 />
               </div>

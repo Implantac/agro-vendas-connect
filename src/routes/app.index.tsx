@@ -164,7 +164,7 @@ function Dashboard() {
       </div>
 
       {/* Cards de resumo */}
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+      <div className="mt-7 grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
         {summaryCards.map((card) => (
           <Link
             key={card.title}

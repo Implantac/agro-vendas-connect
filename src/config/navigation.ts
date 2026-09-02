@@ -3,6 +3,7 @@ import {
   Bell,
   Building2,
   ClipboardList,
+  Compass,
   Handshake,
   Heart,
   Home,
@@ -12,11 +13,15 @@ import {
   Plus,
   Search,
   Settings,
+  ShieldCheck,
+  Store,
   Tag,
   User,
+  Users,
 } from "lucide-react";
 
-export type AppMode = "comprador" | "vendedor";
+/** Experiência ativa. Cada papel tem seu próprio shell — não há toggle global. */
+export type AppMode = "comprador" | "vendedor" | "admin";
 
 export type AppRoute =
   | "/app"
@@ -32,7 +37,11 @@ export type AppRoute =
   | "/app/publicar"
   | "/app/propostas-recebidas"
   | "/app/desempenho"
-  | "/app/empresa";
+  | "/app/empresa"
+  | "/app/admin"
+  | "/app/admin/membros"
+  | "/app/admin/anuncios"
+  | "/app/admin/auditoria";
 
 export interface NavItem {
   to: AppRoute;
@@ -48,7 +57,7 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-/** Rotas exclusivas do modo vendedor (guards). */
+/** Rotas exclusivas do vendedor. */
 export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/meus-anuncios",
   "/app/publicar",
@@ -57,24 +66,27 @@ export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/empresa",
 ];
 
+/** Rotas exclusivas do administrador. */
+export const ADMIN_ONLY_ROUTES: AppRoute[] = ["/app/admin"];
+
+/** Rotas exclusivas do comprador. */
+export const BUYER_ONLY_ROUTES: AppRoute[] = ["/app/comprar", "/app/favoritos"];
+
 export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
   comprador: [
     {
-      label: "Início",
-      items: [{ to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true }],
-    },
-    {
-      label: "Buscar",
+      label: "Explorar",
       items: [
-        { to: "/app/comprar", label: "Comprar máquinas", icon: Search },
+        { to: "/app", label: "Explorar", icon: Compass, exact: true },
+        { to: "/app/comprar", label: "Buscar implementos", icon: Search },
         { to: "/app/favoritos", label: "Favoritos", icon: Heart },
       ],
     },
     {
-      label: "Negócios",
+      label: "Negociações",
       items: [
-        { to: "/app/negociacoes", label: "Minhas negociações", icon: Handshake },
-        { to: "/app/propostas", label: "Propostas enviadas", icon: Tag },
+        { to: "/app/negociacoes", label: "Negociações", icon: Handshake },
+        { to: "/app/propostas", label: "Propostas", icon: Tag },
         { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
         { to: "/app/notificacoes", label: "Notificações", icon: Bell, badgeKey: "notifications" },
       ],
@@ -89,31 +101,58 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
   ],
   vendedor: [
     {
-      label: "Início",
-      items: [{ to: "/app", label: "Dashboard do vendedor", icon: LayoutDashboard, exact: true }],
+      label: "Central",
+      items: [{ to: "/app", label: "Central de vendas", icon: Store, exact: true }],
     },
     {
-      label: "Vendas",
+      label: "Anúncios",
       items: [
         { to: "/app/publicar", label: "Publicar anúncio", icon: Plus, variant: "primary" },
         { to: "/app/meus-anuncios", label: "Meus anúncios", icon: ClipboardList },
-        { to: "/app/propostas-recebidas", label: "Propostas recebidas", icon: Inbox },
-        { to: "/app/desempenho", label: "Desempenho dos anúncios", icon: BarChart3 },
       ],
     },
     {
-      label: "Negociação",
+      label: "Negociações",
       items: [
+        { to: "/app/propostas-recebidas", label: "Propostas", icon: Inbox },
         { to: "/app/negociacoes", label: "Negociações", icon: Handshake },
         { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
         { to: "/app/notificacoes", label: "Notificações", icon: Bell, badgeKey: "notifications" },
       ],
     },
     {
+      label: "Desempenho",
+      items: [{ to: "/app/desempenho", label: "Desempenho", icon: BarChart3 }],
+    },
+    {
       label: "Conta",
       items: [
-        { to: "/app/perfil", label: "Meu perfil", icon: User },
         { to: "/app/empresa", label: "Minha empresa", icon: Building2 },
+        { to: "/app/perfil", label: "Meu perfil", icon: User },
+        { to: "/app/configuracoes", label: "Configurações", icon: Settings },
+      ],
+    },
+  ],
+  admin: [
+    {
+      label: "Command center",
+      items: [{ to: "/app/admin", label: "Visão geral", icon: LayoutDashboard, exact: true }],
+    },
+    {
+      label: "Plataforma",
+      items: [
+        { to: "/app/admin/membros", label: "Membros", icon: Users },
+        { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
+      ],
+    },
+    {
+      label: "Segurança",
+      items: [{ to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck }],
+    },
+    {
+      label: "Configuração",
+      items: [
+        { to: "/app/perfil", label: "Meu perfil", icon: User },
         { to: "/app/configuracoes", label: "Configurações", icon: Settings },
       ],
     },
@@ -122,22 +161,36 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
 
 export const BOTTOM_NAV_BY_ROLE: Record<AppMode, NavItem[]> = {
   comprador: [
-    { to: "/app", label: "Início", icon: Home, exact: true },
+    { to: "/app", label: "Explorar", icon: Home, exact: true },
     { to: "/app/comprar", label: "Buscar", icon: Search },
     { to: "/app/favoritos", label: "Favoritos", icon: Heart },
     { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
     { to: "/app/perfil", label: "Perfil", icon: User },
   ],
   vendedor: [
-    { to: "/app", label: "Início", icon: Home, exact: true },
+    { to: "/app", label: "Central", icon: Home, exact: true },
     { to: "/app/meus-anuncios", label: "Anúncios", icon: ClipboardList },
-    { to: "/app/publicar", label: "Vender", icon: Plus, variant: "primary" },
+    { to: "/app/publicar", label: "Publicar", icon: Plus, variant: "primary" },
     { to: "/app/propostas-recebidas", label: "Propostas", icon: Inbox },
+    { to: "/app/perfil", label: "Perfil", icon: User },
+  ],
+  admin: [
+    { to: "/app/admin", label: "Overview", icon: Home, exact: true },
+    { to: "/app/admin/membros", label: "Membros", icon: Users },
+    { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
+    { to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck },
     { to: "/app/perfil", label: "Perfil", icon: User },
   ],
 };
 
-export const DEFAULT_ROUTE_BY_MODE: Record<AppMode, AppRoute> = {
-  comprador: "/app/comprar",
-  vendedor: "/app/meus-anuncios",
+export const HOME_ROUTE_BY_MODE: Record<AppMode, AppRoute> = {
+  comprador: "/app",
+  vendedor: "/app",
+  admin: "/app/admin",
+};
+
+export const MODE_LABEL: Record<AppMode, string> = {
+  comprador: "Comprador",
+  vendedor: "Vendedor",
+  admin: "Administrador",
 };

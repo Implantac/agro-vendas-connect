@@ -43,3 +43,10 @@
 - [x] Comprar (catálogo interno com filtros), Negociações, Propostas (aceitar/recusar/contraproposta)
 - [x] Favoritos, Meus anúncios (pausar/reativar/excluir), Publicar (wizard 5 passos → in_review)
 - [x] Mensagens com realtime, Notificações, Perfil editável
+
+## Reorganização por papel (Sprint 1 — concluído)
+- [x] Três shells separados: Comprador, Vendedor e Admin (navegação e bottom nav próprios)
+- [x] Remoção do toggle global "Comprar | Vender"; modo derivado do papel
+- [x] Guards por papel (rotas de vendedor, comprador e /app/admin/*)
+- [x] Admin Shell: Command Center, Membros, Anúncios (moderação), Auditoria
+- [ ] Sprint 2 Comprador / 3 Vendedor / 4 Admin avançado / 5 Negociação unificada / 6 Membership

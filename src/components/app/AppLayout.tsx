@@ -202,13 +202,15 @@ export function AppLayout() {
                     <User className="mr-2 h-4 w-4" /> Meu perfil
                   </Link>
                 </DropdownMenuItem>
+                {mode === "vendedor" && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/app/empresa" className="cursor-pointer">
+                      <Building2 className="mr-2 h-4 w-4" /> Minha empresa
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem asChild>
-                  <Link to="/app/perfil" className="cursor-pointer">
-                    <Building2 className="mr-2 h-4 w-4" /> Minha empresa
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/app/perfil" className="cursor-pointer">
+                  <Link to="/app/configuracoes" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" /> Configurações
                   </Link>
                 </DropdownMenuItem>

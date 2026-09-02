@@ -28,6 +28,16 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      {user && (
+        <div className="bg-forest text-primary-foreground">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-1.5 text-xs sm:px-6">
+            <span>Você está no site público da DDP AGRO.</span>
+            <Link to="/app" className="font-semibold text-accent underline-offset-2 hover:underline">
+              Ir para a área de membros →
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
         <Link to="/" aria-label="DDP AGRO — início">
           <Logo />

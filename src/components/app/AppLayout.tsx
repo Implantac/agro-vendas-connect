@@ -131,13 +131,13 @@ export function AppLayout() {
             <Menu className="h-5 w-5" />
           </button>
           <Link to="/app" data-brand="header" className="flex items-center gap-2.5">
-            <Logo className="h-8 w-8" />
+            <Logo variant="symbol" />
             <span className="leading-tight">
               <span className="block font-display text-base font-bold tracking-tight text-forest">
                 DDP <span className="text-accent">AGRO</span>
               </span>
-              <span className="hidden truncate text-[10px] uppercase tracking-widest text-muted-foreground lg:block">
-                Marketplace de Máquinas Agrícolas
+              <span className="hidden truncate text-[10px] font-semibold uppercase tracking-widest text-accent lg:block">
+                Área de membros
               </span>
             </span>
           </Link>

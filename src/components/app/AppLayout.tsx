@@ -387,7 +387,11 @@ export function AppPage({ children }: { children: ReactNode }) {
 export { ClipboardList };
 
 /** Busca do header: digita livremente e só navega ao parar de digitar (ou no Enter). */
-function HeaderSearch({ value, onSearch }: { value: string; onSearch: (q: string) => void }) {
+function HeaderSearch({
+  value,
+  onSearch,
+  placeholder = "Buscar máquinas, marcas, modelos...",
+}: { value: string; onSearch: (q: string) => void; placeholder?: string }) {
   const [term, setTerm] = useState(value);
 
   useEffect(() => setTerm(value), [value]);

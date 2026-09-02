@@ -52,6 +52,17 @@ function AdminMembers() {
     onError: (e: Error) => toast.error("Não foi possível atualizar.", { description: e.message }),
   });
 
+  const roleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: "buyer" | "seller" | "admin" }) =>
+      setMemberRole(id, role),
+    onSuccess: () => {
+      toast.success("Perfil de acesso atualizado.");
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) => toast.error("Não foi possível alterar o perfil.", { description: e.message }),
+  });
+
+
   return (
     <AppPage>
       <h1 className="font-display text-2xl font-bold text-forest">Membros</h1>

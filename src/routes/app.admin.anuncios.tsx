@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { fetchAdminListings, moderateListing } from "@/lib/admin-queries";
+import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
 

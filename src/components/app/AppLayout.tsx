@@ -114,7 +114,8 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const navGroups = NAV_BY_ROLE[mode];
   const showFilters = mode === "comprador" && pathname.startsWith("/app/comprar");
-  const showSearch = mode !== "admin";
+  const showSearch = true;
+  const searchTarget = mode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
   const bottomNav = BOTTOM_NAV_BY_ROLE[mode];
 
 

@@ -417,8 +417,8 @@ function HeaderSearch({
         type="search"
         value={term}
         onChange={(e) => setTerm(e.target.value)}
-        placeholder="Buscar máquinas, marcas, modelos..."
-        aria-label="Buscar máquinas"
+        placeholder={placeholder}
+        aria-label="Buscar"
         className="h-10 w-full rounded-md border border-border bg-secondary/60 pl-9 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-card"
       />
     </form>

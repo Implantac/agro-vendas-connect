@@ -76,6 +76,24 @@ const CONDICAO_LABEL: Record<string, string> = {
 function Catalogo() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/catalogo" });
+  const { profile } = useAuth();
+
+  // Membro aprovado usa a busca completa da área logada: uma única experiência de catálogo.
+  const isApprovedMember = profile?.status === "approved";
+  useEffect(() => {
+    if (!isApprovedMember) return;
+    void navigate({
+      to: "/app/comprar",
+      search: {
+        ...(search.q ? { q: search.q } : {}),
+        ...(search.categoria ? { categoria: search.categoria } : {}),
+        ...(search.uf ? { uf: search.uf } : {}),
+        ...(search.condicao ? { condicao: search.condicao } : {}),
+      },
+      replace: true,
+    });
+  }, [isApprovedMember, search.q, search.categoria, search.uf, search.condicao, navigate]);
+
 
   const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
   const { data: facetRows = [] } = useQuery({

@@ -121,8 +121,8 @@ function Negociacoes() {
                             )}
                           </div>
                           <Button asChild variant="outline" size="sm">
-                            <Link to="/app/mensagens">
-                              <MessageSquare className="mr-1.5 h-4 w-4" /> Conversa
+                            <Link to="/app/negociacao/$id" params={{ id: p.id }}>
+                              <MessageSquare className="mr-1.5 h-4 w-4" /> Abrir negociação
                             </Link>
                           </Button>
                         </div>

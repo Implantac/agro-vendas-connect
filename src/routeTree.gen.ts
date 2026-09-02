@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AguardandoAprovacaoRouteImport } from './routes/aguardando-aprovacao'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as CadastroRejeitadoRouteImport } from './routes/cadastro-rejeitado'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CentralDeAjudaRouteImport } from './routes/central-de-ajuda'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
@@ -47,6 +49,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AguardandoAprovacaoRoute = AguardandoAprovacaoRouteImport.update({
+  id: '/aguardando-aprovacao',
+  path: '/aguardando-aprovacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -55,6 +62,11 @@ const AppRoute = AppRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRejeitadoRoute = CadastroRejeitadoRouteImport.update({
+  id: '/cadastro-rejeitado',
+  path: '/cadastro-rejeitado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoRoute = CatalogoRouteImport.update({
@@ -205,8 +217,10 @@ const AppNegociacaoIdRoute = AppNegociacaoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -239,7 +253,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -273,8 +289,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
+  '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
   '/catalogo': typeof CatalogoRoute
   '/central-de-ajuda': typeof CentralDeAjudaRoute
   '/como-funciona': typeof ComoFuncionaRoute
@@ -309,8 +327,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -343,7 +363,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aguardando-aprovacao'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -376,8 +398,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
+    | '/cadastro-rejeitado'
     | '/catalogo'
     | '/central-de-ajuda'
     | '/como-funciona'
@@ -411,8 +435,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AguardandoAprovacaoRoute: typeof AguardandoAprovacaoRoute
   AppRoute: typeof AppRouteWithChildren
   CadastroRoute: typeof CadastroRoute
+  CadastroRejeitadoRoute: typeof CadastroRejeitadoRoute
   CatalogoRoute: typeof CatalogoRoute
   CentralDeAjudaRoute: typeof CentralDeAjudaRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
@@ -434,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aguardando-aprovacao': {
+      id: '/aguardando-aprovacao'
+      path: '/aguardando-aprovacao'
+      fullPath: '/aguardando-aprovacao'
+      preLoaderRoute: typeof AguardandoAprovacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -446,6 +479,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro-rejeitado': {
+      id: '/cadastro-rejeitado'
+      path: '/cadastro-rejeitado'
+      fullPath: '/cadastro-rejeitado'
+      preLoaderRoute: typeof CadastroRejeitadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogo': {
@@ -702,8 +742,10 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AguardandoAprovacaoRoute: AguardandoAprovacaoRoute,
   AppRoute: AppRouteWithChildren,
   CadastroRoute: CadastroRoute,
+  CadastroRejeitadoRoute: CadastroRejeitadoRoute,
   CatalogoRoute: CatalogoRoute,
   CentralDeAjudaRoute: CentralDeAjudaRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,

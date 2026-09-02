@@ -25,6 +25,12 @@ export const CONDITION_LABELS: Record<string, string> = {
   used: "Usado",
 };
 
+/** Regra da plataforma: DDP AGRO negocia somente máquinas usadas/seminovas. */
+export const SALE_CONDITION_LABELS: Record<string, string> = {
+  semi_new: "Seminovo",
+  used: "Usado",
+};
+
 export const LISTING_STATUS_LABELS: Record<string, string> = {
   draft: "Rascunho",
   in_review: "Em análise",

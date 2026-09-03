@@ -79,10 +79,21 @@ function AdminMembers() {
 
   return (
     <AppPage>
-      <h1 className="font-display text-2xl font-bold text-forest">Membros</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Analise solicitações e controle o acesso ao marketplace privado.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-forest">Membros</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Analise solicitações e controle o acesso ao marketplace privado.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link to="/app/admin/membresias">
+            Solicitações de membresia
+            {pendingReview > 0 ? ` (${pendingReview})` : ""}
+          </Link>
+        </Button>
+      </div>
+
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (

@@ -1,13 +1,9 @@
 import { type MouseEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MapPin, Clock, Calendar, Heart, Gauge, Lock } from "lucide-react";
-import fallback1 from "@/assets/maquina-1.jpg";
-import fallback2 from "@/assets/maquina-2.jpg";
+import { MapPin, Clock, Calendar, Heart, Gauge, Lock, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
-
-const FALLBACKS = [fallback1, fallback2];
 
 export interface ListingCardData {
   id: string;
@@ -32,7 +28,7 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
   const isMember = profile?.status === "approved";
 
   const media = listing.listing_media?.slice().sort((a, b) => a.sort_order - b.sort_order) ?? [];
-  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? FALLBACKS[index % FALLBACKS.length];
+  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? null;
 
   function guard(event: MouseEvent) {
     if (isMember) return;
@@ -67,12 +63,19 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
   return (
     <article className="group flex flex-col overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-[0_12px_30px_-18px_oklch(0.3_0.055_158/0.6)]">
       <GatedLink className="relative block aspect-4/3 overflow-hidden bg-secondary">
-        <img
-          src={cover}
-          alt={listing.title}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
+        {cover ? (
+          <img
+            src={cover}
+            alt={listing.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <span className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-muted-foreground">
+            <ImageOff className="h-6 w-6" />
+            <span className="text-[11px] font-medium">Foto não disponível</span>
+          </span>
+        )}
         <span className="absolute left-3 top-3 rounded-sm bg-forest/90 px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground">
           {CONDITION_LABELS[listing.condition] ?? listing.condition}
         </span>

@@ -53,6 +53,7 @@ import { Route as AppAdminDenunciasRouteImport } from './routes/app.admin.denunc
 import { Route as AppAdminFinanceiroRouteImport } from './routes/app.admin.financeiro'
 import { Route as AppAdminMembresiasRouteImport } from './routes/app.admin.membresias'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
+import { Route as AppAdminNegociacoesRouteImport } from './routes/app.admin.negociacoes'
 import { Route as AppAnuncioIdRouteImport } from './routes/app.anuncio.$id'
 import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
 
@@ -276,6 +277,11 @@ const AppAdminMembrosRoute = AppAdminMembrosRouteImport.update({
   path: '/admin/membros',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminNegociacoesRoute = AppAdminNegociacoesRouteImport.update({
+  id: '/admin/negociacoes',
+  path: '/admin/negociacoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAnuncioIdRoute = AppAnuncioIdRouteImport.update({
   id: '/anuncio/$id',
   path: '/anuncio/$id',
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -378,6 +385,7 @@ export interface FileRoutesByTo {
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -427,6 +435,7 @@ export interface FileRoutesById {
   '/app/admin/financeiro': typeof AppAdminFinanceiroRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
+  '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -477,6 +486,7 @@ export interface FileRouteTypes {
     | '/app/admin/financeiro'
     | '/app/admin/membresias'
     | '/app/admin/membros'
+    | '/app/admin/negociacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -524,6 +534,7 @@ export interface FileRouteTypes {
     | '/app/admin/financeiro'
     | '/app/admin/membresias'
     | '/app/admin/membros'
+    | '/app/admin/negociacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin'
@@ -572,6 +583,7 @@ export interface FileRouteTypes {
     | '/app/admin/financeiro'
     | '/app/admin/membresias'
     | '/app/admin/membros'
+    | '/app/admin/negociacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -911,6 +923,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminMembrosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/negociacoes': {
+      id: '/app/admin/negociacoes'
+      path: '/admin/negociacoes'
+      fullPath: '/app/admin/negociacoes'
+      preLoaderRoute: typeof AppAdminNegociacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/anuncio/$id': {
       id: '/app/anuncio/$id'
       path: '/anuncio/$id'
@@ -951,6 +970,7 @@ interface AppRouteChildren {
   AppAdminFinanceiroRoute: typeof AppAdminFinanceiroRoute
   AppAdminMembresiasRoute: typeof AppAdminMembresiasRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
+  AppAdminNegociacoesRoute: typeof AppAdminNegociacoesRoute
   AppAnuncioIdRoute: typeof AppAnuncioIdRoute
   AppNegociacaoIdRoute: typeof AppNegociacaoIdRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -979,6 +999,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminFinanceiroRoute: AppAdminFinanceiroRoute,
   AppAdminMembresiasRoute: AppAdminMembresiasRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
+  AppAdminNegociacoesRoute: AppAdminNegociacoesRoute,
   AppAnuncioIdRoute: AppAnuncioIdRoute,
   AppNegociacaoIdRoute: AppNegociacaoIdRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,

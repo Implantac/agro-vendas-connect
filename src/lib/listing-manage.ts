@@ -101,7 +101,8 @@ export async function uploadListingPhotos(
   startIndex: number,
 ) {
   const inserted: { url: string; is_cover: boolean; sort_order: number }[] = [];
-  for (const [i, file] of files.entries()) {
+  for (const [i, original] of files.entries()) {
+    const file = await normalizeListingPhoto(original);
     const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
     const path = `${userId}/${listingId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error: uploadError } = await supabase.storage

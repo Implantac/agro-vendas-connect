@@ -54,6 +54,7 @@ import { Route as AppAdminFinanceiroRouteImport } from './routes/app.admin.finan
 import { Route as AppAdminMembresiasRouteImport } from './routes/app.admin.membresias'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
 import { Route as AppAdminNegociacoesRouteImport } from './routes/app.admin.negociacoes'
+import { Route as AppAdminPedidosRouteImport } from './routes/app.admin.pedidos'
 import { Route as AppAnuncioIdRouteImport } from './routes/app.anuncio.$id'
 import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
 
@@ -282,6 +283,11 @@ const AppAdminNegociacoesRoute = AppAdminNegociacoesRouteImport.update({
   path: '/admin/negociacoes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminPedidosRoute = AppAdminPedidosRouteImport.update({
+  id: '/admin/pedidos',
+  path: '/admin/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAnuncioIdRoute = AppAnuncioIdRouteImport.update({
   id: '/anuncio/$id',
   path: '/anuncio/$id',
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
+  '/app/admin/pedidos': typeof AppAdminPedidosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -386,6 +393,7 @@ export interface FileRoutesByTo {
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
+  '/app/admin/pedidos': typeof AppAdminPedidosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -436,6 +444,7 @@ export interface FileRoutesById {
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
+  '/app/admin/pedidos': typeof AppAdminPedidosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -487,6 +496,7 @@ export interface FileRouteTypes {
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
+    | '/app/admin/pedidos'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -535,6 +545,7 @@ export interface FileRouteTypes {
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
+    | '/app/admin/pedidos'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin'
@@ -584,6 +595,7 @@ export interface FileRouteTypes {
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
+    | '/app/admin/pedidos'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -930,6 +942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminNegociacoesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/pedidos': {
+      id: '/app/admin/pedidos'
+      path: '/admin/pedidos'
+      fullPath: '/app/admin/pedidos'
+      preLoaderRoute: typeof AppAdminPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/anuncio/$id': {
       id: '/app/anuncio/$id'
       path: '/anuncio/$id'
@@ -971,6 +990,7 @@ interface AppRouteChildren {
   AppAdminMembresiasRoute: typeof AppAdminMembresiasRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
   AppAdminNegociacoesRoute: typeof AppAdminNegociacoesRoute
+  AppAdminPedidosRoute: typeof AppAdminPedidosRoute
   AppAnuncioIdRoute: typeof AppAnuncioIdRoute
   AppNegociacaoIdRoute: typeof AppNegociacaoIdRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -1000,6 +1020,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminMembresiasRoute: AppAdminMembresiasRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
   AppAdminNegociacoesRoute: AppAdminNegociacoesRoute,
+  AppAdminPedidosRoute: AppAdminPedidosRoute,
   AppAnuncioIdRoute: AppAnuncioIdRoute,
   AppNegociacaoIdRoute: AppNegociacaoIdRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,

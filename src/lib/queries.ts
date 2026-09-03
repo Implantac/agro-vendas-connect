@@ -86,14 +86,22 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
 export async function fetchListingBySlug(slug: string) {
   const { data, error } = await supabase
     .from("listings")
-    .select(
-      "*, categories(name,slug), listing_media(url,is_cover,sort_order), seller_profiles!inner(trade_name,company_description,verification_status)",
-    )
+    .select("*, categories(name,slug), listing_media(url,is_cover,sort_order)")
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
-  return data;
+  if (!data) return null;
+
+  // seller_profiles não tem FK direta com listings; buscamos pelo vendedor.
+  const { data: seller } = await supabase
+    .from("seller_profiles")
+    .select("trade_name,company_description,verification_status")
+    .eq("user_id", data.seller_id)
+    .maybeSingle();
+
+  return { ...data, seller_profiles: seller ?? null };
 }
+
 
 export async function fetchLegalDocument(docType: string) {
   const { data, error } = await supabase

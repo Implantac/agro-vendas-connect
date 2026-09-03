@@ -268,6 +268,72 @@ function NegotiationDetail() {
             )}
           </section>
 
+          {order && (
+            <section className="rounded-lg border border-border bg-card p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display text-base font-semibold text-forest">
+                  Pedido da negociação
+                </h2>
+                <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
+                  {ORDER_STATUS_LABELS[order.status] ?? order.status}
+                </span>
+              </div>
+              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Valor acordado</dt>
+                  <dd className="font-semibold text-forest">{formatBRL(Number(order.amount))}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Comissão da plataforma</dt>
+                  <dd>{formatBRL(Number(order.commission_amount))}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Líquido ao vendedor</dt>
+                  <dd>{formatBRL(Number(order.seller_net_amount))}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Pagamento online ainda não habilitado: combinem forma de pagamento, vistoria e
+                entrega entre as partes. A DDP AGRO registra o histórico, mas não garante a
+                conclusão do negócio.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={orderStatus.isPending || order.status !== "created"}
+                  onClick={() => orderStatus.mutate("awaiting_payment")}
+                >
+                  Pagamento a combinar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={orderStatus.isPending || order.status === "completed"}
+                  onClick={() => orderStatus.mutate("in_delivery")}
+                >
+                  Em entrega
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                  disabled={orderStatus.isPending || order.status === "completed"}
+                  onClick={() => orderStatus.mutate("completed")}
+                >
+                  Negócio concluído
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={orderStatus.isPending || order.status === "cancelled"}
+                  onClick={() => orderStatus.mutate("cancelled")}
+                >
+                  Cancelar pedido
+                </Button>
+              </div>
+            </section>
+          )}
+
           <section className="rounded-lg border border-border bg-card p-5">
             <h2 className="font-display text-base font-semibold text-forest">Conversa</h2>
             <div className="mt-4 max-h-96 space-y-3 overflow-y-auto pr-1">

@@ -1,4 +1,5 @@
 import {
+  BadgeCheck,
   BarChart3,
   Bell,
   Building2,
@@ -40,6 +41,7 @@ export type AppRoute =
   | "/app/empresa"
   | "/app/admin"
   | "/app/admin/membros"
+  | "/app/admin/membresias"
   | "/app/admin/anuncios"
   | "/app/admin/auditoria";
 
@@ -142,6 +144,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
       label: "Plataforma",
       items: [
         { to: "/app/admin/membros", label: "Membros", icon: Users },
+        { to: "/app/admin/membresias", label: "Membresias", icon: BadgeCheck },
         { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
       ],
     },

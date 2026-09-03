@@ -54,6 +54,10 @@ function Index() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+  const { data: stats } = useQuery({
+    queryKey: ["platform-stats"],
+    queryFn: fetchPlatformStats,
+  });
 
   return (
     <PublicLayout>

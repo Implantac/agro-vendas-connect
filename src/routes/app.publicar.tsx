@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { createListing, uploadListingPhotos } from "@/lib/listing-manage";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -69,8 +69,12 @@ function Publicar() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>(INITIAL);
+  const [photos, setPhotos] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
@@ -93,36 +97,15 @@ function Publicar() {
   async function submit() {
     if (!user) return;
     setSubmitting(true);
-    const slugBase = draft.title
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 60);
-    const slug = `${slugBase}-${Math.random().toString(36).slice(2, 8)}`;
-    const { error } = await supabase.from("listings").insert({
-      seller_id: user.id,
-      category_id: draft.categoryId || null,
-      title: draft.title.trim(),
-      slug,
-      brand: draft.brand || null,
-      model: draft.model || null,
-      manufacture_year: draft.year ? Number(draft.year) : null,
-      condition: (draft.condition || "used") as "new" | "semi_new" | "used",
-      hours_used: draft.hours ? Number(draft.hours) : null,
-      description: draft.description,
-      price: draft.priceOnRequest ? null : Number(draft.price),
-      price_on_request: draft.priceOnRequest,
-      city: draft.city || null,
-      state: draft.state || null,
-      status: "in_review",
-    });
-    setSubmitting(false);
-    if (error) {
+    try {
+      const created = await createListing(user.id, draft, "in_review");
+      if (photos.length) await uploadListingPhotos(user.id, created.id, photos, 0);
+    } catch {
+      setSubmitting(false);
       toast.error("Não foi possível enviar o anúncio. Tente novamente.");
       return;
     }
+    setSubmitting(false);
     toast.success("Anúncio enviado para análise! Avisaremos quando for aprovado.");
     void navigate({ to: "/app/meus-anuncios" });
   }
@@ -146,7 +129,9 @@ function Publicar() {
   return (
     <AppPage>
       <div className="mx-auto max-w-2xl">
-        <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Publicar anúncio</h1>
+        <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
+          Publicar anúncio
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Preencha as informações e envie para análise da equipe.
         </p>
@@ -355,6 +340,21 @@ function Publicar() {
           {step === 4 && (
             <div className="space-y-5">
               <h2 className="font-display text-lg font-semibold text-forest">Revise seu anúncio</h2>
+              <div className="space-y-2">
+                <Label htmlFor="photos">Fotos do implemento</Label>
+                <Input
+                  id="photos"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {photos.length
+                    ? `${photos.length} foto(s) selecionada(s). A primeira será a capa.`
+                    : "Anúncios com fotos recebem mais propostas. Você também pode adicionar depois em Editar anúncio."}
+                </p>
+              </div>
               <dl className="space-y-3 rounded-lg bg-secondary/50 p-5 text-sm">
                 {[
                   ["Categoria", categoryName ?? "—"],
@@ -383,11 +383,7 @@ function Publicar() {
           )}
 
           <div className="mt-7 flex items-center justify-between border-t border-border pt-5">
-            <Button
-              variant="ghost"
-              disabled={step === 0}
-              onClick={() => setStep((s) => s - 1)}
-            >
+            <Button variant="ghost" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
               <ArrowLeft className="mr-1.5 h-4 w-4" /> Voltar
             </Button>
             {step < STEPS.length - 1 ? (

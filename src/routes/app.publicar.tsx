@@ -71,7 +71,10 @@ function Publicar() {
   const [draft, setDraft] = useState<Draft>(INITIAL);
   const [photos, setPhotos] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
@@ -126,7 +129,9 @@ function Publicar() {
   return (
     <AppPage>
       <div className="mx-auto max-w-2xl">
-        <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Publicar anúncio</h1>
+        <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
+          Publicar anúncio
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Preencha as informações e envie para análise da equipe.
         </p>
@@ -378,11 +383,7 @@ function Publicar() {
           )}
 
           <div className="mt-7 flex items-center justify-between border-t border-border pt-5">
-            <Button
-              variant="ghost"
-              disabled={step === 0}
-              onClick={() => setStep((s) => s - 1)}
-            >
+            <Button variant="ghost" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
               <ArrowLeft className="mr-1.5 h-4 w-4" /> Voltar
             </Button>
             {step < STEPS.length - 1 ? (

@@ -67,7 +67,10 @@ function EditarAnuncio() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing-edit", id],
@@ -209,7 +212,10 @@ function EditarAnuncio() {
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {media.map((m) => (
-              <div key={m.id} className="group relative overflow-hidden rounded-md border border-border">
+              <div
+                key={m.id}
+                className="group relative overflow-hidden rounded-md border border-border"
+              >
                 <img src={m.url} alt="" className="h-28 w-full object-cover" />
                 <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-background/80 p-1">
                   <button
@@ -282,11 +288,19 @@ function EditarAnuncio() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="brand">Marca</Label>
-              <Input id="brand" value={values.brand} onChange={(e) => set("brand", e.target.value)} />
+              <Input
+                id="brand"
+                value={values.brand}
+                onChange={(e) => set("brand", e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="model">Modelo</Label>
-              <Input id="model" value={values.model} onChange={(e) => set("model", e.target.value)} />
+              <Input
+                id="model"
+                value={values.model}
+                onChange={(e) => set("model", e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="year">Ano</Label>

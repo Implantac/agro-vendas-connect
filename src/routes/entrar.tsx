@@ -106,8 +106,9 @@ function Entrar() {
                 Esqueci minha senha
               </Link>
             </div>
-
+            <Input
               id="senha"
+
               type="password"
               autoComplete="current-password"
               value={password}

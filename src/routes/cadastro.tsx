@@ -252,8 +252,12 @@ function Cadastro() {
               e a{" "}
               <Link to="/politica-de-privacidade" className="text-forest underline">
                 Política de Privacidade
+              </Link>{" "}
+              e o{" "}
+              <Link to="/termo-de-aceite" className="text-forest underline">
+                Termo de Aceite, Ciência de Riscos e Condições de Uso
               </Link>
-              .
+              . O aceite é registrado com data, hora e versão dos documentos.
             </span>
           </label>
 

@@ -91,12 +91,16 @@ function AdminMembers() {
             Analise solicitações e controle o acesso ao marketplace privado.
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link to="/app/admin/membresias">
-            Solicitações de membresia
-            {pendingReview > 0 ? ` (${pendingReview})` : ""}
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link to="/app/admin/membresias">
+              Solicitações de membresia
+              {pendingReview > 0 ? ` (${pendingReview})` : ""}
+            </Link>
+          </Button>
+          <AdminCreateMemberDialog />
+        </div>
+
       </div>
 
 

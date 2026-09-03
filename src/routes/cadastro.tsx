@@ -79,20 +79,41 @@ function Cadastro() {
       toast.error("Não foi possível concluir o cadastro", { description: error.message });
       return;
     }
-    toast.success("Cadastro enviado", {
-      description: "Sua conta passará por verificação da equipe DDP AGRO.",
+    toast.success("Cadastro criado", {
+      description: "Agora conclua o pagamento da membresia para seguir para a análise.",
     });
-    void navigate({ to: "/app" });
+    void navigate({ to: "/membresia", search: plano ? { plano } : {} });
   }
 
   return (
     <PublicLayout>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <h1 className="font-display text-3xl font-bold text-forest">Solicitar acesso</h1>
+        <h1 className="font-display text-3xl font-bold text-forest">Solicitar membresia</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          O DDP AGRO é uma plataforma fechada. Após o cadastro, sua conta é analisada antes da
-          liberação para negociar.
+          O DDP AGRO é uma plataforma fechada. O fluxo tem três etapas: cadastro, pagamento do plano
+          e análise da equipe antes da liberação para negociar.
         </p>
+
+        <ol className="mt-6 grid grid-cols-3 gap-2 text-xs font-semibold">
+          {["1. Cadastro", "2. Pagamento", "3. Análise"].map((s, i) => (
+            <li
+              key={s}
+              className={`rounded-md border px-3 py-2 ${
+                i === 0 ? "border-accent bg-secondary text-forest" : "border-border text-muted-foreground"
+              }`}
+            >
+              {s}
+            </li>
+          ))}
+        </ol>
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          Ainda não escolheu o plano?{" "}
+          <Link to="/planos" className="font-medium text-forest underline">
+            Ver planos de membresia
+          </Link>
+        </p>
+
 
         <form onSubmit={submit} className="mt-8 space-y-6">
           <div className="grid gap-4 sm:grid-cols-2">

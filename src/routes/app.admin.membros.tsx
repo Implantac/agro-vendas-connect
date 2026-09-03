@@ -126,6 +126,21 @@ function AdminMembers() {
                   {m.email} • {m.role} • {m.status}
                   {m.city ? ` • ${m.city}/${m.state ?? ""}` : ""}
                 </p>
+                {(() => {
+                  const req = requestByUser.get(m.id);
+                  if (!req) {
+                    return (
+                      <p className="mt-1 text-xs text-muted-foreground">Sem solicitação de membresia.</p>
+                    );
+                  }
+                  return (
+                    <p className="mt-1 text-xs font-medium text-forest">
+                      {req.membership_plans?.name ?? "Plano"} • {formatBRL(req.amount)} •{" "}
+                      {REQUEST_STATUS_LABELS[req.status]} • Pagamento:{" "}
+                      {PAYMENT_STATUS_LABELS[req.payment_status]}
+                    </p>
+                  );
+                })()}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold text-muted-foreground">Perfil:</span>

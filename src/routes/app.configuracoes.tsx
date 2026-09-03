@@ -58,6 +58,9 @@ function Configuracoes() {
           </div>
         ))}
       </div>
+
+      <PrivacyRequestsCard />
     </AppPage>
+
   );
 }

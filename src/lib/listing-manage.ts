@@ -145,3 +145,20 @@ export async function fetchListingMedia(listingId: string) {
   if (error) throw error;
   return data ?? [];
 }
+
+const SELLER_LOGO_BUCKET = "seller-logos";
+
+/** Envia a foto/logo real do vendedor e devolve a URL para exibição pública. */
+export async function uploadSellerLogo(userId: string, file: File) {
+  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+  const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error: uploadError } = await supabase.storage
+    .from(SELLER_LOGO_BUCKET)
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (uploadError) throw uploadError;
+  const { data: signed, error: signError } = await supabase.storage
+    .from(SELLER_LOGO_BUCKET)
+    .createSignedUrl(path, SIGNED_URL_TTL);
+  if (signError || !signed) throw signError ?? new Error("Falha ao gerar URL da foto");
+  return signed.signedUrl;
+}

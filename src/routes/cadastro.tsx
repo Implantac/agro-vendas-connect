@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
+import { recordLegalAcceptances } from "@/lib/legal";
 
 export const Route = createFileRoute("/cadastro")({
   validateSearch: (search: Record<string, unknown>) => ({

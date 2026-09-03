@@ -15,6 +15,7 @@ import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyListings, updateListingStatus } from "@/lib/app-queries";
+import { deleteListing } from "@/lib/listing-manage";
 import { CONDITION_LABELS, formatBRL, LISTING_STATUS_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
 

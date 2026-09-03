@@ -28,7 +28,7 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
   const isMember = profile?.status === "approved";
 
   const media = listing.listing_media?.slice().sort((a, b) => a.sort_order - b.sort_order) ?? [];
-  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? FALLBACKS[index % FALLBACKS.length];
+  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? null;
 
   function guard(event: MouseEvent) {
     if (isMember) return;

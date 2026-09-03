@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2, Lock } from "lucide-react";
-import fallback from "@/assets/maquina-1.jpg";
+
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL, formatDateBR } from "@/lib/format";
@@ -122,7 +122,7 @@ function ListingDetail() {
   };
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
-  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? fallback;
+  const cover = media.find((m) => m.is_cover)?.url ?? media[0]?.url ?? null;
   const specs = Object.entries(l.technical_data_json ?? {});
   const isApprovedMember = profile?.status === "approved";
 
@@ -139,13 +139,20 @@ function ListingDetail() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
             <div className="overflow-hidden rounded-md border border-border bg-card">
-              <img
-                src={cover}
-                alt={l.title}
-                className="aspect-16/10 w-full object-cover"
-                width={1280}
-                height={800}
-              />
+              {cover ? (
+                <img
+                  src={cover}
+                  alt={l.title}
+                  className="aspect-16/10 w-full object-cover"
+                  width={1280}
+                  height={800}
+                />
+              ) : (
+                <div className="flex aspect-16/10 w-full flex-col items-center justify-center gap-2 bg-secondary text-muted-foreground">
+                  <ImageOff className="h-8 w-8" />
+                  <span className="text-xs font-medium">Foto não disponível</span>
+                </div>
+              )}
             </div>
             {media.length > 1 && (
               <div className="mt-3 grid grid-cols-4 gap-3">

@@ -1,26 +1,65 @@
-# DDP Agro Sales
+# DDP AGRO — Marketplace de Implementos Agrícolas
 
-VAMOS CRIAR UMA PLATAFORMA DE VENDAS CHAMADA DDP AGRO, AGUARDE INSTRUÇOES
+Plataforma fechada para compra, venda e negociação de tratores, colheitadeiras, plantadeiras,
+pulverizadores, carretas e implementos agrícolas usados e seminovos.
 
-This project was built with [Lovable](https://lovable.dev).
+## Stack
 
-**Live app**: https://agro-vendas-connect.lovable.app
+- TanStack Start (React 19 + TypeScript) com Vite 7
+- Tailwind CSS v4 (tokens em `src/styles.css`)
+- Lovable Cloud (PostgreSQL, Auth, Storage, RLS)
+- TanStack Query para dados, Sonner para feedback
 
-## Build with Lovable
+## Estrutura
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d8061ff0-9e14-4df6-adf0-e8e041f22d58).
+- `src/routes/` — rotas públicas (landing, catálogo, institucionais, legais) e área logada `/app/*`
+- `src/components/` — design system próprio, layouts público/logado e componentes de negócio
+- `src/lib/` — consultas, formatação brasileira, regras de anúncio, negociação, pedidos e aceite legal
+- `supabase/migrations/` — schema, RLS, funções e seeds
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## Papéis e acesso
 
-## Development
+- **Visitante**: landing, vitrine limitada, categorias e páginas legais
+- **Comprador aprovado**: catálogo completo, favoritos, propostas, chat, pedidos
+- **Vendedor aprovado**: anúncios (rascunho → análise → aprovado), propostas recebidas, pedidos
+- **Administrador**: `/app/admin/*` — membros, membresias, moderação de anúncios e auditoria
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Todo o controle é aplicado no banco por RLS; papéis ficam em `public.user_roles` (nunca no perfil).
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+## Fluxos implementados
+
+Cadastro com aceite legal registrado (versão, data/hora, user agent) → pagamento da membresia →
+análise do administrador → aprovação → catálogo, propostas, contrapropostas, chat em tempo real,
+geração de pedido após aceite e acompanhamento de status. Pagamento online permanece desabilitado
+(`app_settings.payments_enabled`), operando em modo "pagamento a combinar".
+
+## Variáveis de ambiente
+
+Gerenciadas pelo Lovable Cloud, não versionar valores:
+
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID` (cliente)
+- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (somente servidor)
+
+## Desenvolvimento
+
+```bash
+bun install
+bun run dev      # http://localhost:8080
+bun run build
 ```
+
+## Deploy
+
+Publicação pelo próprio Lovable (HTTPS e domínio configuráveis nas configurações do projeto).
+O banco, o storage (`listing-photos`, privado) e os backups são gerenciados pelo Lovable Cloud.
+
+## Integrações pendentes de terceiros
+
+| Integração | Status | O que falta |
+| --- | --- | --- |
+| Gateway de pagamento (Asaas/Mercado Pago) | Estrutura pronta, desligada | Conta aprovada, chaves e webhook assinado |
+| E-mail transacional (Resend/SES) | Não configurado | Domínio verificado e chave |
+| Monitoramento (Sentry) | Não configurado | DSN do projeto |
+
+Nenhuma chave secreta é mantida no código. A redação jurídica final dos termos deve ser revisada
+por advogado antes do lançamento comercial.

@@ -52,7 +52,7 @@ import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";
 
 export function AppLayout() {
-  const { user, profile, loading, signOut } = useAuth();
+  const { user, profile, loading, signOut, isAdmin } = useAuth();
   const { mode, ready } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });

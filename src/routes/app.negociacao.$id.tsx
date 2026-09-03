@@ -65,6 +65,16 @@ function NegotiationDetail() {
         throw new Error("Informe um valor válido para a contraproposta.");
       }
       await respondProposal(p.id, action, user.id, amount);
+      if (action === "accepted") {
+        await ensureOrderForProposal({
+          proposalId: p.id,
+          listingId: p.listing_id,
+          buyerId: p.buyer_id,
+          sellerId: p.seller_id,
+          amount: Number(p.amount),
+          actorId: user.id,
+        });
+      }
       const other = p.buyer_id === user.id ? p.seller_id : p.buyer_id;
       await notifyCounterpart({
         userId: other,

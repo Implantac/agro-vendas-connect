@@ -1,10 +1,16 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
+import { formatBRL } from "@/lib/format";
+import {
+  fetchAdminMembershipRequests,
+  PAYMENT_STATUS_LABELS,
+  REQUEST_STATUS_LABELS,
+} from "@/lib/membership-queries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/admin/membros")({

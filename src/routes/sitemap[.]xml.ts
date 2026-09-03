@@ -13,6 +13,7 @@ const PATHS = [
   "/termos-de-uso",
   "/politica-de-privacidade",
   "/politica-de-cookies",
+  "/termo-de-aceite",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({

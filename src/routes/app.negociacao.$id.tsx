@@ -15,7 +15,14 @@ import {
   notifyCounterpart,
 } from "@/lib/negotiation-queries";
 import { sendMessage } from "@/lib/app-queries";
-import { CONDITION_LABELS, formatBRL, formatDateTimeBR, PROPOSAL_STATUS_LABELS } from "@/lib/format";
+import {
+  CONDITION_LABELS,
+  formatBRL,
+  formatDateTimeBR,
+  ORDER_STATUS_LABELS,
+  PROPOSAL_STATUS_LABELS,
+} from "@/lib/format";
+import { ensureOrderForProposal, fetchOrderByProposal, updateOrderStatus } from "@/lib/orders";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/negociacao/$id")({
@@ -51,6 +58,25 @@ function NegotiationDetail() {
     refetchInterval: 20_000,
   });
 
+  const { data: order } = useQuery({
+    queryKey: ["negotiation-order", id],
+    queryFn: () => fetchOrderByProposal(id),
+  });
+
+  const orderStatus = useMutation({
+    mutationFn: async (status: "awaiting_payment" | "in_delivery" | "completed" | "cancelled") => {
+      if (!user || !order) return;
+      await updateOrderStatus(order.id, status, user.id);
+    },
+    onSuccess: () => {
+      toast.success("Pedido atualizado");
+      void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
+    },
+    onError: () => toast.error("Não foi possível atualizar o pedido."),
+  });
+
+
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [data?.messages.length]);
@@ -65,6 +91,16 @@ function NegotiationDetail() {
         throw new Error("Informe um valor válido para a contraproposta.");
       }
       await respondProposal(p.id, action, user.id, amount);
+      if (action === "accepted") {
+        await ensureOrderForProposal({
+          proposalId: p.id,
+          listingId: p.listing_id,
+          buyerId: p.buyer_id,
+          sellerId: p.seller_id,
+          amount: Number(p.amount),
+          actorId: user.id,
+        });
+      }
       const other = p.buyer_id === user.id ? p.seller_id : p.buyer_id;
       await notifyCounterpart({
         userId: other,
@@ -81,6 +117,7 @@ function NegotiationDetail() {
       toast.success("Negociação atualizada");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
       void queryClient.invalidateQueries({ queryKey: ["proposals"] });
+      void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -230,6 +267,72 @@ function NegotiationDetail() {
               </div>
             )}
           </section>
+
+          {order && (
+            <section className="rounded-lg border border-border bg-card p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display text-base font-semibold text-forest">
+                  Pedido da negociação
+                </h2>
+                <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
+                  {ORDER_STATUS_LABELS[order.status] ?? order.status}
+                </span>
+              </div>
+              <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Valor acordado</dt>
+                  <dd className="font-semibold text-forest">{formatBRL(Number(order.amount))}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Comissão da plataforma</dt>
+                  <dd>{formatBRL(Number(order.commission_amount))}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Líquido ao vendedor</dt>
+                  <dd>{formatBRL(Number(order.seller_net_amount))}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Pagamento online ainda não habilitado: combinem forma de pagamento, vistoria e
+                entrega entre as partes. A DDP AGRO registra o histórico, mas não garante a
+                conclusão do negócio.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={orderStatus.isPending || order.status !== "created"}
+                  onClick={() => orderStatus.mutate("awaiting_payment")}
+                >
+                  Pagamento a combinar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={orderStatus.isPending || order.status === "completed"}
+                  onClick={() => orderStatus.mutate("in_delivery")}
+                >
+                  Em entrega
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                  disabled={orderStatus.isPending || order.status === "completed"}
+                  onClick={() => orderStatus.mutate("completed")}
+                >
+                  Negócio concluído
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={orderStatus.isPending || order.status === "cancelled"}
+                  onClick={() => orderStatus.mutate("cancelled")}
+                >
+                  Cancelar pedido
+                </Button>
+              </div>
+            </section>
+          )}
 
           <section className="rounded-lg border border-border bg-card p-5">
             <h2 className="font-display text-base font-semibold text-forest">Conversa</h2>

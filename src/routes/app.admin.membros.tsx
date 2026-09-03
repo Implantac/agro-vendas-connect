@@ -172,6 +172,8 @@ function AdminMembers() {
                 </div>
               </div>
               <div className="flex gap-2">
+                <AdminEditMemberDialog member={m} />
+
 
                 <Button
                   size="sm"

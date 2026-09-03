@@ -131,6 +131,36 @@ function Perfil() {
             </span>
           </div>
 
+          {isAdmin && (
+            <div className="rounded-lg border border-accent/40 bg-card p-5">
+              <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-forest">
+                <ShieldCheck className="h-4 w-4 text-accent" /> Modo de teste (admin)
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Alterne sua experiência sem perder o acesso de administrador.
+              </p>
+              <div className="mt-4 grid gap-2">
+                {(
+                  [
+                    ["admin", "Administrador"],
+                    ["seller", "Vendedor"],
+                    ["buyer", "Comprador"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    type="button"
+                    variant={profile?.role === value ? "default" : "outline"}
+                    disabled={switching || profile?.role === value}
+                    onClick={() => void switchRole(value)}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="rounded-lg border border-border bg-card p-5">
             <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-forest">
               <ShieldCheck className="h-4 w-4 text-accent" /> Indicadores

@@ -19,6 +19,7 @@ import { Route as CentralDeAjudaRouteImport } from './routes/central-de-ajuda'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
@@ -92,6 +93,11 @@ const ContatoRoute = ContatoRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -336,6 +345,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -407,6 +418,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -444,6 +456,7 @@ export interface RootRouteChildren {
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   ContatoRoute: typeof ContatoRoute
   EntrarRoute: typeof EntrarRoute
+  PlanosRoute: typeof PlanosRoute
   PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   SegurancaRoute: typeof SegurancaRoute
@@ -521,6 +534,13 @@ declare module '@tanstack/react-router' {
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-cookies': {
@@ -751,6 +771,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComoFuncionaRoute: ComoFuncionaRoute,
   ContatoRoute: ContatoRoute,
   EntrarRoute: EntrarRoute,
+  PlanosRoute: PlanosRoute,
   PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   SegurancaRoute: SegurancaRoute,

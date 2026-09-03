@@ -391,7 +391,7 @@ function SidebarNav({
           <BuyerFilterPanel onApplied={onNavigate} />
         </section>
       )}
-      <div className="border-t border-border px-5 py-4">
+      <div className="mt-auto shrink-0 border-t border-border px-5 py-3">
         <p className="font-display text-xs font-bold text-forest">DDP AGRO</p>
         <p className="text-[11px] text-muted-foreground">Marketplace fechado</p>
         <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">

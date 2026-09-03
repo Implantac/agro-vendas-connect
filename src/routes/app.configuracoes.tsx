@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bell, ShieldCheck, User } from "lucide-react";
 import { AppPage } from "@/components/app/AppLayout";
+import { PrivacyRequestsCard } from "@/components/app/PrivacyRequestsCard";
 import { Button } from "@/components/ui/button";
+
 
 export const Route = createFileRoute("/app/configuracoes")({
   head: () => ({

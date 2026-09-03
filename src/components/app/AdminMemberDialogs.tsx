@@ -223,9 +223,11 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
       sendReset({
         data: {
           email: form.email,
-          redirectTo:
-            typeof window !== "undefined" ? `${window.location.origin}/redefinir-senha` : undefined,
+          ...(typeof window !== "undefined"
+            ? { redirectTo: `${window.location.origin}/redefinir-senha` }
+            : {}),
         },
+
       }),
     onSuccess: () => toast.success("E-mail de redefinição enviado."),
     onError: (e: Error) => toast.error("Não foi possível enviar o e-mail.", { description: e.message }),

@@ -335,6 +335,21 @@ function Publicar() {
           {step === 4 && (
             <div className="space-y-5">
               <h2 className="font-display text-lg font-semibold text-forest">Revise seu anúncio</h2>
+              <div className="space-y-2">
+                <Label htmlFor="photos">Fotos do implemento</Label>
+                <Input
+                  id="photos"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {photos.length
+                    ? `${photos.length} foto(s) selecionada(s). A primeira será a capa.`
+                    : "Anúncios com fotos recebem mais propostas. Você também pode adicionar depois em Editar anúncio."}
+                </p>
+              </div>
               <dl className="space-y-3 rounded-lg bg-secondary/50 p-5 text-sm">
                 {[
                   ["Categoria", categoryName ?? "—"],

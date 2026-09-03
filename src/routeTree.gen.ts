@@ -26,6 +26,7 @@ import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppComprarRouteImport } from './routes/app.comprar'
@@ -132,6 +133,11 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
 const SegurancaRoute = SegurancaRouteImport.update({
   id: '/seguranca',
   path: '/seguranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
@@ -263,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/seguranca': typeof SegurancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByTo {
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/seguranca': typeof SegurancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -345,6 +353,7 @@ export interface FileRoutesById {
   '/recuperar-senha': typeof RecuperarSenhaRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/seguranca': typeof SegurancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -388,6 +397,7 @@ export interface FileRouteTypes {
     | '/recuperar-senha'
     | '/redefinir-senha'
     | '/seguranca'
+    | '/sitemap.xml'
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/configuracoes'
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/recuperar-senha'
     | '/redefinir-senha'
     | '/seguranca'
+    | '/sitemap.xml'
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/configuracoes'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/recuperar-senha'
     | '/redefinir-senha'
     | '/seguranca'
+    | '/sitemap.xml'
     | '/termos-de-uso'
     | '/app/comprar'
     | '/app/configuracoes'
@@ -511,6 +523,7 @@ export interface RootRouteChildren {
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   SegurancaRoute: typeof SegurancaRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
 }
@@ -634,6 +647,13 @@ declare module '@tanstack/react-router' {
       path: '/seguranca'
       fullPath: '/seguranca'
       preLoaderRoute: typeof SegurancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/termos-de-uso': {
@@ -859,6 +879,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecuperarSenhaRoute: RecuperarSenhaRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   SegurancaRoute: SegurancaRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
 }

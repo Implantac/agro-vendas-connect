@@ -23,6 +23,7 @@ import { Route as MembresiaRouteImport } from './routes/membresia'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -115,6 +116,11 @@ const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
 const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
   id: '/politica-de-privacidade',
   path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SegurancaRoute = SegurancaRouteImport.update({
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
   '/seguranca': typeof SegurancaRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
   '/app/comprar': typeof AppComprarRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
+    | '/recuperar-senha'
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
+    | '/recuperar-senha'
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
@@ -444,6 +455,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
+    | '/recuperar-senha'
     | '/seguranca'
     | '/termos-de-uso'
     | '/app/comprar'
@@ -484,6 +496,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
   SegurancaRoute: typeof SegurancaRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
@@ -587,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/politica-de-privacidade'
       fullPath: '/politica-de-privacidade'
       preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seguranca': {
@@ -816,6 +836,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
   SegurancaRoute: SegurancaRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,

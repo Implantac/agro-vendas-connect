@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeListingPhoto } from "@/lib/image-normalize";
 
 const BUCKET = "listing-photos";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 anos
@@ -101,7 +102,8 @@ export async function uploadListingPhotos(
   startIndex: number,
 ) {
   const inserted: { url: string; is_cover: boolean; sort_order: number }[] = [];
-  for (const [i, file] of files.entries()) {
+  for (const [i, original] of files.entries()) {
+    const file = await normalizeListingPhoto(original);
     const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
     const path = `${userId}/${listingId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error: uploadError } = await supabase.storage

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { createListing, uploadListingPhotos } from "@/lib/listing-manage";
+import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -341,14 +342,8 @@ function Publicar() {
             <div className="space-y-5">
               <h2 className="font-display text-lg font-semibold text-forest">Revise seu anúncio</h2>
               <div className="space-y-2">
-                <Label htmlFor="photos">Fotos do implemento</Label>
-                <Input
-                  id="photos"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
-                />
+                <Label>Fotos do implemento</Label>
+                <PhotoUploader files={photos} onChange={setPhotos} />
                 <p className="text-xs text-muted-foreground">
                   {photos.length
                     ? `${photos.length} foto(s) selecionada(s). A primeira será a capa.`

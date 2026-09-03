@@ -126,7 +126,7 @@ export async function reviewMembershipRequest(requestId: string, approve: boolea
   const { error } = await supabase.rpc("admin_review_membership", {
     _request_id: requestId,
     _approve: approve,
-    _notes: notes ?? null,
+    ...(notes ? { _notes: notes } : {}),
   });
   if (error) throw error;
 }

@@ -39,6 +39,7 @@ import { Route as AppMensagensRouteImport } from './routes/app.mensagens'
 import { Route as AppMeusAnunciosRouteImport } from './routes/app.meus-anuncios'
 import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
 import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
+import { Route as AppPedidosRouteImport } from './routes/app.pedidos'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppPropostasRecebidasRouteImport } from './routes/app.propostas-recebidas'
@@ -202,6 +203,11 @@ const AppNotificacoesRoute = AppNotificacoesRouteImport.update({
   path: '/notificacoes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPedidosRoute = AppPedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPerfilRoute = AppPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -293,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
@@ -336,6 +343,7 @@ export interface FileRoutesByTo {
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
@@ -381,6 +389,7 @@ export interface FileRoutesById {
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
   '/app/notificacoes': typeof AppNotificacoesRoute
+  '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
@@ -427,6 +436,7 @@ export interface FileRouteTypes {
     | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/notificacoes'
+    | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
     | '/app/propostas-recebidas'
@@ -470,6 +480,7 @@ export interface FileRouteTypes {
     | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/notificacoes'
+    | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
     | '/app/propostas-recebidas'
@@ -514,6 +525,7 @@ export interface FileRouteTypes {
     | '/app/meus-anuncios'
     | '/app/negociacoes'
     | '/app/notificacoes'
+    | '/app/pedidos'
     | '/app/perfil'
     | '/app/propostas'
     | '/app/propostas-recebidas'
@@ -765,6 +777,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificacoesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/pedidos': {
+      id: '/app/pedidos'
+      path: '/pedidos'
+      fullPath: '/app/pedidos'
+      preLoaderRoute: typeof AppPedidosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/perfil': {
       id: '/app/perfil'
       path: '/perfil'
@@ -862,6 +881,7 @@ interface AppRouteChildren {
   AppMeusAnunciosRoute: typeof AppMeusAnunciosRoute
   AppNegociacoesRoute: typeof AppNegociacoesRoute
   AppNotificacoesRoute: typeof AppNotificacoesRoute
+  AppPedidosRoute: typeof AppPedidosRoute
   AppPerfilRoute: typeof AppPerfilRoute
   AppPropostasRoute: typeof AppPropostasRoute
   AppPropostasRecebidasRoute: typeof AppPropostasRecebidasRoute
@@ -886,6 +906,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMeusAnunciosRoute: AppMeusAnunciosRoute,
   AppNegociacoesRoute: AppNegociacoesRoute,
   AppNotificacoesRoute: AppNotificacoesRoute,
+  AppPedidosRoute: AppPedidosRoute,
   AppPerfilRoute: AppPerfilRoute,
   AppPropostasRoute: AppPropostasRoute,
   AppPropostasRecebidasRoute: AppPropostasRecebidasRoute,

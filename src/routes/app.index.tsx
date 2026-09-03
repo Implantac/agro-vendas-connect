@@ -90,7 +90,7 @@ function Dashboard() {
       title: "Propostas recebidas",
       value: counts?.proposalsReceived ?? 0,
       hint: `${counts?.proposalsWaiting ?? 0} aguardando resposta`,
-      to: "/app/propostas",
+      to: "/app/negociacoes",
     },
     {
       icon: ListChecks,
@@ -109,7 +109,7 @@ function Dashboard() {
   ];
 
   const summaryCards = allCards.filter(
-    (card) => isSeller || (card.to !== "/app/meus-anuncios" && card.to !== "/app/propostas"),
+    (card) => isSeller || (card.to !== "/app/meus-anuncios" && card.title !== "Propostas recebidas"),
   );
 
   return (

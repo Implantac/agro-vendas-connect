@@ -95,7 +95,7 @@ export function ProposalDialog({
       type: "proposal_received",
       title: "Nova proposta recebida",
       message: `Você recebeu uma proposta para ${listingTitle}.`,
-      action_url: "/app/propostas",
+      action_url: "/app/negociacoes",
     });
 
     setSaving(false);

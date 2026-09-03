@@ -42,8 +42,6 @@ import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
 import { Route as AppNotificacoesRouteImport } from './routes/app.notificacoes'
 import { Route as AppPedidosRouteImport } from './routes/app.pedidos'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
-import { Route as AppPropostasRouteImport } from './routes/app.propostas'
-import { Route as AppPropostasRecebidasRouteImport } from './routes/app.propostas-recebidas'
 import { Route as AppPublicarRouteImport } from './routes/app.publicar'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
@@ -223,16 +221,6 @@ const AppPerfilRoute = AppPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AppRoute,
 } as any)
-const AppPropostasRoute = AppPropostasRouteImport.update({
-  id: '/propostas',
-  path: '/propostas',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPropostasRecebidasRoute = AppPropostasRecebidasRouteImport.update({
-  id: '/propostas-recebidas',
-  path: '/propostas-recebidas',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppPublicarRoute = AppPublicarRouteImport.update({
   id: '/publicar',
   path: '/publicar',
@@ -332,8 +320,6 @@ export interface FileRoutesByFullPath {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
-  '/app/propostas': typeof AppPropostasRoute
-  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
@@ -381,8 +367,6 @@ export interface FileRoutesByTo {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
-  '/app/propostas': typeof AppPropostasRoute
-  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app': typeof AppIndexRoute
@@ -432,8 +416,6 @@ export interface FileRoutesById {
   '/app/notificacoes': typeof AppNotificacoesRoute
   '/app/pedidos': typeof AppPedidosRoute
   '/app/perfil': typeof AppPerfilRoute
-  '/app/propostas': typeof AppPropostasRoute
-  '/app/propostas-recebidas': typeof AppPropostasRecebidasRoute
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
@@ -484,8 +466,6 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/pedidos'
     | '/app/perfil'
-    | '/app/propostas'
-    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
@@ -533,8 +513,6 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/pedidos'
     | '/app/perfil'
-    | '/app/propostas'
-    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app'
@@ -583,8 +561,6 @@ export interface FileRouteTypes {
     | '/app/notificacoes'
     | '/app/pedidos'
     | '/app/perfil'
-    | '/app/propostas'
-    | '/app/propostas-recebidas'
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
@@ -858,20 +834,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPerfilRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/propostas': {
-      id: '/app/propostas'
-      path: '/propostas'
-      fullPath: '/app/propostas'
-      preLoaderRoute: typeof AppPropostasRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/propostas-recebidas': {
-      id: '/app/propostas-recebidas'
-      path: '/propostas-recebidas'
-      fullPath: '/app/propostas-recebidas'
-      preLoaderRoute: typeof AppPropostasRecebidasRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/publicar': {
       id: '/app/publicar'
       path: '/publicar'
@@ -979,8 +941,6 @@ interface AppRouteChildren {
   AppNotificacoesRoute: typeof AppNotificacoesRoute
   AppPedidosRoute: typeof AppPedidosRoute
   AppPerfilRoute: typeof AppPerfilRoute
-  AppPropostasRoute: typeof AppPropostasRoute
-  AppPropostasRecebidasRoute: typeof AppPropostasRecebidasRoute
   AppPublicarRoute: typeof AppPublicarRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAdminAnunciosRoute: typeof AppAdminAnunciosRoute
@@ -1009,8 +969,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificacoesRoute: AppNotificacoesRoute,
   AppPedidosRoute: AppPedidosRoute,
   AppPerfilRoute: AppPerfilRoute,
-  AppPropostasRoute: AppPropostasRoute,
-  AppPropostasRecebidasRoute: AppPropostasRecebidasRoute,
   AppPublicarRoute: AppPublicarRoute,
   AppIndexRoute: AppIndexRoute,
   AppAdminAnunciosRoute: AppAdminAnunciosRoute,

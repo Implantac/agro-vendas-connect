@@ -69,7 +69,7 @@ function Leads() {
                     </span>
                   )}
                   <Button asChild variant="outline" size="sm">
-                    <Link to="/app/propostas-recebidas">Ver propostas</Link>
+                    <Link to="/app/negociacoes">Ver propostas</Link>
                   </Button>
                 </div>
               </div>

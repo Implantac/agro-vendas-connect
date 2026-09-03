@@ -341,14 +341,8 @@ function Publicar() {
             <div className="space-y-5">
               <h2 className="font-display text-lg font-semibold text-forest">Revise seu anúncio</h2>
               <div className="space-y-2">
-                <Label htmlFor="photos">Fotos do implemento</Label>
-                <Input
-                  id="photos"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => setPhotos(Array.from(e.target.files ?? []))}
-                />
+                <Label>Fotos do implemento</Label>
+                <PhotoUploader files={photos} onChange={setPhotos} />
                 <p className="text-xs text-muted-foreground">
                   {photos.length
                     ? `${photos.length} foto(s) selecionada(s). A primeira será a capa.`

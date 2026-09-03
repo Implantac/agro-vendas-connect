@@ -52,7 +52,7 @@ import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";
 
 export function AppLayout() {
-  const { user, profile, loading, signOut } = useAuth();
+  const { user, profile, loading, signOut, isAdmin } = useAuth();
   const { mode, ready } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -85,13 +85,14 @@ export function AppLayout() {
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
   // Admin é superusuário: navega livremente pelas telas de comprador e vendedor.
-  const isSuperAdmin = mode === "admin";
+  // Admin é superusuário mesmo quando testa o app como comprador/vendedor.
+  const isSuperAdmin = isAdmin || mode === "admin";
   const viewMode: AppMode = isSuperAdmin
     ? isSellerOnlyRoute
       ? "vendedor"
       : isBuyerOnlyRoute
         ? "comprador"
-        : "admin"
+        : mode
     : mode;
 
   const blockedRoute =

@@ -53,28 +53,57 @@ export async function fetchMyProposals(userId: string) {
   return data ?? [];
 }
 
+/**
+ * Responde a uma proposta de forma transacional no backend:
+ * o servidor valida participante, estado atual e valor, e grava
+ * histórico + auditoria na mesma operação.
+ */
 export async function respondProposal(
   proposalId: string,
-  action: "accepted" | "rejected" | "countered",
-  actorId: string,
+  action: "accepted" | "rejected" | "countered" | "cancelled",
+  _actorId: string,
   counterAmount?: number,
 ) {
-  const { error } = await supabase
-    .from("proposals")
-    .update(
-      action === "countered" && counterAmount
-        ? { status: action, amount: counterAmount }
-        : { status: action },
-    )
-    .eq("id", proposalId);
-  if (error) throw error;
-  await supabase.from("proposal_events").insert({
-    proposal_id: proposalId,
-    actor_id: actorId,
-    event_type: action,
-    new_status: action,
-    message: counterAmount ? `Contraproposta de R$ ${counterAmount}` : null,
+  const { error } = await supabase.rpc("respond_proposal", {
+    _proposal_id: proposalId,
+    _action: action,
+    ...(counterAmount ? { _amount: counterAmount } : {}),
   });
+  if (error) throw new Error(error.message);
+}
+
+/** Vendedor: interessados (favoritos + conversas) nos seus anúncios. */
+export async function fetchSellerLeads(userId: string) {
+  const { data: listings } = await supabase
+    .from("listings")
+    .select("id,title,slug,price,status,views_count,favorites(id,created_at,user_id),proposals(id,status,amount,created_at),conversations(id,created_at,buyer_id)")
+    .eq("seller_id", userId)
+    .order("created_at", { ascending: false });
+  return (listings ?? []).map((l) => ({
+    id: l.id,
+    title: l.title,
+    price: l.price,
+    status: l.status,
+    views: l.views_count ?? 0,
+    favorites: (l.favorites ?? []).length,
+    conversations: (l.conversations ?? []).length,
+    proposals: (l.proposals ?? []).length,
+    openProposals: (l.proposals ?? []).filter((p) => ["open", "countered"].includes(p.status)).length,
+    negotiatingValue: (l.proposals ?? [])
+      .filter((p) => ["open", "countered"].includes(p.status))
+      .reduce((sum, p) => sum + Number(p.amount ?? 0), 0),
+  }));
+}
+
+/** Pedidos do usuário (como comprador ou vendedor). */
+export async function fetchMyOrders(userId: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, listings(title,slug)")
+    .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function fetchMyListings(userId: string) {

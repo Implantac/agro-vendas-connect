@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { createListing, uploadListingPhotos } from "@/lib/listing-manage";
+import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";

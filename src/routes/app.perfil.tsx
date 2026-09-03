@@ -39,9 +39,27 @@ const PROFILE_STATUS = {
 } as const;
 
 function Perfil() {
-  const { user, profile } = useAuth();
+  const { user, profile, isAdmin, refreshProfile } = useAuth();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
+  const [switching, setSwitching] = useState(false);
+
+  async function switchRole(role: "buyer" | "seller" | "admin") {
+    if (!user) return;
+    setSwitching(true);
+    const { error } = await supabase.rpc("admin_set_member_role", {
+      _user_id: user.id,
+      _role: role,
+    });
+    setSwitching(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Perfil alterado.");
+    await refreshProfile();
+    void queryClient.invalidateQueries();
+  }
   const [form, setForm] = useState({
     full_name: profile?.full_name ?? "",
     phone: profile?.phone ?? "",
@@ -112,6 +130,36 @@ function Perfil() {
               <BadgeCheck className="h-3.5 w-3.5" /> {status.label}
             </span>
           </div>
+
+          {isAdmin && (
+            <div className="rounded-lg border border-accent/40 bg-card p-5">
+              <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-forest">
+                <ShieldCheck className="h-4 w-4 text-accent" /> Modo de teste (admin)
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Alterne sua experiência sem perder o acesso de administrador.
+              </p>
+              <div className="mt-4 grid gap-2">
+                {(
+                  [
+                    ["admin", "Administrador"],
+                    ["seller", "Vendedor"],
+                    ["buyer", "Comprador"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <Button
+                    key={value}
+                    type="button"
+                    variant={profile?.role === value ? "default" : "outline"}
+                    disabled={switching || profile?.role === value}
+                    onClick={() => void switchRole(value)}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="rounded-lg border border-border bg-card p-5">
             <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-forest">

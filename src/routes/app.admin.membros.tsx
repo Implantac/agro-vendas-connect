@@ -1,10 +1,16 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
+import { formatBRL } from "@/lib/format";
+import {
+  fetchAdminMembershipRequests,
+  PAYMENT_STATUS_LABELS,
+  REQUEST_STATUS_LABELS,
+} from "@/lib/membership-queries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/admin/membros")({
@@ -42,6 +48,14 @@ function AdminMembers() {
     queryFn: () => fetchAdminMembers(status || undefined),
   });
 
+  const { data: requests = [] } = useQuery({
+    queryKey: ["admin", "memberships", "all"],
+    queryFn: () => fetchAdminMembershipRequests(),
+  });
+
+  const requestByUser = new Map(requests.map((r) => [r.user_id, r]));
+  const pendingReview = requests.filter((r) => r.status === "in_review").length;
+
   const mutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: "approved" | "rejected" | "suspended" }) =>
       setMemberStatus(id, next),
@@ -65,10 +79,21 @@ function AdminMembers() {
 
   return (
     <AppPage>
-      <h1 className="font-display text-2xl font-bold text-forest">Membros</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Analise solicitações e controle o acesso ao marketplace privado.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-forest">Membros</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Analise solicitações e controle o acesso ao marketplace privado.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link to="/app/admin/membresias">
+            Solicitações de membresia
+            {pendingReview > 0 ? ` (${pendingReview})` : ""}
+          </Link>
+        </Button>
+      </div>
+
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -101,6 +126,21 @@ function AdminMembers() {
                   {m.email} • {m.role} • {m.status}
                   {m.city ? ` • ${m.city}/${m.state ?? ""}` : ""}
                 </p>
+                {(() => {
+                  const req = requestByUser.get(m.id);
+                  if (!req) {
+                    return (
+                      <p className="mt-1 text-xs text-muted-foreground">Sem solicitação de membresia.</p>
+                    );
+                  }
+                  return (
+                    <p className="mt-1 text-xs font-medium text-forest">
+                      {req.membership_plans?.name ?? "Plano"} • {formatBRL(req.amount)} •{" "}
+                      {REQUEST_STATUS_LABELS[req.status]} • Pagamento:{" "}
+                      {PAYMENT_STATUS_LABELS[req.payment_status]}
+                    </p>
+                  );
+                })()}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold text-muted-foreground">Perfil:</span>

@@ -453,6 +453,119 @@ export type Database = {
           },
         ]
       }
+      membership_plans: {
+        Row: {
+          active: boolean
+          benefits_json: Json
+          code: string
+          created_at: string
+          description: string | null
+          highlight: boolean
+          id: string
+          name: string
+          period: string
+          price: number
+          sort_order: number
+          target_role: Database["public"]["Enums"]["member_role"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          benefits_json?: Json
+          code: string
+          created_at?: string
+          description?: string | null
+          highlight?: boolean
+          id?: string
+          name: string
+          period?: string
+          price?: number
+          sort_order?: number
+          target_role?: Database["public"]["Enums"]["member_role"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          benefits_json?: Json
+          code?: string
+          created_at?: string
+          description?: string | null
+          highlight?: boolean
+          id?: string
+          name?: string
+          period?: string
+          price?: number
+          sort_order?: number
+          target_role?: Database["public"]["Enums"]["member_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_requests: {
+        Row: {
+          amount: number
+          applicant_notes: string | null
+          created_at: string
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: Database["public"]["Enums"]["membership_payment_status"]
+          plan_id: string | null
+          requested_role: Database["public"]["Enums"]["member_role"]
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["membership_request_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          applicant_notes?: string | null
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["membership_payment_status"]
+          plan_id?: string | null
+          requested_role?: Database["public"]["Enums"]["member_role"]
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["membership_request_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          applicant_notes?: string | null
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["membership_payment_status"]
+          plan_id?: string | null
+          requested_role?: Database["public"]["Enums"]["member_role"]
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["membership_request_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_requests_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "membership_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -953,11 +1066,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_review_membership: {
+        Args: { _approve: boolean; _notes?: string; _request_id: string }
+        Returns: undefined
+      }
       admin_set_member_role: {
         Args: {
           _role: Database["public"]["Enums"]["member_role"]
           _user_id: string
         }
+        Returns: undefined
+      }
+      cancel_membership_request: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
+      confirm_membership_payment: {
+        Args: { _method: string; _request_id: string }
         Returns: undefined
       }
       has_role: {
@@ -988,6 +1113,13 @@ export type Database = {
         | "archived"
       member_role: "buyer" | "seller" | "admin"
       member_status: "pending" | "approved" | "rejected" | "suspended"
+      membership_payment_status: "pending" | "paid" | "failed" | "refunded"
+      membership_request_status:
+        | "payment_pending"
+        | "in_review"
+        | "approved"
+        | "rejected"
+        | "cancelled"
       order_status:
         | "created"
         | "awaiting_payment"
@@ -1151,6 +1283,14 @@ export const Constants = {
       ],
       member_role: ["buyer", "seller", "admin"],
       member_status: ["pending", "approved", "rejected", "suspended"],
+      membership_payment_status: ["pending", "paid", "failed", "refunded"],
+      membership_request_status: [
+        "payment_pending",
+        "in_review",
+        "approved",
+        "rejected",
+        "cancelled",
+      ],
       order_status: [
         "created",
         "awaiting_payment",

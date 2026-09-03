@@ -19,6 +19,8 @@ import { Route as CentralDeAjudaRouteImport } from './routes/central-de-ajuda'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as MembresiaRouteImport } from './routes/membresia'
+import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as SegurancaRouteImport } from './routes/seguranca'
@@ -41,6 +43,7 @@ import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminAnunciosRouteImport } from './routes/app.admin.anuncios'
 import { Route as AppAdminAuditoriaRouteImport } from './routes/app.admin.auditoria'
+import { Route as AppAdminMembresiasRouteImport } from './routes/app.admin.membresias'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
 import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
 
@@ -92,6 +95,16 @@ const ContatoRoute = ContatoRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembresiaRoute = MembresiaRouteImport.update({
+  id: '/membresia',
+  path: '/membresia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDeCookiesRoute = PoliticaDeCookiesRouteImport.update({
@@ -204,6 +217,11 @@ const AppAdminAuditoriaRoute = AppAdminAuditoriaRouteImport.update({
   path: '/admin/auditoria',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminMembresiasRoute = AppAdminMembresiasRouteImport.update({
+  id: '/admin/membresias',
+  path: '/admin/membresias',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminMembrosRoute = AppAdminMembrosRouteImport.update({
   id: '/admin/membros',
   path: '/admin/membros',
@@ -226,6 +244,8 @@ export interface FileRoutesByFullPath {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/membresia': typeof MembresiaRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -247,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -261,6 +282,8 @@ export interface FileRoutesByTo {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/membresia': typeof MembresiaRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -282,6 +305,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -298,6 +322,8 @@ export interface FileRoutesById {
   '/como-funciona': typeof ComoFuncionaRoute
   '/contato': typeof ContatoRoute
   '/entrar': typeof EntrarRoute
+  '/membresia': typeof MembresiaRoute
+  '/planos': typeof PlanosRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/seguranca': typeof SegurancaRoute
@@ -319,6 +345,7 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -336,6 +363,8 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/membresia'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -357,6 +386,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -371,6 +401,8 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/membresia'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -392,6 +424,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/negociacao/$id'
     | '/app/admin'
@@ -407,6 +440,8 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/contato'
     | '/entrar'
+    | '/membresia'
+    | '/planos'
     | '/politica-de-cookies'
     | '/politica-de-privacidade'
     | '/seguranca'
@@ -428,6 +463,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/negociacao/$id'
     | '/app/admin/'
@@ -444,6 +480,8 @@ export interface RootRouteChildren {
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   ContatoRoute: typeof ContatoRoute
   EntrarRoute: typeof EntrarRoute
+  MembresiaRoute: typeof MembresiaRoute
+  PlanosRoute: typeof PlanosRoute
   PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   SegurancaRoute: typeof SegurancaRoute
@@ -521,6 +559,20 @@ declare module '@tanstack/react-router' {
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/membresia': {
+      id: '/membresia'
+      path: '/membresia'
+      fullPath: '/membresia'
+      preLoaderRoute: typeof MembresiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-cookies': {
@@ -677,6 +729,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAuditoriaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/membresias': {
+      id: '/app/admin/membresias'
+      path: '/admin/membresias'
+      fullPath: '/app/admin/membresias'
+      preLoaderRoute: typeof AppAdminMembresiasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/membros': {
       id: '/app/admin/membros'
       path: '/admin/membros'
@@ -711,6 +770,7 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppAdminAnunciosRoute: typeof AppAdminAnunciosRoute
   AppAdminAuditoriaRoute: typeof AppAdminAuditoriaRoute
+  AppAdminMembresiasRoute: typeof AppAdminMembresiasRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
   AppNegociacaoIdRoute: typeof AppNegociacaoIdRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -733,6 +793,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppAdminAnunciosRoute: AppAdminAnunciosRoute,
   AppAdminAuditoriaRoute: AppAdminAuditoriaRoute,
+  AppAdminMembresiasRoute: AppAdminMembresiasRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
   AppNegociacaoIdRoute: AppNegociacaoIdRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
@@ -751,6 +812,8 @@ const rootRouteChildren: RootRouteChildren = {
   ComoFuncionaRoute: ComoFuncionaRoute,
   ContatoRoute: ContatoRoute,
   EntrarRoute: EntrarRoute,
+  MembresiaRoute: MembresiaRoute,
+  PlanosRoute: PlanosRoute,
   PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   SegurancaRoute: SegurancaRoute,

@@ -382,12 +382,17 @@ function Catalogo() {
           {!isLoading && listings.length === 0 ? (
             <div className="rounded-md border border-dashed border-border p-12 text-center">
               <p className="font-display text-base font-semibold text-forest">
-                Nenhum implemento encontrado
+                {chips.length > 0
+                  ? "Nenhum implemento encontrado"
+                  : "Catálogo em atualização"}
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Ajuste os filtros ou volte em breve: novos anúncios são aprovados diariamente.
+                {chips.length > 0
+                  ? "Ajuste os filtros para ver mais resultados."
+                  : "Os implementos da DDP AGRO estão sendo cadastrados. Volte em breve para ver as máquinas disponíveis."}
               </p>
             </div>
+
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {listings.map((l, i) => (

@@ -49,6 +49,7 @@ import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminAnunciosRouteImport } from './routes/app.admin.anuncios'
 import { Route as AppAdminAuditoriaRouteImport } from './routes/app.admin.auditoria'
+import { Route as AppAdminDenunciasRouteImport } from './routes/app.admin.denuncias'
 import { Route as AppAdminMembresiasRouteImport } from './routes/app.admin.membresias'
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
 import { Route as AppAnuncioIdRouteImport } from './routes/app.anuncio.$id'
@@ -254,6 +255,11 @@ const AppAdminAuditoriaRoute = AppAdminAuditoriaRouteImport.update({
   path: '/admin/auditoria',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminDenunciasRoute = AppAdminDenunciasRouteImport.update({
+  id: '/admin/denuncias',
+  path: '/admin/denuncias',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminMembresiasRoute = AppAdminMembresiasRouteImport.update({
   id: '/admin/membresias',
   path: '/admin/membresias',
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/denuncias': typeof AppAdminDenunciasRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
@@ -360,6 +367,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/denuncias': typeof AppAdminDenunciasRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
@@ -407,6 +415,7 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
+  '/app/admin/denuncias': typeof AppAdminDenunciasRoute
   '/app/admin/membresias': typeof AppAdminMembresiasRoute
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/denuncias'
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/anuncio/$id'
@@ -500,6 +510,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/denuncias'
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/anuncio/$id'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/admin/anuncios'
     | '/app/admin/auditoria'
+    | '/app/admin/denuncias'
     | '/app/admin/membresias'
     | '/app/admin/membros'
     | '/app/anuncio/$id'
@@ -859,6 +871,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAuditoriaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/denuncias': {
+      id: '/app/admin/denuncias'
+      path: '/admin/denuncias'
+      fullPath: '/app/admin/denuncias'
+      preLoaderRoute: typeof AppAdminDenunciasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/membresias': {
       id: '/app/admin/membresias'
       path: '/admin/membresias'
@@ -909,6 +928,7 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppAdminAnunciosRoute: typeof AppAdminAnunciosRoute
   AppAdminAuditoriaRoute: typeof AppAdminAuditoriaRoute
+  AppAdminDenunciasRoute: typeof AppAdminDenunciasRoute
   AppAdminMembresiasRoute: typeof AppAdminMembresiasRoute
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
   AppAnuncioIdRoute: typeof AppAnuncioIdRoute
@@ -935,6 +955,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppAdminAnunciosRoute: AppAdminAnunciosRoute,
   AppAdminAuditoriaRoute: AppAdminAuditoriaRoute,
+  AppAdminDenunciasRoute: AppAdminDenunciasRoute,
   AppAdminMembresiasRoute: AppAdminMembresiasRoute,
   AppAdminMembrosRoute: AppAdminMembrosRoute,
   AppAnuncioIdRoute: AppAnuncioIdRoute,

@@ -9,10 +9,13 @@ import type { AppMode } from "@/config/navigation";
 export function useAppRole() {
   const { profile, isAdmin } = useAuth();
   const role = profile?.role;
-  const mode: AppMode = isAdmin || role === "admin" ? "admin" : role === "seller" ? "vendedor" : "comprador";
+  // Admin mantém acesso irrestrito (isAdmin), mas pode alternar o próprio
+  // perfil para comprador/vendedor a fim de testar as experiências.
+  const mode: AppMode = role === "admin" ? "admin" : role === "seller" ? "vendedor" : "comprador";
 
   return {
     role,
+    isAdmin,
     mode,
     /** false até o perfil carregar (evita guards prematuros). */
     ready: Boolean(role),

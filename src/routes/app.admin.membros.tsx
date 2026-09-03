@@ -3,8 +3,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
+import {
+  AdminCreateMemberDialog,
+  AdminEditMemberDialog,
+} from "@/components/app/AdminMemberDialogs";
 import { Button } from "@/components/ui/button";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
+
 import { formatBRL } from "@/lib/format";
 import {
   fetchAdminMembershipRequests,
@@ -86,12 +91,16 @@ function AdminMembers() {
             Analise solicitações e controle o acesso ao marketplace privado.
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link to="/app/admin/membresias">
-            Solicitações de membresia
-            {pendingReview > 0 ? ` (${pendingReview})` : ""}
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link to="/app/admin/membresias">
+              Solicitações de membresia
+              {pendingReview > 0 ? ` (${pendingReview})` : ""}
+            </Link>
+          </Button>
+          <AdminCreateMemberDialog />
+        </div>
+
       </div>
 
 
@@ -163,6 +172,8 @@ function AdminMembers() {
                 </div>
               </div>
               <div className="flex gap-2">
+                <AdminEditMemberDialog member={m} />
+
 
                 <Button
                   size="sm"

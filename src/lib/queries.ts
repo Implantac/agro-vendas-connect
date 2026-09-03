@@ -122,7 +122,7 @@ export async function fetchListingBySlug(slug: string) {
   // seller_profiles não tem FK direta com listings; buscamos pelo vendedor.
   const { data: seller } = await supabase
     .from("seller_profiles")
-    .select("trade_name,company_description,verification_status")
+    .select("trade_name,company_description,verification_status,logo_url")
     .eq("user_id", data.seller_id)
     .maybeSingle();
 

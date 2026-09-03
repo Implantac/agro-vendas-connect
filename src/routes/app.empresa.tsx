@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadSellerLogo } from "@/lib/listing-manage";
 
 export const Route = createFileRoute("/app/empresa")({
   head: () => ({
@@ -41,6 +42,8 @@ function Empresa() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<CompanyForm>(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: seller, isLoading } = useQuery({
     queryKey: ["seller-profile", user?.id],
@@ -64,6 +67,7 @@ function Empresa() {
         company_description: seller.company_description ?? "",
         website: seller.website ?? "",
       });
+      setLogoUrl(seller.logo_url ?? null);
     } else if (profile) {
       setForm((f) => (f.trade_name ? f : { ...f, trade_name: profile.full_name }));
     }
@@ -84,6 +88,7 @@ function Empresa() {
       legal_name: form.legal_name.trim() || form.trade_name.trim(),
       trade_name: form.trade_name.trim(),
       company_description: form.company_description.trim() || null,
+      logo_url: logoUrl,
       website: form.website.trim() || null,
     };
     const { error } = seller
@@ -96,6 +101,28 @@ function Empresa() {
     }
     toast.success("Dados da empresa atualizados.");
     void queryClient.invalidateQueries({ queryKey: ["seller-profile"] });
+  }
+
+  async function handleLogo(file: File | undefined) {
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const url = await uploadSellerLogo(user.id, file);
+      setLogoUrl(url);
+      if (seller) {
+        const { error } = await supabase
+          .from("seller_profiles")
+          .update({ logo_url: url })
+          .eq("id", seller.id);
+        if (error) throw error;
+        void queryClient.invalidateQueries({ queryKey: ["seller-profile"] });
+      }
+      toast.success("Foto da empresa atualizada.");
+    } catch {
+      toast.error("Não foi possível enviar a foto.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
@@ -111,9 +138,29 @@ function Empresa() {
         ) : (
           <>
             <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary text-forest">
-                <Building2 className="h-6 w-6" />
-              </span>
+              <div className="flex flex-col items-center gap-2">
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={form.trade_name || "Logo da empresa"}
+                    className="h-16 w-16 rounded-lg border border-border object-cover"
+                  />
+                ) : (
+                  <span className="flex h-16 w-16 items-center justify-center rounded-lg bg-secondary text-forest">
+                    <Building2 className="h-7 w-7" />
+                  </span>
+                )}
+                <label className="cursor-pointer text-xs font-medium text-forest underline">
+                  {uploading ? "Enviando..." : logoUrl ? "Trocar foto" : "Enviar foto"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploading}
+                    onChange={(e) => void handleLogo(e.target.files?.[0])}
+                  />
+                </label>
+              </div>
               <div>
                 <p className="text-base font-semibold text-forest">
                   {form.trade_name || "Empresa não cadastrada"}

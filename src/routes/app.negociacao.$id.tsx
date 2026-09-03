@@ -58,6 +58,25 @@ function NegotiationDetail() {
     refetchInterval: 20_000,
   });
 
+  const { data: order } = useQuery({
+    queryKey: ["negotiation-order", id],
+    queryFn: () => fetchOrderByProposal(id),
+  });
+
+  const orderStatus = useMutation({
+    mutationFn: async (status: "awaiting_payment" | "in_delivery" | "completed" | "cancelled") => {
+      if (!user || !order) return;
+      await updateOrderStatus(order.id, status, user.id);
+    },
+    onSuccess: () => {
+      toast.success("Pedido atualizado");
+      void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
+    },
+    onError: () => toast.error("Não foi possível atualizar o pedido."),
+  });
+
+
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [data?.messages.length]);

@@ -93,36 +93,15 @@ function Publicar() {
   async function submit() {
     if (!user) return;
     setSubmitting(true);
-    const slugBase = draft.title
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 60);
-    const slug = `${slugBase}-${Math.random().toString(36).slice(2, 8)}`;
-    const { error } = await supabase.from("listings").insert({
-      seller_id: user.id,
-      category_id: draft.categoryId || null,
-      title: draft.title.trim(),
-      slug,
-      brand: draft.brand || null,
-      model: draft.model || null,
-      manufacture_year: draft.year ? Number(draft.year) : null,
-      condition: (draft.condition || "used") as "new" | "semi_new" | "used",
-      hours_used: draft.hours ? Number(draft.hours) : null,
-      description: draft.description,
-      price: draft.priceOnRequest ? null : Number(draft.price),
-      price_on_request: draft.priceOnRequest,
-      city: draft.city || null,
-      state: draft.state || null,
-      status: "in_review",
-    });
-    setSubmitting(false);
-    if (error) {
+    try {
+      const created = await createListing(user.id, draft, "in_review");
+      if (photos.length) await uploadListingPhotos(user.id, created.id, photos, 0);
+    } catch {
+      setSubmitting(false);
       toast.error("Não foi possível enviar o anúncio. Tente novamente.");
       return;
     }
+    setSubmitting(false);
     toast.success("Anúncio enviado para análise! Avisaremos quando for aprovado.");
     void navigate({ to: "/app/meus-anuncios" });
   }

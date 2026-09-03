@@ -9,6 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/cadastro")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    ...(typeof search["plano"] === "string" ? { plano: search["plano"] } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Solicitar acesso | DDP AGRO" },

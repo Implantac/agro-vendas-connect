@@ -15,7 +15,14 @@ import {
   notifyCounterpart,
 } from "@/lib/negotiation-queries";
 import { sendMessage } from "@/lib/app-queries";
-import { CONDITION_LABELS, formatBRL, formatDateTimeBR, PROPOSAL_STATUS_LABELS } from "@/lib/format";
+import {
+  CONDITION_LABELS,
+  formatBRL,
+  formatDateTimeBR,
+  ORDER_STATUS_LABELS,
+  PROPOSAL_STATUS_LABELS,
+} from "@/lib/format";
+import { ensureOrderForProposal, fetchOrderByProposal, updateOrderStatus } from "@/lib/orders";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/negociacao/$id")({

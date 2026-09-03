@@ -37,12 +37,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   async function loadProfile(userId: string) {
-    const [{ data: prof }, { data: roles }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", userId),
-    ]);
-    setProfile((prof as Profile) ?? null);
-    setIsAdmin(Boolean(roles?.some((r) => r.role === "admin")));
+    setLoading(true);
+    try {
+      const [{ data: prof }, { data: roles }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
+      ]);
+      setProfile((prof as Profile) ?? null);
+      setIsAdmin(Boolean(roles?.some((r) => r.role === "admin")));
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {

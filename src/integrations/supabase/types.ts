@@ -1098,6 +1098,27 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]
       }
+      respond_proposal: {
+        Args: { _action: string; _amount?: number; _proposal_id: string }
+        Returns: {
+          amount: number
+          buyer_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          listing_id: string
+          message: string | null
+          seller_id: string
+          status: Database["public"]["Enums"]["proposal_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "proposals"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       shares_deal_with: { Args: { _other: string }; Returns: boolean }
     }
     Enums: {

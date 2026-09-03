@@ -2,23 +2,23 @@ import {
   BadgeCheck,
   BarChart3,
   Bell,
-  Building2,
   ClipboardList,
-  Compass,
+  Flag,
   Handshake,
   Heart,
   Home,
-  Inbox,
   LayoutDashboard,
   MessageSquare,
+  Package,
   Plus,
   Search,
   Settings,
   ShieldCheck,
   Store,
-  Tag,
+  Target,
   User,
   Users,
+  Wallet,
 } from "lucide-react";
 
 /** Experiência ativa. Cada papel tem seu próprio shell — não há toggle global. */
@@ -30,12 +30,14 @@ export type AppRoute =
   | "/app/favoritos"
   | "/app/negociacoes"
   | "/app/propostas"
+  | "/app/pedidos"
   | "/app/mensagens"
   | "/app/notificacoes"
   | "/app/perfil"
   | "/app/configuracoes"
   | "/app/meus-anuncios"
   | "/app/publicar"
+  | "/app/leads"
   | "/app/propostas-recebidas"
   | "/app/desempenho"
   | "/app/empresa"
@@ -43,6 +45,10 @@ export type AppRoute =
   | "/app/admin/membros"
   | "/app/admin/membresias"
   | "/app/admin/anuncios"
+  | "/app/admin/negociacoes"
+  | "/app/admin/pedidos"
+  | "/app/admin/denuncias"
+  | "/app/admin/financeiro"
   | "/app/admin/auditoria";
 
 export interface NavItem {
@@ -63,6 +69,7 @@ export interface NavGroup {
 export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/meus-anuncios",
   "/app/publicar",
+  "/app/leads",
   "/app/propostas-recebidas",
   "/app/desempenho",
   "/app/empresa",
@@ -77,85 +84,75 @@ export const BUYER_ONLY_ROUTES: AppRoute[] = ["/app/comprar", "/app/favoritos"];
 export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
   comprador: [
     {
-      label: "Explorar",
+      label: "Comprar",
       items: [
-        { to: "/app", label: "Explorar", icon: Compass, exact: true },
-        { to: "/app/comprar", label: "Buscar implementos", icon: Search },
+        { to: "/app", label: "Início", icon: Home, exact: true },
+        { to: "/app/comprar", label: "Buscar máquinas", icon: Search },
         { to: "/app/favoritos", label: "Favoritos", icon: Heart },
       ],
     },
     {
-      label: "Negociações",
+      label: "Minhas negociações",
       items: [
         { to: "/app/negociacoes", label: "Negociações", icon: Handshake },
-        { to: "/app/propostas", label: "Propostas", icon: Tag },
         { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
+        { to: "/app/pedidos", label: "Pedidos", icon: Package },
         { to: "/app/notificacoes", label: "Notificações", icon: Bell, badgeKey: "notifications" },
       ],
     },
     {
       label: "Conta",
-      items: [
-        { to: "/app/perfil", label: "Meu perfil", icon: User },
-        { to: "/app/configuracoes", label: "Configurações", icon: Settings },
-      ],
+      items: [{ to: "/app/perfil", label: "Perfil", icon: User }],
     },
   ],
   vendedor: [
     {
-      label: "Central",
-      items: [{ to: "/app", label: "Central de vendas", icon: Store, exact: true }],
-    },
-    {
-      label: "Anúncios",
+      label: "Vender",
       items: [
+        { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
         { to: "/app/publicar", label: "Publicar anúncio", icon: Plus, variant: "primary" },
         { to: "/app/meus-anuncios", label: "Meus anúncios", icon: ClipboardList },
+        { to: "/app/leads", label: "Leads/Interessados", icon: Target },
       ],
     },
     {
-      label: "Negociações",
+      label: "Pipeline",
       items: [
-        { to: "/app/propostas-recebidas", label: "Propostas", icon: Inbox },
         { to: "/app/negociacoes", label: "Negociações", icon: Handshake },
         { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
+        { to: "/app/pedidos", label: "Pedidos", icon: Package },
+        { to: "/app/desempenho", label: "Desempenho", icon: BarChart3 },
         { to: "/app/notificacoes", label: "Notificações", icon: Bell, badgeKey: "notifications" },
       ],
     },
     {
-      label: "Desempenho",
-      items: [{ to: "/app/desempenho", label: "Desempenho", icon: BarChart3 }],
-    },
-    {
       label: "Conta",
-      items: [
-        { to: "/app/empresa", label: "Minha empresa", icon: Building2 },
-        { to: "/app/perfil", label: "Meu perfil", icon: User },
-        { to: "/app/configuracoes", label: "Configurações", icon: Settings },
-      ],
+      items: [{ to: "/app/perfil", label: "Perfil", icon: User }],
     },
   ],
   admin: [
     {
-      label: "Command center",
-      items: [{ to: "/app/admin", label: "Visão geral", icon: LayoutDashboard, exact: true }],
-    },
-    {
-      label: "Plataforma",
+      label: "Operação",
       items: [
-        { to: "/app/admin/membros", label: "Membros", icon: Users },
-        { to: "/app/admin/membresias", label: "Membresias", icon: BadgeCheck },
+        { to: "/app/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+        { to: "/app/admin/membros", label: "Usuários", icon: Users },
+        { to: "/app/admin/membresias", label: "Aprovações", icon: BadgeCheck },
         { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
       ],
     },
     {
-      label: "Segurança",
-      items: [{ to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck }],
+      label: "Negócios",
+      items: [
+        { to: "/app/admin/negociacoes", label: "Negociações", icon: Handshake },
+        { to: "/app/admin/pedidos", label: "Pedidos", icon: Package },
+        { to: "/app/admin/financeiro", label: "Financeiro", icon: Wallet },
+      ],
     },
     {
-      label: "Configuração",
+      label: "Confiança",
       items: [
-        { to: "/app/perfil", label: "Meu perfil", icon: User },
+        { to: "/app/admin/denuncias", label: "Denúncias", icon: Flag },
+        { to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck },
         { to: "/app/configuracoes", label: "Configurações", icon: Settings },
       ],
     },
@@ -164,24 +161,24 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
 
 export const BOTTOM_NAV_BY_ROLE: Record<AppMode, NavItem[]> = {
   comprador: [
-    { to: "/app", label: "Explorar", icon: Home, exact: true },
     { to: "/app/comprar", label: "Buscar", icon: Search },
     { to: "/app/favoritos", label: "Favoritos", icon: Heart },
+    { to: "/app/negociacoes", label: "Negócios", icon: Handshake },
     { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
     { to: "/app/perfil", label: "Perfil", icon: User },
   ],
   vendedor: [
-    { to: "/app", label: "Central", icon: Home, exact: true },
+    { to: "/app", label: "Painel", icon: Home, exact: true },
     { to: "/app/meus-anuncios", label: "Anúncios", icon: ClipboardList },
     { to: "/app/publicar", label: "Publicar", icon: Plus, variant: "primary" },
-    { to: "/app/propostas-recebidas", label: "Propostas", icon: Inbox },
+    { to: "/app/leads", label: "Leads", icon: Target },
     { to: "/app/perfil", label: "Perfil", icon: User },
   ],
   admin: [
-    { to: "/app/admin", label: "Overview", icon: Home, exact: true },
-    { to: "/app/admin/membros", label: "Membros", icon: Users },
+    { to: "/app/admin", label: "Painel", icon: Home, exact: true },
+    { to: "/app/admin/membros", label: "Usuários", icon: Users },
     { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
-    { to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck },
+    { to: "/app/admin/denuncias", label: "Denúncias", icon: Flag },
     { to: "/app/perfil", label: "Perfil", icon: User },
   ],
 };

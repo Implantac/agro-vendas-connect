@@ -92,14 +92,15 @@ function Index() {
               <Link to="/cadastro">Solicitar acesso</Link>
             </Button>
           </div>
-          <dl className="mt-14 grid max-w-2xl grid-cols-2 gap-6 border-t border-primary-foreground/20 pt-8 sm:grid-cols-3">
+          <dl className="mt-14 grid max-w-2xl grid-cols-2 gap-6 border-t border-primary-foreground/20 pt-8 sm:grid-cols-4">
             {[
-              ["Análise documental", "em todo cadastro"],
-              ["Moderação técnica", "em todo anúncio"],
-              ["Histórico auditável", "em toda proposta"],
+              [String(stats?.listings ?? 0), "implementos publicados"],
+              [String(stats?.categories ?? 0), "linhas de equipamento"],
+              [String(stats?.states ?? 0), "estados atendidos"],
+              [String(stats?.verifiedSellers ?? 0), "vendedores verificados"],
             ].map(([t, s]) => (
-              <div key={t}>
-                <dt className="font-display text-sm font-semibold text-primary-foreground">{t}</dt>
+              <div key={s}>
+                <dt className="font-display text-2xl font-bold text-primary-foreground">{t}</dt>
                 <dd className="text-xs text-primary-foreground/65">{s}</dd>
               </div>
             ))}

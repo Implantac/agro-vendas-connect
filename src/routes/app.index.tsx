@@ -134,7 +134,7 @@ function KpiGrid({ cards }: { cards: KpiCard[] }) {
   );
 }
 
-function RecentActivity({ userId }: { userId?: string }) {
+function RecentActivity({ userId }: { userId?: string | undefined }) {
   const { data: notifications = [] } = useQuery({
     queryKey: ["notifications", userId],
     queryFn: () => fetchNotifications(userId!),

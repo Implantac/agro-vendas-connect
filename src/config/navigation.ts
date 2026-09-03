@@ -29,7 +29,6 @@ export type AppRoute =
   | "/app/comprar"
   | "/app/favoritos"
   | "/app/negociacoes"
-  | "/app/propostas"
   | "/app/pedidos"
   | "/app/mensagens"
   | "/app/notificacoes"
@@ -38,7 +37,6 @@ export type AppRoute =
   | "/app/meus-anuncios"
   | "/app/publicar"
   | "/app/leads"
-  | "/app/propostas-recebidas"
   | "/app/desempenho"
   | "/app/empresa"
   | "/app/admin"
@@ -70,7 +68,6 @@ export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/meus-anuncios",
   "/app/publicar",
   "/app/leads",
-  "/app/propostas-recebidas",
   "/app/desempenho",
   "/app/empresa",
 ];

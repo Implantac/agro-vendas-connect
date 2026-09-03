@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Archive, Eye, ListChecks, PauseCircle, PlusCircle, PlayCircle } from "lucide-react";
+import {
+  Archive,
+  Eye,
+  ListChecks,
+  PauseCircle,
+  Pencil,
+  PlusCircle,
+  PlayCircle,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -37,6 +46,15 @@ function MeusAnuncios() {
       void queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
     onError: () => toast.error("Não foi possível atualizar o anúncio."),
+  });
+
+  const removeListing = useMutation({
+    mutationFn: (id: string) => deleteListing(id),
+    onSuccess: () => {
+      toast.success("Anúncio excluído.");
+      void queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    },
+    onError: () => toast.error("Não foi possível excluir o anúncio."),
   });
 
   return (
@@ -119,21 +137,26 @@ function MeusAnuncios() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   {l.status === "approved" && (
-                    <>
-                      <Button asChild variant="outline" size="sm">
-                        <Link to="/implementos/$slug" params={{ slug: l.slug }}>
-                          <Eye className="mr-1.5 h-4 w-4" /> Ver
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        disabled={updateStatus.isPending}
-                        onClick={() => updateStatus.mutate({ id: l.id, status: "paused" })}
-                      >
-                        <PauseCircle className="mr-1.5 h-4 w-4" /> Pausar
-                      </Button>
-                    </>
+                    <Button asChild variant="outline" size="sm">
+                      <Link to="/implementos/$slug" params={{ slug: l.slug }}>
+                        <Eye className="mr-1.5 h-4 w-4" /> Ver
+                      </Link>
+                    </Button>
+                  )}
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/app/anuncio/$id" params={{ id: l.id }}>
+                      <Pencil className="mr-1.5 h-4 w-4" /> Editar
+                    </Link>
+                  </Button>
+                  {l.status === "approved" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={updateStatus.isPending}
+                      onClick={() => updateStatus.mutate({ id: l.id, status: "paused" })}
+                    >
+                      <PauseCircle className="mr-1.5 h-4 w-4" /> Pausar
+                    </Button>
                   )}
                   {l.status === "paused" && (
                     <Button
@@ -149,13 +172,24 @@ function MeusAnuncios() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-destructive hover:text-destructive"
                       disabled={updateStatus.isPending}
                       onClick={() => updateStatus.mutate({ id: l.id, status: "archived" })}
                     >
-                      <Archive className="mr-1.5 h-4 w-4" /> Excluir
+                      <Archive className="mr-1.5 h-4 w-4" /> Arquivar
                     </Button>
                   )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                    disabled={removeListing.isPending}
+                    onClick={() => {
+                      if (window.confirm("Excluir definitivamente este anúncio?"))
+                        removeListing.mutate(l.id);
+                    }}
+                  >
+                    <Trash2 className="mr-1.5 h-4 w-4" /> Excluir
+                  </Button>
                 </div>
               </div>
             );

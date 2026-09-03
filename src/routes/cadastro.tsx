@@ -58,7 +58,7 @@ function Cadastro() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -74,11 +74,19 @@ function Cadastro() {
         },
       },
     });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       toast.error("Não foi possível concluir o cadastro", { description: error.message });
       return;
     }
+    if (data.user && data.session) {
+      try {
+        await recordLegalAcceptances(data.user.id);
+      } catch {
+        // o aceite será solicitado novamente no primeiro acesso
+      }
+    }
+    setLoading(false);
     toast.success("Cadastro criado", {
       description: "Agora conclua o pagamento da membresia para seguir para a análise.",
     });

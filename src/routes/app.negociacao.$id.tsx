@@ -117,6 +117,7 @@ function NegotiationDetail() {
       toast.success("Negociação atualizada");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
       void queryClient.invalidateQueries({ queryKey: ["proposals"] });
+      void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

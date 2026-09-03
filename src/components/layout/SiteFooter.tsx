@@ -24,6 +24,7 @@ const COLUMNS = [
       { to: "/termos-de-uso", label: "Termos de uso" },
       { to: "/politica-de-privacidade", label: "Política de privacidade" },
       { to: "/politica-de-cookies", label: "Política de cookies" },
+      { to: "/termo-de-aceite", label: "Termo de aceite e riscos" },
     ],
   },
 ] as const;

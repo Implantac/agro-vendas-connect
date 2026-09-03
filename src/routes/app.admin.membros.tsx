@@ -48,6 +48,14 @@ function AdminMembers() {
     queryFn: () => fetchAdminMembers(status || undefined),
   });
 
+  const { data: requests = [] } = useQuery({
+    queryKey: ["admin", "memberships", "all"],
+    queryFn: () => fetchAdminMembershipRequests(),
+  });
+
+  const requestByUser = new Map(requests.map((r) => [r.user_id, r]));
+  const pendingReview = requests.filter((r) => r.status === "in_review").length;
+
   const mutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: "approved" | "rejected" | "suspended" }) =>
       setMemberStatus(id, next),

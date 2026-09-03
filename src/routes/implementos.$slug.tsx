@@ -118,7 +118,7 @@ function ListingDetail() {
     technical_data_json: Record<string, string>;
     categories?: { name: string; slug: string } | null;
     listing_media?: { url: string; is_cover: boolean; sort_order: number }[];
-    seller_profiles?: { trade_name: string; company_description: string | null; verification_status: string } | null;
+    seller_profiles?: { trade_name: string; company_description: string | null; verification_status: string; logo_url?: string | null } | null;
   };
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
@@ -236,12 +236,26 @@ function ListingDetail() {
 
               <div className="mt-6 border-t border-border pt-5">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">Vendedor</p>
-                <p className="mt-1 flex items-center gap-2 font-display text-sm font-semibold text-forest">
-                  {l.seller_profiles?.trade_name ?? "Vendedor verificado"}
-                  {l.seller_profiles?.verification_status === "approved" && (
-                    <ShieldCheck className="h-4 w-4 text-success" />
+                <div className="mt-1 flex items-center gap-3">
+                  {l.seller_profiles?.logo_url ? (
+                    <img
+                      src={l.seller_profiles.logo_url}
+                      alt={l.seller_profiles.trade_name}
+                      className="h-10 w-10 rounded-md border border-border object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-secondary text-forest">
+                      <Building2 className="h-5 w-5" />
+                    </span>
                   )}
-                </p>
+                  <p className="flex items-center gap-2 font-display text-sm font-semibold text-forest">
+                    {l.seller_profiles?.trade_name ?? "Vendedor verificado"}
+                    {l.seller_profiles?.verification_status === "approved" && (
+                      <ShieldCheck className="h-4 w-4 text-success" />
+                    )}
+                  </p>
+                </div>
                 {l.seller_profiles?.company_description && (
                   <p className="mt-1 text-xs text-muted-foreground">
                     {l.seller_profiles.company_description}

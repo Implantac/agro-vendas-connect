@@ -39,9 +39,27 @@ const PROFILE_STATUS = {
 } as const;
 
 function Perfil() {
-  const { user, profile } = useAuth();
+  const { user, profile, isAdmin, refreshProfile } = useAuth();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
+  const [switching, setSwitching] = useState(false);
+
+  async function switchRole(role: "buyer" | "seller" | "admin") {
+    if (!user) return;
+    setSwitching(true);
+    const { error } = await supabase.rpc("admin_set_member_role", {
+      _user_id: user.id,
+      _role: role,
+    });
+    setSwitching(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Perfil alterado.");
+    await refreshProfile();
+    void queryClient.invalidateQueries();
+  }
   const [form, setForm] = useState({
     full_name: profile?.full_name ?? "",
     phone: profile?.phone ?? "",

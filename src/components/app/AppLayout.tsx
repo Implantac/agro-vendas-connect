@@ -345,13 +345,13 @@ function SidebarNav({
 }) {
   return (
     <>
-      <nav className={cn("space-y-5 px-3 py-5", showFilters ? "shrink-0" : "flex-1")}>
+      <nav className={cn("space-y-3 px-3 py-4", showFilters ? "shrink-0" : "flex-1")}>
         {groups.map((group) => (
           <div key={group.label}>
-            <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {group.label}
             </p>
-            <ul className="space-y-0.5">
+            <ul className="space-y-px">
               {group.items.map((item) => {
                 const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
                 return (
@@ -360,17 +360,20 @@ function SidebarNav({
                       to={item.to}
                       onClick={onNavigate}
                       className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        "relative flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                         item.variant === "primary"
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          ? "mt-1 mb-1 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
                           : active
                             ? "bg-secondary text-forest"
                             : "text-muted-foreground hover:bg-secondary/60 hover:text-forest",
                       )}
                     >
+                      {active && item.variant !== "primary" && (
+                        <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-accent" />
+                      )}
                       <item.icon
                         className={cn(
-                          "h-4 w-4",
+                          "h-4 w-4 shrink-0",
                           item.variant === "primary" ? "" : active ? "text-accent" : "",
                         )}
                       />
@@ -388,7 +391,7 @@ function SidebarNav({
           <BuyerFilterPanel onApplied={onNavigate} />
         </section>
       )}
-      <div className="border-t border-border px-5 py-4">
+      <div className="mt-auto shrink-0 border-t border-border px-5 py-3">
         <p className="font-display text-xs font-bold text-forest">DDP AGRO</p>
         <p className="text-[11px] text-muted-foreground">Marketplace fechado</p>
         <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">

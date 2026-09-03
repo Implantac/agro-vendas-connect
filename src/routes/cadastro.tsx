@@ -32,6 +32,7 @@ export const Route = createFileRoute("/cadastro")({
 
 function Cadastro() {
   const navigate = useNavigate();
+  const { plano } = Route.useSearch();
   const [form, setForm] = useState({
     full_name: "",
     email: "",

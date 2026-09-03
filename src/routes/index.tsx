@@ -5,7 +5,7 @@ import hero from "@/assets/hero-campo.jpg";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/catalog/ListingCard";
 import { Button } from "@/components/ui/button";
-import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
+import { fetchApprovedListings, fetchCategories, fetchPlatformStats } from "@/lib/queries";
 
 export const Route = createFileRoute("/")({
   head: () => ({

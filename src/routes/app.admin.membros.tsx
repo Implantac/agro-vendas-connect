@@ -3,8 +3,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
+import {
+  AdminCreateMemberDialog,
+  AdminEditMemberDialog,
+} from "@/components/app/AdminMemberDialogs";
 import { Button } from "@/components/ui/button";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
+
 import { formatBRL } from "@/lib/format";
 import {
   fetchAdminMembershipRequests,

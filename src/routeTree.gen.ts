@@ -35,6 +35,7 @@ import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes
 import { Route as AppDesempenhoRouteImport } from './routes/app.desempenho'
 import { Route as AppEmpresaRouteImport } from './routes/app.empresa'
 import { Route as AppFavoritosRouteImport } from './routes/app.favoritos'
+import { Route as AppLeadsRouteImport } from './routes/app.leads'
 import { Route as AppMensagensRouteImport } from './routes/app.mensagens'
 import { Route as AppMeusAnunciosRouteImport } from './routes/app.meus-anuncios'
 import { Route as AppNegociacoesRouteImport } from './routes/app.negociacoes'
@@ -183,6 +184,11 @@ const AppFavoritosRoute = AppFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLeadsRoute = AppLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMensagensRoute = AppMensagensRouteImport.update({
   id: '/mensagens',
   path: '/mensagens',
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/app/desempenho': typeof AppDesempenhoRoute
   '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
@@ -339,6 +346,7 @@ export interface FileRoutesByTo {
   '/app/desempenho': typeof AppDesempenhoRoute
   '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
@@ -385,6 +393,7 @@ export interface FileRoutesById {
   '/app/desempenho': typeof AppDesempenhoRoute
   '/app/empresa': typeof AppEmpresaRoute
   '/app/favoritos': typeof AppFavoritosRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/mensagens': typeof AppMensagensRoute
   '/app/meus-anuncios': typeof AppMeusAnunciosRoute
   '/app/negociacoes': typeof AppNegociacoesRoute
@@ -432,6 +441,7 @@ export interface FileRouteTypes {
     | '/app/desempenho'
     | '/app/empresa'
     | '/app/favoritos'
+    | '/app/leads'
     | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
@@ -476,6 +486,7 @@ export interface FileRouteTypes {
     | '/app/desempenho'
     | '/app/empresa'
     | '/app/favoritos'
+    | '/app/leads'
     | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/app/desempenho'
     | '/app/empresa'
     | '/app/favoritos'
+    | '/app/leads'
     | '/app/mensagens'
     | '/app/meus-anuncios'
     | '/app/negociacoes'
@@ -749,6 +761,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFavoritosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/leads': {
+      id: '/app/leads'
+      path: '/leads'
+      fullPath: '/app/leads'
+      preLoaderRoute: typeof AppLeadsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/mensagens': {
       id: '/app/mensagens'
       path: '/mensagens'
@@ -877,6 +896,7 @@ interface AppRouteChildren {
   AppDesempenhoRoute: typeof AppDesempenhoRoute
   AppEmpresaRoute: typeof AppEmpresaRoute
   AppFavoritosRoute: typeof AppFavoritosRoute
+  AppLeadsRoute: typeof AppLeadsRoute
   AppMensagensRoute: typeof AppMensagensRoute
   AppMeusAnunciosRoute: typeof AppMeusAnunciosRoute
   AppNegociacoesRoute: typeof AppNegociacoesRoute
@@ -902,6 +922,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDesempenhoRoute: AppDesempenhoRoute,
   AppEmpresaRoute: AppEmpresaRoute,
   AppFavoritosRoute: AppFavoritosRoute,
+  AppLeadsRoute: AppLeadsRoute,
   AppMensagensRoute: AppMensagensRoute,
   AppMeusAnunciosRoute: AppMeusAnunciosRoute,
   AppNegociacoesRoute: AppNegociacoesRoute,

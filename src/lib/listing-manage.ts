@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { normalizeListingPhoto } from "@/lib/image-normalize";
 
 const BUCKET = "listing-photos";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 anos

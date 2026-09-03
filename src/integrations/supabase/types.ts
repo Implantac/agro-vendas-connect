@@ -1098,6 +1098,7 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]
       }
+      shares_deal_with: { Args: { _other: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

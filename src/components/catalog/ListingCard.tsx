@@ -1,13 +1,9 @@
 import { type MouseEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MapPin, Clock, Calendar, Heart, Gauge, Lock } from "lucide-react";
-import fallback1 from "@/assets/maquina-1.jpg";
-import fallback2 from "@/assets/maquina-2.jpg";
+import { MapPin, Clock, Calendar, Heart, Gauge, Lock, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
-
-const FALLBACKS = [fallback1, fallback2];
 
 export interface ListingCardData {
   id: string;

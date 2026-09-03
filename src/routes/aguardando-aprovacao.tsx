@@ -58,6 +58,9 @@ function AwaitingApproval() {
         </ol>
 
         <div className="mt-10 flex flex-wrap gap-3">
+          <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link to="/membresia">Ver minha solicitação</Link>
+          </Button>
           <Button asChild variant="outline">
             <Link to="/catalogo">Ver catálogo</Link>
           </Button>

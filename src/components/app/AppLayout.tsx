@@ -94,25 +94,31 @@ export function AppLayout() {
         : "admin"
     : mode;
 
+  const blockedRoute =
+    ready &&
+    !isSuperAdmin &&
+    ((mode !== "vendedor" && isSellerOnlyRoute) ||
+      isAdminOnlyRoute ||
+      (mode !== "comprador" && isBuyerOnlyRoute));
+  // Admin entra direto no command center.
+  const needsAdminHome = ready && mode === "admin" && pathname === "/app";
+  const awaitingMembership = Boolean(memberStatus) && memberStatus !== "approved";
+
   useEffect(() => {
     if (!ready) return;
-    const blocked =
-      !isSuperAdmin &&
-      ((mode !== "vendedor" && isSellerOnlyRoute) ||
-        isAdminOnlyRoute ||
-        (mode !== "comprador" && isBuyerOnlyRoute));
-    if (blocked) {
+    if (blockedRoute) {
       toast.info("Esta área não pertence ao seu perfil de acesso.");
       void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
       return;
     }
-    // Admin entra direto no command center.
-    if (mode === "admin" && pathname === "/app") {
+    if (needsAdminHome) {
       void navigate({ to: "/app/admin", replace: true });
     }
-  }, [ready, mode, isSuperAdmin, isSellerOnlyRoute, isAdminOnlyRoute, isBuyerOnlyRoute, pathname, navigate]);
+  }, [ready, mode, blockedRoute, needsAdminHome, navigate]);
 
-  if (loading || !user) {
+  // Enquanto o perfil carrega ou há um redirecionamento pendente, não renderiza
+  // a tela — isso evitava o "flash" do dashboard antes do redirecionamento.
+  if (loading || !user || !ready || blockedRoute || needsAdminHome || awaitingMembership) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="text-sm text-muted-foreground">Carregando sua área...</p>

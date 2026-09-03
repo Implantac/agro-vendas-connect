@@ -32,6 +32,33 @@ export async function fetchCategories() {
   return data ?? [];
 }
 
+export interface PlatformStats {
+  listings: number;
+  categories: number;
+  states: number;
+  verifiedSellers: number;
+}
+
+/** Números reais da plataforma, usados na vitrine pública. */
+export async function fetchPlatformStats(): Promise<PlatformStats> {
+  const [listings, categories, sellers, regions] = await Promise.all([
+    supabase.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
+    supabase.from("categories").select("id", { count: "exact", head: true }).eq("active", true),
+    supabase
+      .from("seller_profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("verification_status", "approved"),
+    supabase.from("listings").select("state").eq("status", "approved").not("state", "is", null),
+  ]);
+
+  return {
+    listings: listings.count ?? 0,
+    categories: categories.count ?? 0,
+    states: new Set((regions.data ?? []).map((r) => r.state)).size,
+    verifiedSellers: sellers.count ?? 0,
+  };
+}
+
 export interface CatalogFilters {
   search?: string;
   category?: string;

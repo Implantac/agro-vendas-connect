@@ -166,6 +166,8 @@ function Comprar() {
         </div>
       </div>
 
+      <SavedSearches filters={filters} />
+
       {chips.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {chips.map((chip) => (

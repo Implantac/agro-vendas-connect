@@ -7,10 +7,19 @@ interface PhotoUploaderProps {
   onChange: (files: File[]) => void;
   max?: number;
   className?: string;
+  /** id do input de arquivo (usado por labels e testes). */
+  inputId?: string;
 }
 
 /** Seleção de fotos com pré-visualização em tamanho padrão (4:3). */
-export function PhotoUploader({ files, onChange, max = 12, className }: PhotoUploaderProps) {
+export function PhotoUploader({
+  files,
+  onChange,
+  max = 12,
+  className,
+  inputId = "photos",
+}: PhotoUploaderProps) {
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -61,7 +70,9 @@ export function PhotoUploader({ files, onChange, max = 12, className }: PhotoUpl
         </p>
       </div>
       <input
+        id={inputId}
         ref={inputRef}
+
         type="file"
         accept="image/*"
         multiple

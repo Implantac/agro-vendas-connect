@@ -14,28 +14,36 @@
 
 ## Fase 2 — Auth e aprovação
 - [x] /cadastro (comprador/vendedor) e /entrar (e-mail + Google)
-- [ ] Recuperação de senha
+- [x] Recuperação de senha (/recuperar-senha e /redefinir-senha)
 - [x] Perfis, papéis em tabela separada, status de aprovação (banco + painel /app)
-- [ ] /aguardando-aprovacao, /cadastro-rejeitado, /aceite-atualizado
-- [ ] Termos versionados + registro de aceite
+- [x] /aguardando-aprovacao, /cadastro-rejeitado
+- [ ] /aceite-atualizado (reaceite quando o termo muda de versão)
+- [x] Termos versionados + registro de aceite no cadastro
 
 ## Fase 3 — Anúncios
-- [ ] CRUD de anúncios do vendedor + upload de fotos
-- [ ] Fluxo de moderação (rascunho > análise > aprovado/rejeitado)
-- [ ] Favoritos
+- [x] CRUD de anúncios do vendedor + upload de fotos (padronizadas 4:3)
+- [x] Fluxo de moderação (rascunho > análise > aprovado/rejeitado)
+- [x] Favoritos
 
 ## Fase 4 — Negociação
-- [ ] Propostas e contrapropostas
-- [ ] Pedidos
-- [ ] Chat entre partes autorizadas
-- [ ] Notificações
+- [x] Propostas e contrapropostas (validade 48h, RPC transacional)
+- [x] Pedidos com comissão automática
+- [x] Chat entre partes autorizadas (realtime)
+- [x] Notificações in-app
+- [ ] Notificações por e-mail
 
 ## Fase 5 — Admin
-- [ ] Dashboard, membros, moderação, pedidos, termos, LGPD, categorias, auditoria
+- [x] Dashboard consolidado, membros (criar/editar/senha), moderação, pedidos, denúncias, auditoria, financeiro, membresias
+- [ ] Gestão de categorias e atributos pela tela
+- [ ] Gestão de termos/versões pela tela
+- [ ] Tela de atendimento LGPD (privacy_requests) completa
 
 ## Fase 6 — Pagamentos e produção
-- [ ] Estrutura de gateway (Asaas) com feature flag
-- [ ] Webhooks, auditoria, documentação
+- [ ] Estrutura de gateway (Asaas) com feature flag — hoje pagamento é simulado
+- [ ] Webhook assinado de pagamento/assinatura
+- [ ] Busca salva com alertas
+- [ ] Pipeline operacional de leads (etapas editáveis)
+- [ ] Documentação final de operação
 
 ## Área logada (concluído)
 - [x] Layout logado: header fixo, busca global, notificações, sidebar agrupada, bottom nav mobile

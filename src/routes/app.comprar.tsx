@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { fetchApprovedListings } from "@/lib/queries";
 import { CONDITION_LABELS } from "@/lib/format";
 import { countActiveFilters, useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import { SavedSearches } from "@/components/app/SavedSearches";
 import { useState } from "react";
 
 const searchSchema = z.object({

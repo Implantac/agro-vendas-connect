@@ -133,7 +133,7 @@ async def main(base: str, email: str, password: str) -> int:
             await page.get_by_role("button", name="Continuar").click()
 
             # Etapa 5 — foto + envio
-            await page.wait_for_selector("#photos", timeout=15000)
+            await page.wait_for_selector("#photos", state="attached", timeout=15000)
             await page.set_input_files("#photos", photo)
             await page.get_by_role("button", name="Enviar para análise").click()
             await page.wait_for_url("**/app/meus-anuncios**", timeout=45000)
@@ -177,9 +177,10 @@ async def main(base: str, email: str, password: str) -> int:
                 "/app",
                 "/app/comprar",
                 "/app/favoritos",
-                "/app/propostas",
-                "/app/propostas-recebidas",
                 "/app/negociacoes",
+                "/app/pedidos",
+                "/app/leads",
+                "/app/desempenho",
                 "/app/mensagens",
                 "/app/notificacoes",
                 "/app/perfil",

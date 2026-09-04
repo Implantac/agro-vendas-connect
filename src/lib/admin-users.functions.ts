@@ -1,10 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 type MemberRole = "buyer" | "seller" | "admin";
 type MemberStatus = "pending" | "approved" | "rejected" | "suspended";
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+async function assertAdmin(context: {
+  supabase: SupabaseClient<Database>;
+  userId: string;
+}) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
@@ -12,6 +17,7 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Apenas administradores podem executar esta ação.");
 }
+
 
 /** Admin cria um novo membro já com senha definida. */
 export const adminCreateUser = createServerFn({ method: "POST" })

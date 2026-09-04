@@ -80,7 +80,7 @@ export async function createSavedSearch(
   const { error } = await supabase.from("saved_searches").insert({
     user_id: userId,
     name,
-    filters_json: filtersToJson(filters),
+    filters_json: filtersToJson(filters) as never,
     alerts_enabled: alertsEnabled,
   });
   if (error) throw error;

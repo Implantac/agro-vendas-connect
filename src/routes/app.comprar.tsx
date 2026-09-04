@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { fetchApprovedListings } from "@/lib/queries";
 import { CONDITION_LABELS } from "@/lib/format";
 import { countActiveFilters, useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import { SavedSearches } from "@/components/app/SavedSearches";
 import { useState } from "react";
 
 const searchSchema = z.object({
@@ -164,6 +165,8 @@ function Comprar() {
           </Select>
         </div>
       </div>
+
+      <SavedSearches filters={filters} />
 
       {chips.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-2">

@@ -993,6 +993,39 @@ export type Database = {
           },
         ]
       }
+      saved_searches: {
+        Row: {
+          alerts_enabled: boolean
+          created_at: string
+          filters_json: Json
+          id: string
+          last_notified_at: string | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alerts_enabled?: boolean
+          created_at?: string
+          filters_json?: Json
+          id?: string
+          last_notified_at?: string | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alerts_enabled?: boolean
+          created_at?: string
+          filters_json?: Json
+          id?: string
+          last_notified_at?: string | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       seller_profiles: {
         Row: {
           company_description: string | null

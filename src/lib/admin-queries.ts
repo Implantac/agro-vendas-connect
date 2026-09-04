@@ -119,3 +119,89 @@ export async function setMemberRole(userId: string, role: "buyer" | "seller" | "
   });
   if (error) throw error;
 }
+
+export interface AdminConsole {
+  alerts: {
+    pendingMembers: number;
+    listingsInReview: number;
+    openReports: number;
+    membershipRequests: number;
+    ordersAwaitingPayment: number;
+  };
+  trust: {
+    approvedMembers: number;
+    totalMembers: number;
+    verifiedSellers: number;
+    totalSellers: number;
+    approvedListings: number;
+    totalListings: number;
+    documentsPending: number;
+  };
+  negotiations: {
+    id: string;
+    amount: number;
+    status: string;
+    updated_at: string;
+    title: string | null;
+  }[];
+  pipeline: { open: number; countered: number; accepted: number; closed: number };
+  gmv: number;
+}
+
+/** Painel consolidado do admin: alertas, confiança e negociações em uma única leitura. */
+export async function fetchAdminConsole(): Promise<AdminConsole> {
+  const [profiles, listings, reports, requests, orders, sellers, docs, proposals] = await Promise.all([
+    supabase.from("profiles").select("id, role, status"),
+    supabase.from("listings").select("id, status"),
+    supabase.from("reports").select("id, status"),
+    supabase.from("membership_requests").select("id, status"),
+    supabase.from("orders").select("id, status, amount"),
+    supabase.from("seller_profiles").select("id, verification_status"),
+    supabase.from("member_documents").select("id, status"),
+    supabase
+      .from("proposals")
+      .select("id, amount, status, updated_at, listings(title)")
+      .order("updated_at", { ascending: false })
+      .limit(8),
+  ]);
+
+  const p = profiles.data ?? [];
+  const l = listings.data ?? [];
+  const o = orders.data ?? [];
+  const pr = proposals.data ?? [];
+
+  return {
+    alerts: {
+      pendingMembers: p.filter((x) => x.status === "pending").length,
+      listingsInReview: l.filter((x) => x.status === "in_review").length,
+      openReports: (reports.data ?? []).filter((x) => x.status !== "resolved" && x.status !== "rejected").length,
+      membershipRequests: (requests.data ?? []).filter((x) =>
+        ["payment_pending", "in_review"].includes(x.status),
+      ).length,
+      ordersAwaitingPayment: o.filter((x) => ["created", "awaiting_payment"].includes(x.status)).length,
+    },
+    trust: {
+      approvedMembers: p.filter((x) => x.status === "approved").length,
+      totalMembers: p.length,
+      verifiedSellers: (sellers.data ?? []).filter((x) => x.verification_status === "approved").length,
+      totalSellers: (sellers.data ?? []).length,
+      approvedListings: l.filter((x) => x.status === "approved").length,
+      totalListings: l.length,
+      documentsPending: (docs.data ?? []).filter((x) => x.status === "pending").length,
+    },
+    negotiations: pr.map((x) => ({
+      id: x.id,
+      amount: Number(x.amount),
+      status: x.status,
+      updated_at: x.updated_at,
+      title: (x.listings as { title: string } | null)?.title ?? null,
+    })),
+    pipeline: {
+      open: pr.filter((x) => x.status === "open").length,
+      countered: pr.filter((x) => x.status === "countered").length,
+      accepted: pr.filter((x) => x.status === "accepted").length,
+      closed: o.filter((x) => x.status === "completed").length,
+    },
+    gmv: o.filter((x) => ["paid", "in_delivery", "completed"].includes(x.status)).reduce((s, x) => s + Number(x.amount), 0),
+  };
+}

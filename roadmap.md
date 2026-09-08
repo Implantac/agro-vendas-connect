@@ -41,8 +41,8 @@
 ## Fase 6 — Pagamentos e produção
 - [ ] Estrutura de gateway (Asaas) com feature flag — hoje pagamento é simulado
 - [ ] Webhook assinado de pagamento/assinatura
-- [ ] Busca salva com alertas
-- [ ] Pipeline operacional de leads (etapas editáveis)
+- [x] Busca salva com alertas (in-app)
+- [x] Pipeline de leads por etapa (derivado de eventos reais; sem etapas manuais por decisão de produto)
 - [ ] Documentação final de operação
 
 ## Área logada (concluído)
@@ -62,3 +62,14 @@
 - [x] Sprint 6 — Membresia: /aguardando-aprovacao, /cadastro-rejeitado, guard por status e CTA "Solicitar membresia" no login
 - [x] Membresia completa: /planos, /membresia (pagamento Pix/boleto/cartão simulado), análise e aprovação em /app/admin/membresias + tela de Membros atualizada
 - [x] Regra da plataforma: anúncios apenas usados/seminovos (wizard e filtros)
+
+## Evolução marketplace (concluído)
+- [x] Guardas no banco: dono/role/status imutáveis por usuário comum; proposta/pedido validados no banco
+- [x] Página do anúncio: galeria, código, resumo comercial, ficha técnica, selos de confiança reais
+- [x] Índice de completude do anúncio (edição)
+- [x] Minhas máquinas (listas, histórico de preço, disponibilidade) + Comparador (/app/comparar)
+- [x] Funil do vendedor por máquina; interessados sempre vinculados a anúncio
+- [x] Negociação: linha do tempo, validade 48h, vez de quem, condições comerciais estruturadas
+- [x] Command Center: saúde do marketplace (30 dias) com sinais acionáveis
+- [x] .env.example; .env contém apenas chaves publicáveis (sem service role)
+- [ ] Segunda conta de teste (comprador) para E2E da proposta ponta a ponta

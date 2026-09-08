@@ -34,7 +34,14 @@ const STEPS: { key: keyof SellerFunnel; label: string }[] = [
 
 /** Pontuação de proximidade de venda: pesa etapas mais avançadas. */
 function heat(r: SellerFunnel) {
-  return r.accepted * 100 + r.negotiating * 40 + r.proposals * 20 + r.contacts * 5 + r.interested * 2 + r.views * 0.2;
+  return (
+    r.accepted * 100 +
+    r.negotiating * 40 +
+    r.proposals * 20 +
+    r.contacts * 5 +
+    r.interested * 2 +
+    r.views * 0.2
+  );
 }
 
 function Desempenho() {
@@ -68,9 +75,7 @@ function Desempenho() {
             const conv = prev ? Math.round((v / prev) * 100) : null;
             return (
               <li key={s.key} className="rounded-md bg-secondary/60 p-3">
-                <p className="font-display text-2xl font-bold text-forest">
-                  {isLoading ? "—" : v}
-                </p>
+                <p className="font-display text-2xl font-bold text-forest">{isLoading ? "—" : v}</p>
                 <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
                   {s.label}
                 </p>
@@ -81,7 +86,9 @@ function Desempenho() {
                   />
                 </div>
                 {conv !== null && (
-                  <p className="mt-1 text-[10px] text-muted-foreground">{conv}% da etapa anterior</p>
+                  <p className="mt-1 text-[10px] text-muted-foreground">
+                    {conv}% da etapa anterior
+                  </p>
                 )}
               </li>
             );

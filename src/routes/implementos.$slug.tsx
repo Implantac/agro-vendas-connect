@@ -274,7 +274,8 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                   { label: "Ano", value: l.manufacture_year ? String(l.manufacture_year) : null },
                   {
                     label: "Horas",
-                    value: l.hours_used != null ? `${l.hours_used.toLocaleString("pt-BR")} h` : null,
+                    value:
+                      l.hours_used != null ? `${l.hours_used.toLocaleString("pt-BR")} h` : null,
                   },
                   ...specs.map((s) => ({ label: s.label, value: s.value })),
                 ]

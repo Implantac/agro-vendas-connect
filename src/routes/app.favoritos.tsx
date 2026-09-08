@@ -140,11 +140,15 @@ function Favoritos() {
           {groups.map(([name, items]) => (
             <section key={name}>
               <h2 className="mb-4 font-display text-base font-semibold text-forest">
-                {name} <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
+                {name}{" "}
+                <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
               </h2>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((f, i) => {
-                  const l = f.listings as ListingCardData & { status: string; price: number | null };
+                  const l = f.listings as ListingCardData & {
+                    status: string;
+                    price: number | null;
+                  };
                   const delta = priceDelta.get(l.id);
                   const checked = selected.includes(l.id);
                   const unavailable = l.status !== "approved";
@@ -166,7 +170,10 @@ function Favoritos() {
                           <span className="rounded-sm bg-warning/15 px-2 py-0.5 font-semibold text-warning">
                             {LISTING_STATUS_LABELS[l.status] ?? "Indisponível"}
                           </span>
-                        ) : delta && delta.old != null && delta.now != null && delta.old !== delta.now ? (
+                        ) : delta &&
+                          delta.old != null &&
+                          delta.now != null &&
+                          delta.old !== delta.now ? (
                           <span
                             className={cn(
                               "inline-flex items-center gap-1 rounded-sm px-2 py-0.5 font-semibold",
@@ -180,7 +187,8 @@ function Favoritos() {
                             ) : (
                               <ArrowUpRight className="h-3 w-3" />
                             )}
-                            {delta.now < delta.old ? "Baixou de" : "Subiu de"} {formatBRL(delta.old)}
+                            {delta.now < delta.old ? "Baixou de" : "Subiu de"}{" "}
+                            {formatBRL(delta.old)}
                           </span>
                         ) : (
                           <span className="text-muted-foreground">Disponível</span>

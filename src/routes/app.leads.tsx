@@ -36,13 +36,25 @@ function nextAction(l: SellerLead) {
     case "proposta":
       return { text: "Responder proposta", to: "negotiation" as const, primary: true };
     case "negociacao":
-      return { text: "Aguardando o comprador — acompanhe a conversa", to: "negotiation" as const, primary: false };
+      return {
+        text: "Aguardando o comprador — acompanhe a conversa",
+        to: "negotiation" as const,
+        primary: false,
+      };
     case "aceite":
-      return { text: "Combinar pagamento e retirada no pedido", to: "negotiation" as const, primary: true };
+      return {
+        text: "Combinar pagamento e retirada no pedido",
+        to: "negotiation" as const,
+        primary: true,
+      };
     case "contato":
       return { text: "Responder mensagem", to: "messages" as const, primary: true };
     case "interessado":
-      return { text: "Sem ação — mantenha o anúncio completo e com fotos", to: null, primary: false };
+      return {
+        text: "Sem ação — mantenha o anúncio completo e com fotos",
+        to: null,
+        primary: false,
+      };
     case "venda":
       return { text: "Negócio concluído", to: null, primary: false };
     default:
@@ -120,7 +132,9 @@ function Leads() {
                     <span
                       className={cn(
                         "rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
-                        action.primary ? "bg-accent/15 text-accent-foreground" : "bg-secondary text-forest",
+                        action.primary
+                          ? "bg-accent/15 text-accent-foreground"
+                          : "bg-secondary text-forest",
                       )}
                     >
                       {STAGES.find((s) => s.key === l.stage)?.label ?? l.stage}
@@ -155,7 +169,11 @@ function Leads() {
                   )}
                 </div>
                 {action.to === "negotiation" && l.proposalId ? (
-                  <Button asChild size="sm" className={cn(action.primary && "bg-forest hover:bg-forest/90")}>
+                  <Button
+                    asChild
+                    size="sm"
+                    className={cn(action.primary && "bg-forest hover:bg-forest/90")}
+                  >
                     <Link to="/app/negociacao/$id" params={{ id: l.proposalId }}>
                       Abrir <ArrowRight className="ml-1 h-3.5 w-3.5" />
                     </Link>

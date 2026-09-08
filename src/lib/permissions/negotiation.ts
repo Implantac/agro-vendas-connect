@@ -3,12 +3,7 @@
  * O frontend usa isto só para UX; o banco é a barreira real.
  */
 export type ProposalStatus =
-  | "open"
-  | "countered"
-  | "accepted"
-  | "rejected"
-  | "expired"
-  | "cancelled";
+  "open" | "countered" | "accepted" | "rejected" | "expired" | "cancelled";
 
 export const OPEN_STATUSES: ProposalStatus[] = ["open", "countered"];
 
@@ -63,12 +58,24 @@ export interface CommercialTerms {
 }
 
 export const TERM_FIELDS: { key: keyof CommercialTerms; label: string; placeholder: string }[] = [
-  { key: "pagamento", label: "Forma de pagamento", placeholder: "Ex.: 50% sinal + 50% na retirada" },
+  {
+    key: "pagamento",
+    label: "Forma de pagamento",
+    placeholder: "Ex.: 50% sinal + 50% na retirada",
+  },
   { key: "prazo", label: "Prazo", placeholder: "Ex.: até 15 dias após aceite" },
   { key: "transporte", label: "Transporte", placeholder: "Ex.: por conta do comprador" },
-  { key: "entrega", label: "Entrega / retirada", placeholder: "Ex.: retirada na fazenda, Apucarana/PR" },
+  {
+    key: "entrega",
+    label: "Entrega / retirada",
+    placeholder: "Ex.: retirada na fazenda, Apucarana/PR",
+  },
   { key: "documentacao", label: "Documentação", placeholder: "Ex.: nota fiscal de venda + recibo" },
-  { key: "observacoes", label: "Observações", placeholder: "Vistoria prévia, garantia, acessórios..." },
+  {
+    key: "observacoes",
+    label: "Observações",
+    placeholder: "Vistoria prévia, garantia, acessórios...",
+  },
 ];
 
 export function termsFilled(t: CommercialTerms | null | undefined) {

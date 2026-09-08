@@ -146,11 +146,25 @@ export interface AdminConsole {
   }[];
   pipeline: { open: number; countered: number; accepted: number; closed: number };
   gmv: number;
+  /** Saúde do marketplace nos últimos 30 dias — sinais acionáveis, não decorativos. */
+  health: {
+    views30d: number;
+    interested30d: number;
+    proposals30d: number;
+    accepted30d: number;
+    /** Propostas abertas que venceram sem resposta (vendedor lento). */
+    expiredNoReply: number;
+    /** Anúncios aprovados sem nenhuma visualização nos últimos 30 dias. */
+    staleListings: number;
+    /** Anúncios aprovados sem foto. */
+    listingsWithoutPhoto: number;
+  };
 }
 
 /** Painel consolidado do admin: alertas, confiança e negociações em uma única leitura. */
 export async function fetchAdminConsole(): Promise<AdminConsole> {
-  const [profiles, listings, reports, requests, orders, sellers, docs, proposals] =
+  const since = new Date(Date.now() - 30 * 864e5).toISOString();
+  const [profiles, listings, reports, requests, orders, sellers, docs, proposals, allProposals, events, media] =
     await Promise.all([
       supabase.from("profiles").select("id, role, status"),
       supabase.from("listings").select("id, status"),
@@ -164,12 +178,24 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
         .select("id, amount, status, updated_at, listings(title)")
         .order("updated_at", { ascending: false })
         .limit(8),
+      supabase.from("proposals").select("id, status, expires_at, created_at, updated_at"),
+      supabase
+        .from("listing_events")
+        .select("listing_id, event_type")
+        .gte("created_at", since),
+      supabase.from("listing_media").select("listing_id"),
     ]);
 
   const p = profiles.data ?? [];
   const l = listings.data ?? [];
   const o = orders.data ?? [];
   const pr = proposals.data ?? [];
+  const ap = allProposals.data ?? [];
+  const ev = events.data ?? [];
+  const withPhoto = new Set((media.data ?? []).map((m) => m.listing_id));
+  const viewed = new Set(ev.filter((e) => e.event_type === "view").map((e) => e.listing_id));
+  const approvedListings = l.filter((x) => x.status === "approved");
+  const now = Date.now();
 
   return {
     alerts: {
@@ -190,7 +216,7 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
       verifiedSellers: (sellers.data ?? []).filter((x) => x.verification_status === "approved")
         .length,
       totalSellers: (sellers.data ?? []).length,
-      approvedListings: l.filter((x) => x.status === "approved").length,
+      approvedListings: approvedListings.length,
       totalListings: l.length,
       documentsPending: (docs.data ?? []).filter((x) => x.status === "pending").length,
     },
@@ -202,13 +228,28 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
       title: (x.listings as { title: string } | null)?.title ?? null,
     })),
     pipeline: {
-      open: pr.filter((x) => x.status === "open").length,
-      countered: pr.filter((x) => x.status === "countered").length,
-      accepted: pr.filter((x) => x.status === "accepted").length,
+      open: ap.filter((x) => x.status === "open").length,
+      countered: ap.filter((x) => x.status === "countered").length,
+      accepted: ap.filter((x) => x.status === "accepted").length,
       closed: o.filter((x) => x.status === "completed").length,
     },
     gmv: o
       .filter((x) => ["paid", "in_delivery", "completed"].includes(x.status))
       .reduce((s, x) => s + Number(x.amount), 0),
+    health: {
+      views30d: ev.filter((e) => e.event_type === "view").length,
+      interested30d: ev.filter((e) => e.event_type === "favorite").length,
+      proposals30d: ap.filter((x) => x.created_at >= since).length,
+      accepted30d: ap.filter((x) => x.status === "accepted" && x.updated_at >= since).length,
+      expiredNoReply: ap.filter(
+        (x) =>
+          x.status === "expired" ||
+          (["open", "countered"].includes(x.status) &&
+            x.expires_at &&
+            new Date(x.expires_at).getTime() < now),
+      ).length,
+      staleListings: approvedListings.filter((x) => !viewed.has(x.id)).length,
+      listingsWithoutPhoto: approvedListings.filter((x) => !withPhoto.has(x.id)).length,
+    },
   };
 }

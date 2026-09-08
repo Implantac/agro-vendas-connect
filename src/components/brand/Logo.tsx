@@ -1,4 +1,4 @@
-import symbol from "@/assets/ddp-symbol.png";
+import symbolAsset from "@/assets/ddp-logo-symbol.png.asset.json";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -13,11 +13,11 @@ export function Logo({
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <img
-        src={symbol}
+        src={symbolAsset.url}
         alt="Símbolo DDP AGRO"
         width={40}
         height={40}
-        className="h-9 w-9 shrink-0"
+        className="h-9 w-9 shrink-0 object-contain"
       />
       {variant === "horizontal" && (
         <span className="flex flex-col leading-none">

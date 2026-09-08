@@ -73,4 +73,3 @@ export async function ensureConversation(proposal: {
   if (error) throw error;
   return data.id;
 }
-

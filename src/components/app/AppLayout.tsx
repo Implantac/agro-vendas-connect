@@ -147,9 +147,9 @@ export function AppLayout() {
       <header
         id="app-header"
         data-app-header="true"
-        className="fixed inset-x-0 top-0 z-40 h-16 shrink-0 border-b border-border bg-card"
+        className="fixed inset-x-0 top-0 z-40 h-20 shrink-0 border-b border-border bg-card"
       >
-        <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
+        <div className="flex h-20 items-center gap-3 px-4 sm:px-6">
           <button
             className="rounded-md p-2 text-forest hover:bg-secondary lg:hidden"
             onClick={() => setMobileMenu(true)}
@@ -277,7 +277,7 @@ export function AppLayout() {
       </header>
 
       {/* Sidebar desktop */}
-      <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-60 flex-col overflow-y-auto border-r border-border bg-card lg:flex">
+      <aside className="fixed bottom-0 left-0 top-20 z-30 hidden w-60 flex-col overflow-y-auto border-r border-border bg-card lg:flex">
         <SidebarNav
           groups={navGroups}
           showFilters={showFilters}
@@ -291,7 +291,7 @@ export function AppLayout() {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-forest/40" onClick={() => setMobileMenu(false)} />
           <div className="absolute bottom-0 left-0 top-0 flex w-72 flex-col overflow-y-auto bg-card shadow-xl">
-            <div className="flex h-16 items-center justify-between border-b border-border px-4">
+            <div className="flex h-20 items-center justify-between border-b border-border px-4">
               <Logo variant="symbol" />
               <button
                 className="rounded-md p-2 text-forest hover:bg-secondary"
@@ -312,7 +312,7 @@ export function AppLayout() {
       )}
 
       {/* Conteúdo */}
-      <main className="pb-24 pt-16 lg:pb-10 lg:pl-60">
+      <main className="pb-24 pt-20 lg:pb-10 lg:pl-60">
         <Outlet />
       </main>
 

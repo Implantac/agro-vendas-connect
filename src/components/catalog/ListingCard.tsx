@@ -4,6 +4,7 @@ import { MapPin, Clock, Calendar, Heart, Gauge, Lock, ImageOff } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
+import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 
 export interface ListingCardData {
   id: string;
@@ -126,11 +127,15 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
           <Button asChild size="sm" className="flex-1 bg-forest hover:bg-forest/90">
             <GatedLink>{isMember ? "Enviar proposta" : "Ser membro para negociar"}</GatedLink>
           </Button>
-          <Button asChild size="sm" variant="outline" className="px-3">
-            <GatedLink ariaLabel="Favoritar implemento">
-              <Heart className="h-4 w-4" />
-            </GatedLink>
-          </Button>
+          {isMember ? (
+            <FavoriteButton listingId={listing.id} />
+          ) : (
+            <Button asChild size="sm" variant="outline" className="px-3">
+              <GatedLink ariaLabel="Favoritar implemento">
+                <Heart className="h-4 w-4" />
+              </GatedLink>
+            </Button>
+          )}
         </div>
       </div>
     </article>

@@ -9,11 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { respondProposal } from "@/lib/app-queries";
-import {
-  ensureConversation,
-  fetchNegotiation,
-  notifyCounterpart,
-} from "@/lib/negotiation-queries";
+import { ensureConversation, fetchNegotiation, notifyCounterpart } from "@/lib/negotiation-queries";
 import { sendMessage } from "@/lib/app-queries";
 import {
   CONDITION_LABELS,
@@ -74,8 +70,6 @@ function NegotiationDetail() {
     },
     onError: () => toast.error("Não foi possível atualizar o pedido."),
   });
-
-
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });

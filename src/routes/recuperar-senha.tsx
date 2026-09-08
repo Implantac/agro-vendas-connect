@@ -77,7 +77,11 @@ function RecuperarSenha() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest/90">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-forest hover:bg-forest/90"
+            >
               {loading ? "Enviando..." : "Enviar link de redefinição"}
             </Button>
             <p className="text-center text-xs text-muted-foreground">

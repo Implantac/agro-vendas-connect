@@ -74,7 +74,8 @@ export function AdminCreateMemberDialog() {
       setForm({ ...form, full_name: "", email: "", password: "", phone: "" });
       void qc.invalidateQueries({ queryKey: ["admin"] });
     },
-    onError: (e: Error) => toast.error("Não foi possível criar o membro.", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Não foi possível criar o membro.", { description: e.message }),
   });
 
   return (
@@ -113,7 +114,10 @@ export function AdminCreateMemberDialog() {
             />
           </Field>
           <Field label="Telefone">
-            <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <Input
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
           </Field>
           <Field label="Tipo de pessoa">
             <select
@@ -129,7 +133,10 @@ export function AdminCreateMemberDialog() {
             <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
           </Field>
           <Field label="Estado (UF)">
-            <Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
+            <Input
+              value={form.state}
+              onChange={(e) => setForm({ ...form, state: e.target.value })}
+            />
           </Field>
           <Field label="Perfil de acesso">
             <select
@@ -215,7 +222,8 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
       toast.success("Nova senha definida.");
       setPassword("");
     },
-    onError: (e: Error) => toast.error("Não foi possível definir a senha.", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Não foi possível definir a senha.", { description: e.message }),
   });
 
   const resetMutation = useMutation({
@@ -227,10 +235,10 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
             ? { redirectTo: `${window.location.origin}/redefinir-senha` }
             : {}),
         },
-
       }),
     onSuccess: () => toast.success("E-mail de redefinição enviado."),
-    onError: (e: Error) => toast.error("Não foi possível enviar o e-mail.", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Não foi possível enviar o e-mail.", { description: e.message }),
   });
 
   return (
@@ -262,13 +270,19 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
             />
           </Field>
           <Field label="Telefone">
-            <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <Input
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
           </Field>
           <Field label="Cidade">
             <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
           </Field>
           <Field label="Estado (UF)">
-            <Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
+            <Input
+              value={form.state}
+              onChange={(e) => setForm({ ...form, state: e.target.value })}
+            />
           </Field>
           <Field label="Tipo de pessoa">
             <select

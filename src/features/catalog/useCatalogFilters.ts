@@ -70,7 +70,12 @@ export function useCatalogFilters() {
         page: filters.page > 1 ? filters.page : undefined,
       };
       for (const [key, value] of Object.entries(patch)) {
-        next[key] = key === "marcas" ? ((value as string[])?.length ? (value as string[]).join(",") : undefined) : value;
+        next[key] =
+          key === "marcas"
+            ? (value as string[])?.length
+              ? (value as string[]).join(",")
+              : undefined
+            : value;
       }
       if (!("page" in patch)) next["page"] = undefined;
       for (const key of Object.keys(next)) {
@@ -97,7 +102,8 @@ function matches(row: CatalogFacetRow, f: CatalogFilters, ignore: FacetKey) {
     if (!haystack.includes(term)) return false;
   }
   if (ignore !== "categoria" && f.categoria && row.categorySlug !== f.categoria) return false;
-  if (ignore !== "marcas" && f.marcas.length && !(row.brand && f.marcas.includes(row.brand))) return false;
+  if (ignore !== "marcas" && f.marcas.length && !(row.brand && f.marcas.includes(row.brand)))
+    return false;
   if (ignore !== "preco") {
     const price = row.price ?? 0;
     if (f.preco_min !== undefined && price < f.preco_min) return false;
@@ -136,7 +142,7 @@ export function useCatalogFacets(filters: CatalogFilters): CatalogFacets {
   });
 
   return useMemo(() => {
-    const count = <T,>(ignore: FacetKey, key: (r: CatalogFacetRow) => T | null) => {
+    const count = <T>(ignore: FacetKey, key: (r: CatalogFacetRow) => T | null) => {
       const map = new Map<T, number>();
       for (const row of rows) {
         if (!matches(row, filters, ignore)) continue;
@@ -162,12 +168,19 @@ export function useCatalogFacets(filters: CatalogFilters): CatalogFacets {
 
     return {
       categories: [...catMap.entries()]
-        .map(([slug, c]) => ({ slug: slug as string, name: catNames.get(slug) ?? (slug as string), count: c }))
+        .map(([slug, c]) => ({
+          slug: slug as string,
+          name: catNames.get(slug) ?? (slug as string),
+          count: c,
+        }))
         .sort((a, b) => b.count - a.count),
       brands: [...brandMap.entries()]
         .map(([name, c]) => ({ name: name as string, count: c }))
         .sort((a, b) => b.count - a.count || String(a.name).localeCompare(String(b.name))),
-      conditions: [...condMap.entries()].map(([value, c]) => ({ value: value as string, count: c })),
+      conditions: [...condMap.entries()].map(([value, c]) => ({
+        value: value as string,
+        count: c,
+      })),
       states: [...ufMap.entries()]
         .map(([uf, c]) => ({ uf: uf as string, count: c }))
         .sort((a, b) => a.uf.localeCompare(b.uf)),

@@ -11,7 +11,10 @@ export const Route = createFileRoute("/app/desempenho")({
   head: () => ({
     meta: [
       { title: "Desempenho dos anúncios | DDP AGRO" },
-      { name: "description", content: "Visualizações, status e valor da sua carteira de anúncios." },
+      {
+        name: "description",
+        content: "Visualizações, status e valor da sua carteira de anúncios.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),

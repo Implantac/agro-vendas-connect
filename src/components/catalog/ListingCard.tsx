@@ -133,8 +133,6 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
           </Button>
         </div>
       </div>
-
     </article>
   );
 }
-

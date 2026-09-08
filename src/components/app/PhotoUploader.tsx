@@ -19,7 +19,6 @@ export function PhotoUploader({
   className,
   inputId = "photos",
 }: PhotoUploaderProps) {
-
   const inputRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>([]);
   const [dragging, setDragging] = useState(false);

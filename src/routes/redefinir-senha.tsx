@@ -99,7 +99,11 @@ function RedefinirSenha() {
                 onChange={(e) => setConfirm(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest/90">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-forest hover:bg-forest/90"
+            >
               {loading ? "Salvando..." : "Salvar nova senha"}
             </Button>
           </form>

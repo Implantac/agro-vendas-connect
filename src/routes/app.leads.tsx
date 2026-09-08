@@ -11,7 +11,10 @@ export const Route = createFileRoute("/app/leads")({
   head: () => ({
     meta: [
       { title: "Leads e interessados | DDP AGRO" },
-      { name: "description", content: "Veja quem demonstrou interesse nos seus anúncios e priorize o contato." },
+      {
+        name: "description",
+        content: "Veja quem demonstrou interesse nos seus anúncios e priorize o contato.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -20,7 +23,11 @@ export const Route = createFileRoute("/app/leads")({
 
 function Leads() {
   const { user } = useAuth();
-  const { data: leads = [], isLoading, isError } = useQuery({
+  const {
+    data: leads = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["seller-leads", user?.id],
     queryFn: () => fetchSellerLeads(user!.id),
     enabled: Boolean(user),
@@ -30,7 +37,9 @@ function Leads() {
 
   return (
     <AppPage>
-      <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Leads e interessados</h1>
+      <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
+        Leads e interessados
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Oportunidades por anúncio: quem favoritou, abriu conversa ou enviou proposta.
       </p>
@@ -48,7 +57,9 @@ function Leads() {
       ) : withInterest.length === 0 ? (
         <div className="mt-8 flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
           <Target className="h-10 w-10 text-muted-foreground/50" />
-          <h2 className="mt-4 font-display text-lg font-semibold text-forest">Nenhum interessado ainda</h2>
+          <h2 className="mt-4 font-display text-lg font-semibold text-forest">
+            Nenhum interessado ainda
+          </h2>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">
             Publique anúncios com fotos e dados técnicos completos para atrair mais compradores.
           </p>

@@ -40,7 +40,9 @@ export function LegalPage({ docType, fallbackTitle }: { docType: string; fallbac
         eyebrow="Documento legal"
         title={data?.title ?? fallbackTitle}
         {...(data
-          ? { description: `Versão ${data.version} — vigente desde ${formatDateBR(data.published_at)}` }
+          ? {
+              description: `Versão ${data.version} — vigente desde ${formatDateBR(data.published_at)}`,
+            }
           : {})}
       />
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6">

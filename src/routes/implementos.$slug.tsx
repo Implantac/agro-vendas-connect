@@ -1,6 +1,15 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, ShieldCheck, Calendar, Clock, Gauge, Building2, Lock, ImageOff } from "lucide-react";
+import {
+  MapPin,
+  ShieldCheck,
+  Calendar,
+  Clock,
+  Gauge,
+  Building2,
+  Lock,
+  ImageOff,
+} from "lucide-react";
 
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";
@@ -98,8 +107,6 @@ function ListingDetail() {
     );
   }
 
-
-
   const l = listing as unknown as {
     id: string;
     title: string;
@@ -118,7 +125,12 @@ function ListingDetail() {
     technical_data_json: Record<string, string>;
     categories?: { name: string; slug: string } | null;
     listing_media?: { url: string; is_cover: boolean; sort_order: number }[];
-    seller_profiles?: { trade_name: string; company_description: string | null; verification_status: string; logo_url?: string | null } | null;
+    seller_profiles?: {
+      trade_name: string;
+      company_description: string | null;
+      verification_status: string;
+      logo_url?: string | null;
+    } | null;
   };
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);

@@ -44,7 +44,6 @@ function AdminListings() {
       )
     : allListings;
 
-
   const mutation = useMutation({
     mutationFn: ({ id, next }: { id: string; next: "approved" | "rejected" | "archived" }) =>
       moderateListing(id, next),
@@ -83,7 +82,9 @@ function AdminListings() {
         <ul className="divide-y divide-border">
           {isLoading && <li className="px-5 py-6 text-sm text-muted-foreground">Carregando...</li>}
           {!isLoading && listings.length === 0 && (
-            <li className="px-5 py-6 text-sm text-muted-foreground">Nenhum anúncio nesta situação.</li>
+            <li className="px-5 py-6 text-sm text-muted-foreground">
+              Nenhum anúncio nesta situação.
+            </li>
           )}
           {listings.map((l) => (
             <li key={l.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">

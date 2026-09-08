@@ -94,7 +94,9 @@ export function SavedSearches({ filters }: { filters: CatalogFilters }) {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Salvar busca</DialogTitle>
-              <DialogDescription>{describeFilters({ ...filtersPreview(filters) })}</DialogDescription>
+              <DialogDescription>
+                {describeFilters({ ...filtersPreview(filters) })}
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-1.5">
@@ -114,10 +116,7 @@ export function SavedSearches({ filters }: { filters: CatalogFilters }) {
               </div>
             </div>
             <DialogFooter>
-              <Button
-                onClick={() => save.mutate()}
-                disabled={!name.trim() || save.isPending}
-              >
+              <Button onClick={() => save.mutate()} disabled={!name.trim() || save.isPending}>
                 {save.isPending ? "Salvando..." : "Salvar busca"}
               </Button>
             </DialogFooter>

@@ -77,7 +77,9 @@ function StatusBanners() {
         <div className="mb-6 flex gap-4 rounded-md border-l-4 border-clay bg-secondary/60 p-5">
           <Clock className="mt-0.5 h-5 w-5 shrink-0 text-clay" />
           <div>
-            <h2 className="font-display text-base font-semibold text-forest">Cadastro em análise</h2>
+            <h2 className="font-display text-base font-semibold text-forest">
+              Cadastro em análise
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Sua conta está em verificação. Você pode explorar o catálogo, mas ainda não pode
               publicar anúncios, enviar propostas ou usar o chat.
@@ -93,7 +95,8 @@ function StatusBanners() {
               {profile?.status === "rejected" ? "Cadastro não aprovado" : "Conta suspensa"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {profile?.rejection_reason ?? "Entre em contato com a equipe para os próximos passos."}
+              {profile?.rejection_reason ??
+                "Entre em contato com a equipe para os próximos passos."}
             </p>
           </div>
         </div>
@@ -457,7 +460,10 @@ function BuyerDashboard() {
     queryKey: ["listings", "oportunidades"],
     queryFn: () => fetchApprovedListings({ sort: "recent" }),
   });
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
   const { data: proposals = [] } = useQuery({
     queryKey: ["proposals", user?.id],
     queryFn: () => fetchMyProposals(user!.id),
@@ -547,7 +553,8 @@ function BuyerDashboard() {
               })()}
               <span className="text-sm font-semibold text-forest">{c.name}</span>
               <span className="inline-flex items-center gap-1 text-xs font-medium text-accent">
-                Ver máquinas <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                Ver máquinas{" "}
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>
           ))}

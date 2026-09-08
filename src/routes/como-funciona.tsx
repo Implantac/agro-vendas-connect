@@ -22,9 +22,15 @@ export const Route = createFileRoute("/como-funciona")({
 });
 
 const BUYER = [
-  ["Solicite acesso", "Cadastro com dados da empresa ou pessoa física e aceite dos termos vigentes."],
+  [
+    "Solicite acesso",
+    "Cadastro com dados da empresa ou pessoa física e aceite dos termos vigentes.",
+  ],
   ["Aguarde a aprovação", "A equipe interna confere documentos e libera o acesso de comprador."],
-  ["Explore o catálogo", "Filtre por categoria, condição, estado e faixa de preço; salve favoritos."],
+  [
+    "Explore o catálogo",
+    "Filtre por categoria, condição, estado e faixa de preço; salve favoritos.",
+  ],
   ["Envie propostas", "Negocie valores com contrapropostas registradas e chat interno."],
   ["Acompanhe o pedido", "Ao aceitar, um pedido é criado com histórico completo de eventos."],
 ];

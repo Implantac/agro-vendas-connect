@@ -94,8 +94,8 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.yearMin) query = query.gte("manufacture_year", filters.yearMin);
   if (filters.yearMax) query = query.lte("manufacture_year", filters.yearMax);
 
-
-  if (filters.sort === "price_asc") query = query.order("price", { ascending: true, nullsFirst: false });
+  if (filters.sort === "price_asc")
+    query = query.order("price", { ascending: true, nullsFirst: false });
   else if (filters.sort === "price_desc")
     query = query.order("price", { ascending: false, nullsFirst: false });
   else query = query.order("published_at", { ascending: false, nullsFirst: false });
@@ -105,7 +105,9 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
 
   let rows = data ?? [];
   if (filters.category) {
-    rows = rows.filter((r) => (r as { categories?: { slug?: string } }).categories?.slug === filters.category);
+    rows = rows.filter(
+      (r) => (r as { categories?: { slug?: string } }).categories?.slug === filters.category,
+    );
   }
   return rows;
 }
@@ -128,7 +130,6 @@ export async function fetchListingBySlug(slug: string) {
 
   return { ...data, seller_profiles: seller ?? null };
 }
-
 
 export async function fetchLegalDocument(docType: string) {
   const { data, error } = await supabase

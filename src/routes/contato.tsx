@@ -106,12 +106,23 @@ function Contato() {
         <aside className="space-y-4">
           {[
             [Mail, "Atendimento", "Respondemos em até 2 dias úteis pelo e-mail informado."],
-            [MessageSquare, "Suporte a membros", "Membros aprovados também podem abrir chamado pelo painel."],
-            [ShieldCheck, "Privacidade", "Toda solicitação LGPD é registrada com data, tipo e status."],
+            [
+              MessageSquare,
+              "Suporte a membros",
+              "Membros aprovados também podem abrir chamado pelo painel.",
+            ],
+            [
+              ShieldCheck,
+              "Privacidade",
+              "Toda solicitação LGPD é registrada com data, tipo e status.",
+            ],
           ].map(([Icon, title, text]) => {
             const Ico = Icon as typeof Mail;
             return (
-              <div key={title as string} className="rounded-md border border-border bg-secondary/50 p-5">
+              <div
+                key={title as string}
+                className="rounded-md border border-border bg-secondary/50 p-5"
+              >
                 <Ico className="h-5 w-5 text-accent" />
                 <h2 className="mt-3 font-display text-sm font-semibold text-forest">
                   {title as string}

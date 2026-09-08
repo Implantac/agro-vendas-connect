@@ -108,7 +108,9 @@ function Cadastro() {
             <li
               key={s}
               className={`rounded-md border px-3 py-2 ${
-                i === 0 ? "border-accent bg-secondary text-forest" : "border-border text-muted-foreground"
+                i === 0
+                  ? "border-accent bg-secondary text-forest"
+                  : "border-border text-muted-foreground"
               }`}
             >
               {s}
@@ -122,7 +124,6 @@ function Cadastro() {
             Ver planos de membresia
           </Link>
         </p>
-
 
         <form onSubmit={submit} className="mt-8 space-y-6">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -200,11 +201,7 @@ function Cadastro() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="cidade">Cidade</Label>
-              <Input
-                id="cidade"
-                value={form.city}
-                onChange={(e) => set("city", e.target.value)}
-              />
+              <Input id="cidade" value={form.city} onChange={(e) => set("city", e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="uf">UF</Label>

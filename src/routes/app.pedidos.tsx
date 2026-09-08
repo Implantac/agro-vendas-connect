@@ -11,7 +11,10 @@ export const Route = createFileRoute("/app/pedidos")({
   head: () => ({
     meta: [
       { title: "Meus pedidos | DDP AGRO" },
-      { name: "description", content: "Acompanhe os pedidos gerados a partir das negociações aceitas." },
+      {
+        name: "description",
+        content: "Acompanhe os pedidos gerados a partir das negociações aceitas.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -20,7 +23,11 @@ export const Route = createFileRoute("/app/pedidos")({
 
 function Pedidos() {
   const { user } = useAuth();
-  const { data: orders = [], isLoading, isError } = useQuery({
+  const {
+    data: orders = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["orders", user?.id],
     queryFn: () => fetchMyOrders(user!.id),
     enabled: Boolean(user),
@@ -46,7 +53,9 @@ function Pedidos() {
       ) : orders.length === 0 ? (
         <div className="mt-8 flex flex-col items-center rounded-lg border border-dashed border-border bg-card px-6 py-16 text-center">
           <Package className="h-10 w-10 text-muted-foreground/50" />
-          <h2 className="mt-4 font-display text-lg font-semibold text-forest">Nenhum pedido ainda</h2>
+          <h2 className="mt-4 font-display text-lg font-semibold text-forest">
+            Nenhum pedido ainda
+          </h2>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">
             Assim que uma negociação for aceita, o pedido aparece aqui com o andamento completo.
           </p>
@@ -83,7 +92,9 @@ function Pedidos() {
                 <div className="flex items-center gap-5">
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Valor</p>
-                    <p className="font-display text-lg font-bold text-forest">{formatBRL(order.amount)}</p>
+                    <p className="font-display text-lg font-bold text-forest">
+                      {formatBRL(order.amount)}
+                    </p>
                     {!isBuyer && (
                       <p className="text-xs text-muted-foreground">
                         Líquido: {formatBRL(order.seller_net_amount)}

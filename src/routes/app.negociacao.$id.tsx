@@ -128,16 +128,7 @@ function NegotiationDetail() {
           actorId: user.id,
         });
       }
-      const other = p.buyer_id === user.id ? p.seller_id : p.buyer_id;
-      await notifyCounterpart({
-        userId: other,
-        type: `proposal_${action}`,
-        title: EVENT_LABELS[action] ?? "Atualização da negociação",
-        message: amount
-          ? `Nova contraproposta de ${formatBRL(amount)}.`
-          : "Sua negociação foi atualizada.",
-        proposalId: p.id,
-      });
+      // A notificação à outra parte é gerada pelo banco de dados.
     },
     onSuccess: () => {
       setCounter("");

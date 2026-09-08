@@ -157,16 +157,8 @@ export function AppLayout() {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link to="/app" data-brand="header" className="flex items-center gap-2.5">
+          <Link to="/app" data-brand="header" className="flex shrink-0 items-center">
             <Logo variant="symbol" />
-            <span className="leading-tight">
-              <span className="block font-display text-base font-bold tracking-tight text-forest">
-                DDP <span className="text-accent">AGRO</span>
-              </span>
-              <span className="hidden truncate text-[10px] font-semibold uppercase tracking-widest text-accent lg:block">
-                Área de membros
-              </span>
-            </span>
           </Link>
 
           {showSearch && (
@@ -300,9 +292,7 @@ export function AppLayout() {
           <div className="absolute inset-0 bg-forest/40" onClick={() => setMobileMenu(false)} />
           <div className="absolute bottom-0 left-0 top-0 flex w-72 flex-col overflow-y-auto bg-card shadow-xl">
             <div className="flex h-16 items-center justify-between border-b border-border px-4">
-              <span className="font-display text-base font-bold text-forest">
-                DDP <span className="text-accent">AGRO</span>
-              </span>
+              <Logo variant="symbol" />
               <button
                 className="rounded-md p-2 text-forest hover:bg-secondary"
                 onClick={() => setMobileMenu(false)}

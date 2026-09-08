@@ -84,6 +84,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { user, profile, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Membro aprovado que já está logado entra direto no sistema.
+  useEffect(() => {
+    if (loading || !user) return;
+    if (profile?.status === "approved") void navigate({ to: "/app", replace: true });
+  }, [loading, user, profile?.status, navigate]);
+
   return (
     <PublicLayout>
       <section className="relative isolate overflow-hidden bg-forest">

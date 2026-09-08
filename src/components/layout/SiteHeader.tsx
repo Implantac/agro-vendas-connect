@@ -42,9 +42,9 @@ export function SiteHeader() {
           </div>
         </div>
       )}
-      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
-        <Link to="/" aria-label="DDP AGRO — início" className="flex items-center">
-          <Logo className="h-14 w-auto sm:h-16" />
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+        <Link to="/" aria-label="DDP AGRO — início" className="flex shrink-0 items-center">
+          <Logo />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">

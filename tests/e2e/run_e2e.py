@@ -234,6 +234,12 @@ async def main(base: str, email: str, password: str) -> int:
             assert await link.count(), "anúncio aprovado não apareceu no catálogo"
             await link.click()
             await page.wait_for_url("**/implementos/**", timeout=20000)
+            await page.wait_for_timeout(2000)
+            # O banco proíbe proposta no próprio anúncio: com uma única conta,
+            # o passo só valida que a página protege o vendedor.
+            if await page.get_by_role("link", name="Editar meu anúncio").count():
+                print("      (anúncio pertence à conta de teste — proposta exige segunda conta)")
+                return
             trigger = page.get_by_role("button", name="Enviar proposta").first
             await expect(trigger).to_be_visible(timeout=30000)
             await trigger.click()

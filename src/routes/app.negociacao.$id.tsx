@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { respondProposal } from "@/lib/app-queries";
-import { ensureConversation, fetchNegotiation, notifyCounterpart } from "@/lib/negotiation-queries";
+import { ensureConversation, fetchNegotiation } from "@/lib/negotiation-queries";
 import { sendMessage } from "@/lib/app-queries";
 import {
   CONDITION_LABELS,
@@ -93,16 +93,8 @@ function NegotiationDetail() {
   const saveTerms = useMutation({
     mutationFn: async () => {
       if (!data?.proposal) return;
+      // A notificação à outra parte é gerada pelo banco de dados.
       await updateProposalTerms(data.proposal.id, termsDraft);
-      const p = data.proposal;
-      const other = p.buyer_id === user?.id ? p.seller_id : p.buyer_id;
-      await notifyCounterpart({
-        userId: other,
-        type: "proposal_terms",
-        title: "Condições comerciais atualizadas",
-        message: "A outra parte registrou condições de pagamento, prazo ou entrega.",
-        proposalId: p.id,
-      });
     },
     onSuccess: () => {
       setTermsOpen(false);

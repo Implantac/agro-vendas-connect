@@ -102,6 +102,7 @@ function AdminHome() {
     },
   ];
 
+  const h = data?.health;
   const pipeline = [
     { label: "Abertas", value: data?.pipeline.open ?? 0 },
     { label: "Contrapropostas", value: data?.pipeline.countered ?? 0 },

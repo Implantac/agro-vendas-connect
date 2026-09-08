@@ -42,7 +42,7 @@ export function SiteHeader() {
           </div>
         </div>
       )}
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex min-h-28 max-w-7xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
         <Link to="/" aria-label="DDP AGRO — início">
           <Logo />
         </Link>

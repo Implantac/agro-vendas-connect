@@ -181,7 +181,10 @@ function Perfil() {
         </div>
 
         {/* Formulário */}
-        <form onSubmit={(e) => void save(e)} className="rounded-lg border border-border bg-card p-6">
+        <form
+          onSubmit={(e) => void save(e)}
+          className="rounded-lg border border-border bg-card p-6"
+        >
           <h3 className="flex items-center gap-2 font-display text-base font-semibold text-forest">
             <User className="h-4 w-4 text-accent" /> Dados pessoais
           </h3>

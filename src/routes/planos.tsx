@@ -20,7 +20,8 @@ export const Route = createFileRoute("/planos")({
       { property: "og:title", content: "Planos de membresia | DDP AGRO" },
       {
         property: "og:description",
-        content: "Planos para compradores e vendedores do marketplace fechado de implementos agrícolas.",
+        content:
+          "Planos para compradores e vendedores do marketplace fechado de implementos agrícolas.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -48,7 +49,9 @@ function Planos() {
   return (
     <PublicLayout>
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <span className="text-xs font-semibold uppercase tracking-widest text-accent">Membresia</span>
+        <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+          Membresia
+        </span>
         <h1 className="mt-2 font-display text-3xl font-bold text-forest sm:text-4xl">
           Planos do DDP AGRO
         </h1>

@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Boxes,
-  Cog,
-  Droplets,
-  Sprout,
-  Tractor,
-  Wheat,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { Boxes, Cog, Droplets, Sprout, Tractor, Wheat, X, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
@@ -106,9 +97,13 @@ export function BuyerFilterPanel({
                       : "text-foreground hover:bg-secondary",
                   )}
                 >
-                  <Icon className={cn("h-4 w-4 shrink-0", active ? "text-accent" : "text-primary")} />
+                  <Icon
+                    className={cn("h-4 w-4 shrink-0", active ? "text-accent" : "text-primary")}
+                  />
                   <span className="truncate text-left">{c.name}</span>
-                  <span className="ml-auto text-xs tabular-nums text-muted-foreground">{c.count}</span>
+                  <span className="ml-auto text-xs tabular-nums text-muted-foreground">
+                    {c.count}
+                  </span>
                 </button>
               </li>
             );

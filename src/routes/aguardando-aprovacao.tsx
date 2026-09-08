@@ -26,8 +26,16 @@ export const Route = createFileRoute("/aguardando-aprovacao")({
 
 const STEPS = [
   { icon: FileCheck2, title: "Dados recebidos", text: "Seu cadastro foi registrado com sucesso." },
-  { icon: Clock, title: "Verificação em andamento", text: "Conferimos documentos e vínculo comercial." },
-  { icon: ShieldCheck, title: "Liberação do acesso", text: "Você recebe um e-mail assim que for aprovado." },
+  {
+    icon: Clock,
+    title: "Verificação em andamento",
+    text: "Conferimos documentos e vínculo comercial.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Liberação do acesso",
+    text: "Você recebe um e-mail assim que for aprovado.",
+  },
 ];
 
 function AwaitingApproval() {

@@ -16,7 +16,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchApprovedListings } from "@/lib/queries";
 import { CONDITION_LABELS } from "@/lib/format";
-import { countActiveFilters, useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import {
+  countActiveFilters,
+  useCatalogFacets,
+  useCatalogFilters,
+} from "@/features/catalog/useCatalogFilters";
 import { SavedSearches } from "@/components/app/SavedSearches";
 import { useState } from "react";
 
@@ -81,9 +85,7 @@ function Comprar() {
 
   const sorted =
     filters.sort === "year_desc"
-      ? [...allListings].sort(
-          (a, b) => (b.manufacture_year ?? 0) - (a.manufacture_year ?? 0),
-        )
+      ? [...allListings].sort((a, b) => (b.manufacture_year ?? 0) - (a.manufacture_year ?? 0))
       : allListings;
 
   const total = sorted.length;
@@ -93,9 +95,18 @@ function Comprar() {
   const activeCount = countActiveFilters(filters);
 
   const chips: { key: string; label: string; remove: () => void }[] = [];
-  if (filters.q) chips.push({ key: "q", label: `Busca: ${filters.q}`, remove: () => setFilters({ q: undefined }) });
+  if (filters.q)
+    chips.push({
+      key: "q",
+      label: `Busca: ${filters.q}`,
+      remove: () => setFilters({ q: undefined }),
+    });
   if (filters.categoria)
-    chips.push({ key: "categoria", label: filters.categoria, remove: () => setFilters({ categoria: undefined }) });
+    chips.push({
+      key: "categoria",
+      label: filters.categoria,
+      remove: () => setFilters({ categoria: undefined }),
+    });
   for (const brand of filters.marcas)
     chips.push({
       key: `marca-${brand}`,
@@ -117,16 +128,20 @@ function Comprar() {
   if (filters.condicao)
     chips.push({
       key: "condicao",
-      label: CONDITION_LABELS[filters.condicao as keyof typeof CONDITION_LABELS] ?? filters.condicao,
+      label:
+        CONDITION_LABELS[filters.condicao as keyof typeof CONDITION_LABELS] ?? filters.condicao,
       remove: () => setFilters({ condicao: undefined }),
     });
-  if (filters.uf) chips.push({ key: "uf", label: filters.uf, remove: () => setFilters({ uf: undefined }) });
+  if (filters.uf)
+    chips.push({ key: "uf", label: filters.uf, remove: () => setFilters({ uf: undefined }) });
 
   return (
     <AppPage>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">Comprar máquinas</h1>
+          <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
+            Comprar máquinas
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Encontre tratores, colheitadeiras e implementos para o seu negócio.
           </p>
@@ -208,7 +223,8 @@ function Comprar() {
       ) : (
         <>
           <p className="mt-6 text-xs text-muted-foreground">
-            Mostrando {(page - 1) * PAGE_SIZE + 1}–{(page - 1) * PAGE_SIZE + listings.length} de {total}
+            Mostrando {(page - 1) * PAGE_SIZE + 1}–{(page - 1) * PAGE_SIZE + listings.length} de{" "}
+            {total}
           </p>
           <div className="mt-3 grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
             {listings.map((l, i) => (

@@ -33,7 +33,10 @@ export function SiteHeader() {
         <div className="bg-forest text-primary-foreground">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-1.5 text-xs sm:px-6">
             <span>Você está no site público da DDP AGRO.</span>
-            <Link to="/app" className="font-semibold text-accent underline-offset-2 hover:underline">
+            <Link
+              to="/app"
+              className="font-semibold text-accent underline-offset-2 hover:underline"
+            >
               Ir para a área de membros →
             </Link>
           </div>
@@ -109,7 +112,9 @@ export function SiteHeader() {
         </button>
       </div>
 
-      <div className={cn("border-t border-border bg-background lg:hidden", open ? "block" : "hidden")}>
+      <div
+        className={cn("border-t border-border bg-background lg:hidden", open ? "block" : "hidden")}
+      >
         <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
           <form onSubmit={submitSearch} className="mb-2">
             <div className="relative">

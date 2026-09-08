@@ -134,7 +134,10 @@ export async function deleteListingPhoto(mediaId: string) {
 
 export async function setCoverPhoto(listingId: string, mediaId: string) {
   await supabase.from("listing_media").update({ is_cover: false }).eq("listing_id", listingId);
-  const { error } = await supabase.from("listing_media").update({ is_cover: true }).eq("id", mediaId);
+  const { error } = await supabase
+    .from("listing_media")
+    .update({ is_cover: true })
+    .eq("id", mediaId);
   if (error) throw error;
 }
 

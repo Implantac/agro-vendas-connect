@@ -141,12 +141,14 @@ export function AppLayout() {
   const searchTarget = viewMode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
   const bottomNav = BOTTOM_NAV_BY_ROLE[viewMode];
 
-
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header id="app-header" data-app-header="true" className="fixed inset-x-0 top-0 z-40 h-16 shrink-0 border-b border-border bg-card">
+      <header
+        id="app-header"
+        data-app-header="true"
+        className="fixed inset-x-0 top-0 z-40 h-16 shrink-0 border-b border-border bg-card"
+      >
         <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
           <button
             className="rounded-md p-2 text-forest hover:bg-secondary lg:hidden"
@@ -172,19 +174,27 @@ export function AppLayout() {
               <div className="mx-auto hidden w-full max-w-xl md:block">
                 <HeaderSearch
                   value={filters.q ?? ""}
-                  placeholder={viewMode === "admin" ? "Buscar anúncios para moderar" : "Buscar máquinas e implementos"}
+                  placeholder={
+                    viewMode === "admin"
+                      ? "Buscar anúncios para moderar"
+                      : "Buscar máquinas e implementos"
+                  }
                   onSearch={(q) => setFilters({ q: q || undefined })}
                 />
               </div>
-              <Button asChild variant="ghost" size="icon" className="ml-auto text-forest md:hidden" aria-label="Buscar">
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="ml-auto text-forest md:hidden"
+                aria-label="Buscar"
+              >
                 <Link to={searchTarget}>
                   <Search className="h-5 w-5" />
                 </Link>
               </Button>
             </>
           )}
-
-
 
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
@@ -198,12 +208,24 @@ export function AppLayout() {
                 <HelpCircle className="h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Mensagens">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="text-forest"
+              aria-label="Mensagens"
+            >
               <Link to="/app/mensagens">
                 <MessageSquare className="h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="icon" className="relative text-forest" aria-label="Notificações">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="relative text-forest"
+              aria-label="Notificações"
+            >
               <Link to="/app/notificacoes">
                 <Bell className="h-5 w-5" />
                 {unread > 0 && (
@@ -250,7 +272,10 @@ export function AppLayout() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => void handleSignOut()} className="cursor-pointer text-destructive">
+                <DropdownMenuItem
+                  onClick={() => void handleSignOut()}
+                  className="cursor-pointer text-destructive"
+                >
                   <LogOut className="mr-2 h-4 w-4" /> Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -394,7 +419,10 @@ function SidebarNav({
         ))}
       </nav>
       {showFilters && (
-        <section aria-label="Filtros do catálogo" className="overflow-y-auto border-t border-border">
+        <section
+          aria-label="Filtros do catálogo"
+          className="overflow-y-auto border-t border-border"
+        >
           <BuyerFilterPanel onApplied={onNavigate} />
         </section>
       )}
@@ -420,7 +448,11 @@ function HeaderSearch({
   value,
   onSearch,
   placeholder = "Buscar máquinas, marcas, modelos...",
-}: { value: string; onSearch: (q: string) => void; placeholder?: string }) {
+}: {
+  value: string;
+  onSearch: (q: string) => void;
+  placeholder?: string;
+}) {
   const [term, setTerm] = useState(value);
 
   useEffect(() => setTerm(value), [value]);

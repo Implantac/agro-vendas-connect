@@ -56,7 +56,12 @@ function Mensagens() {
       .channel(`messages:${activeId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${activeId}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${activeId}`,
+        },
         () => {
           void queryClient.invalidateQueries({ queryKey: ["messages", activeId] });
           void queryClient.invalidateQueries({ queryKey: ["conversations"] });
@@ -104,12 +109,7 @@ function Mensagens() {
       ) : (
         <div className="mt-7 grid overflow-hidden rounded-lg border border-border bg-card lg:grid-cols-[320px_1fr]">
           {/* Lista de conversas */}
-          <aside
-            className={cn(
-              "border-border lg:border-r",
-              active && "hidden lg:block",
-            )}
-          >
+          <aside className={cn("border-border lg:border-r", active && "hidden lg:block")}>
             <div className="border-b border-border p-4">
               <p className="text-sm font-semibold text-forest">
                 {conversations.length} {conversations.length === 1 ? "conversa" : "conversas"}
@@ -122,10 +122,11 @@ function Mensagens() {
                   price: number | null;
                   listing_media: { url: string; is_cover: boolean }[] | null;
                 } | null;
-                const lastMsg = (c.messages as { content: string; created_at: string }[] | null)
-                  ?.slice(-1)[0];
-                const cover = listing?.listing_media?.find((m) => m.is_cover) ??
-                  listing?.listing_media?.[0];
+                const lastMsg = (
+                  c.messages as { content: string; created_at: string }[] | null
+                )?.slice(-1)[0];
+                const cover =
+                  listing?.listing_media?.find((m) => m.is_cover) ?? listing?.listing_media?.[0];
                 return (
                   <button
                     key={c.id}
@@ -220,7 +221,10 @@ function Mensagens() {
                 <div ref={bottomRef} />
               </div>
 
-              <form onSubmit={(e) => void handleSend(e)} className="flex gap-2 border-t border-border p-4">
+              <form
+                onSubmit={(e) => void handleSend(e)}
+                className="flex gap-2 border-t border-border p-4"
+              >
                 <Input
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}

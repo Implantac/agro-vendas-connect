@@ -63,7 +63,10 @@ export function SiteFooter() {
       <div className="border-t border-primary-foreground/15">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-primary-foreground/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} DDP AGRO. Todos os direitos reservados.</p>
-          <p>O DDP AGRO intermedeia o contato entre as partes e não é proprietário dos bens anunciados.</p>
+          <p>
+            O DDP AGRO intermedeia o contato entre as partes e não é proprietário dos bens
+            anunciados.
+          </p>
         </div>
       </div>
     </footer>

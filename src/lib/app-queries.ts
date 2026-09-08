@@ -76,7 +76,9 @@ export async function respondProposal(
 export async function fetchSellerLeads(userId: string) {
   const { data: listings } = await supabase
     .from("listings")
-    .select("id,title,slug,price,status,views_count,favorites(id,created_at,user_id),proposals(id,status,amount,created_at),conversations(id,created_at,buyer_id)")
+    .select(
+      "id,title,slug,price,status,views_count,favorites(id,created_at,user_id),proposals(id,status,amount,created_at),conversations(id,created_at,buyer_id)",
+    )
     .eq("seller_id", userId)
     .order("created_at", { ascending: false });
   return (listings ?? []).map((l) => ({
@@ -88,7 +90,8 @@ export async function fetchSellerLeads(userId: string) {
     favorites: (l.favorites ?? []).length,
     conversations: (l.conversations ?? []).length,
     proposals: (l.proposals ?? []).length,
-    openProposals: (l.proposals ?? []).filter((p) => ["open", "countered"].includes(p.status)).length,
+    openProposals: (l.proposals ?? []).filter((p) => ["open", "countered"].includes(p.status))
+      .length,
     negotiatingValue: (l.proposals ?? [])
       .filter((p) => ["open", "countered"].includes(p.status))
       .reduce((sum, p) => sum + Number(p.amount ?? 0), 0),
@@ -116,7 +119,10 @@ export async function fetchMyListings(userId: string) {
   return data ?? [];
 }
 
-export async function updateListingStatus(listingId: string, status: "paused" | "approved" | "archived") {
+export async function updateListingStatus(
+  listingId: string,
+  status: "paused" | "approved" | "archived",
+) {
   const { error } = await supabase.from("listings").update({ status }).eq("id", listingId);
   if (error) throw error;
 }
@@ -141,7 +147,9 @@ export async function toggleFavorite(userId: string, listingId: string, isFavori
     if (error) throw error;
     return false;
   }
-  const { error } = await supabase.from("favorites").insert({ user_id: userId, listing_id: listingId });
+  const { error } = await supabase
+    .from("favorites")
+    .insert({ user_id: userId, listing_id: listingId });
   if (error) throw error;
   return true;
 }

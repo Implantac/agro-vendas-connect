@@ -57,7 +57,10 @@ export function MembershipGateDialog({
         )}
 
         {isPending ? (
-          <Button className="w-full bg-forest hover:bg-forest/90" onClick={() => onOpenChange(false)}>
+          <Button
+            className="w-full bg-forest hover:bg-forest/90"
+            onClick={() => onOpenChange(false)}
+          >
             Entendi
           </Button>
         ) : (

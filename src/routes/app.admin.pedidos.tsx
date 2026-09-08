@@ -18,7 +18,11 @@ export const Route = createFileRoute("/app/admin/pedidos")({
 });
 
 function AdminOrders() {
-  const { data: orders = [], isLoading, isError } = useQuery({
+  const {
+    data: orders = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["admin", "orders"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -58,7 +62,10 @@ function AdminOrders() {
           {orders.map((o) => {
             const listing = o.listings as { title: string } | null;
             return (
-              <div key={o.id} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+              <div
+                key={o.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4"
+              >
                 <div className="min-w-0">
                   <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
                     {ORDER_STATUS_LABELS[o.status] ?? o.status}
@@ -70,7 +77,9 @@ function AdminOrders() {
                 </div>
                 <div className="flex items-center gap-5">
                   <div className="text-right">
-                    <p className="font-display text-lg font-bold text-forest">{formatBRL(o.amount)}</p>
+                    <p className="font-display text-lg font-bold text-forest">
+                      {formatBRL(o.amount)}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       Comissão: {formatBRL(o.commission_amount)}
                     </p>

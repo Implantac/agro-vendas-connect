@@ -128,7 +128,11 @@ function AdminMemberships() {
                   size="sm"
                   disabled={review.isPending || r.payment_status !== "paid"}
                   onClick={() =>
-                    review.mutate({ id: r.id, approve: true, ...(notes[r.id] ? { note: notes[r.id] } : {}) })
+                    review.mutate({
+                      id: r.id,
+                      approve: true,
+                      ...(notes[r.id] ? { note: notes[r.id] } : {}),
+                    })
                   }
                 >
                   Aprovar membresia

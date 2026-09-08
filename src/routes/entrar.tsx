@@ -68,9 +68,7 @@ function Entrar() {
     <PublicLayout>
       <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-20 sm:px-6">
         <h1 className="font-display text-3xl font-bold text-forest">Entrar</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Área restrita a membros do DDP AGRO.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Área restrita a membros do DDP AGRO.</p>
 
         {redirect && (
           <div className="mt-6 rounded-md border border-accent/40 bg-secondary/60 p-4 text-sm text-forest">
@@ -115,11 +113,7 @@ function Entrar() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-forest hover:bg-forest/90"
-          >
+          <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest/90">
             {loading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
@@ -138,7 +132,10 @@ function Entrar() {
             O DDP AGRO é um marketplace fechado: cada comprador e vendedor passa por verificação
             antes de negociar.
           </p>
-          <Button asChild className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button
+            asChild
+            className="mt-4 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+          >
             <Link to="/cadastro">Solicitar membresia</Link>
           </Button>
           <p className="mt-3 text-xs text-muted-foreground">

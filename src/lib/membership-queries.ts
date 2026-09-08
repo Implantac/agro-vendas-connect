@@ -98,7 +98,13 @@ export async function cancelMembershipRequest(requestId: string) {
 /* ---------- Admin ---------- */
 
 export type AdminMembershipRequest = MembershipRequestWithPlan & {
-  profiles: { id: string; full_name: string; email: string; city: string | null; state: string | null } | null;
+  profiles: {
+    id: string;
+    full_name: string;
+    email: string;
+    city: string | null;
+    state: string | null;
+  } | null;
 };
 
 export async function fetchAdminMembershipRequests(status?: string) {
@@ -119,7 +125,10 @@ export async function fetchAdminMembershipRequests(status?: string) {
     .select("id, full_name, email, city, state")
     .in("id", ids);
   const byId = new Map((profiles ?? []).map((p) => [p.id, p]));
-  return rows.map((r) => ({ ...r, profiles: byId.get(r.user_id) ?? null })) as AdminMembershipRequest[];
+  return rows.map((r) => ({
+    ...r,
+    profiles: byId.get(r.user_id) ?? null,
+  })) as AdminMembershipRequest[];
 }
 
 export async function reviewMembershipRequest(requestId: string, approve: boolean, notes?: string) {

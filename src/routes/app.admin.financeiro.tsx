@@ -86,7 +86,9 @@ function AdminFinance() {
         <ul className="divide-y divide-border">
           {isLoading && <li className="px-5 py-4 text-sm text-muted-foreground">Carregando...</li>}
           {!isLoading && (data?.byStatus.length ?? 0) === 0 && (
-            <li className="px-5 py-4 text-sm text-muted-foreground">Nenhum pedido registrado ainda.</li>
+            <li className="px-5 py-4 text-sm text-muted-foreground">
+              Nenhum pedido registrado ainda.
+            </li>
           )}
           {data?.byStatus.map(([status, count]) => (
             <li key={status} className="flex items-center justify-between px-5 py-3 text-sm">

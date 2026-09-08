@@ -18,7 +18,11 @@ export const Route = createFileRoute("/app/admin/negociacoes")({
 });
 
 function AdminNegotiations() {
-  const { data: proposals = [], isLoading, isError } = useQuery({
+  const {
+    data: proposals = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["admin", "proposals"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -60,7 +64,10 @@ function AdminNegotiations() {
           {proposals.map((p) => {
             const listing = p.listings as { title: string } | null;
             return (
-              <div key={p.id} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+              <div
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4"
+              >
                 <div className="min-w-0">
                   <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
                     {PROPOSAL_STATUS_LABELS[p.status] ?? p.status}
@@ -73,7 +80,9 @@ function AdminNegotiations() {
                   </p>
                 </div>
                 <div className="flex items-center gap-5">
-                  <p className="font-display text-lg font-bold text-forest">{formatBRL(p.amount)}</p>
+                  <p className="font-display text-lg font-bold text-forest">
+                    {formatBRL(p.amount)}
+                  </p>
                   <Button asChild variant="outline" size="sm">
                     <Link to="/app/negociacao/$id" params={{ id: p.id }}>
                       Abrir

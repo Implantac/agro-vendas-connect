@@ -30,8 +30,7 @@ export const Route = createFileRoute("/membresia")({
       { title: "Minha membresia | DDP AGRO" },
       {
         name: "description",
-        content:
-          "Acompanhe o pagamento e a análise da sua solicitação de membresia no DDP AGRO.",
+        content: "Acompanhe o pagamento e a análise da sua solicitação de membresia no DDP AGRO.",
       },
       { property: "og:title", content: "Minha membresia | DDP AGRO" },
       {
@@ -99,7 +98,8 @@ function Membresia() {
       toast.success("Solicitação criada", { description: "Conclua o pagamento para seguir." });
       void qc.invalidateQueries({ queryKey: ["membership"] });
     },
-    onError: (e: Error) => toast.error("Não foi possível criar a solicitação", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Não foi possível criar a solicitação", { description: e.message }),
   });
 
   const payMutation = useMutation({
@@ -108,7 +108,8 @@ function Membresia() {
       toast.success("Pagamento confirmado", { description: "Sua solicitação entrou em análise." });
       void qc.invalidateQueries({ queryKey: ["membership"] });
     },
-    onError: (e: Error) => toast.error("Falha ao confirmar o pagamento", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Falha ao confirmar o pagamento", { description: e.message }),
   });
 
   const cancelMutation = useMutation({
@@ -129,7 +130,9 @@ function Membresia() {
   return (
     <PublicLayout>
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <span className="text-xs font-semibold uppercase tracking-widest text-accent">Membresia</span>
+        <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+          Membresia
+        </span>
         <h1 className="mt-2 font-display text-3xl font-bold text-forest">Minha solicitação</h1>
 
         <ol className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -305,7 +308,8 @@ function Membresia() {
               Membresia aprovada
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Seu acesso está liberado como {active.requested_role === "seller" ? "vendedor" : "comprador"}.
+              Seu acesso está liberado como{" "}
+              {active.requested_role === "seller" ? "vendedor" : "comprador"}.
             </p>
             <Button asChild className="mt-5 bg-forest hover:bg-forest/90">
               <Link to="/app">Ir para a área de membros</Link>
@@ -319,7 +323,10 @@ function Membresia() {
             <h2 className="font-display text-lg font-semibold text-forest">Histórico</h2>
             <ul className="mt-3 divide-y divide-border overflow-hidden rounded-md border border-border bg-card">
               {requests.map((r) => (
-                <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-4">
+                <li
+                  key={r.id}
+                  className="flex flex-wrap items-center justify-between gap-2 px-5 py-4"
+                >
                   <div>
                     <p className="text-sm font-medium text-forest">
                       {r.membership_plans?.name ?? "Plano"} • {formatBRL(r.amount)}

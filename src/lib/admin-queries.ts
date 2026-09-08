@@ -150,20 +150,21 @@ export interface AdminConsole {
 
 /** Painel consolidado do admin: alertas, confiança e negociações em uma única leitura. */
 export async function fetchAdminConsole(): Promise<AdminConsole> {
-  const [profiles, listings, reports, requests, orders, sellers, docs, proposals] = await Promise.all([
-    supabase.from("profiles").select("id, role, status"),
-    supabase.from("listings").select("id, status"),
-    supabase.from("reports").select("id, status"),
-    supabase.from("membership_requests").select("id, status"),
-    supabase.from("orders").select("id, status, amount"),
-    supabase.from("seller_profiles").select("id, verification_status"),
-    supabase.from("member_documents").select("id, status"),
-    supabase
-      .from("proposals")
-      .select("id, amount, status, updated_at, listings(title)")
-      .order("updated_at", { ascending: false })
-      .limit(8),
-  ]);
+  const [profiles, listings, reports, requests, orders, sellers, docs, proposals] =
+    await Promise.all([
+      supabase.from("profiles").select("id, role, status"),
+      supabase.from("listings").select("id, status"),
+      supabase.from("reports").select("id, status"),
+      supabase.from("membership_requests").select("id, status"),
+      supabase.from("orders").select("id, status, amount"),
+      supabase.from("seller_profiles").select("id, verification_status"),
+      supabase.from("member_documents").select("id, status"),
+      supabase
+        .from("proposals")
+        .select("id, amount, status, updated_at, listings(title)")
+        .order("updated_at", { ascending: false })
+        .limit(8),
+    ]);
 
   const p = profiles.data ?? [];
   const l = listings.data ?? [];
@@ -174,16 +175,20 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
     alerts: {
       pendingMembers: p.filter((x) => x.status === "pending").length,
       listingsInReview: l.filter((x) => x.status === "in_review").length,
-      openReports: (reports.data ?? []).filter((x) => x.status !== "resolved" && x.status !== "rejected").length,
+      openReports: (reports.data ?? []).filter(
+        (x) => x.status !== "resolved" && x.status !== "rejected",
+      ).length,
       membershipRequests: (requests.data ?? []).filter((x) =>
         ["payment_pending", "in_review"].includes(x.status),
       ).length,
-      ordersAwaitingPayment: o.filter((x) => ["created", "awaiting_payment"].includes(x.status)).length,
+      ordersAwaitingPayment: o.filter((x) => ["created", "awaiting_payment"].includes(x.status))
+        .length,
     },
     trust: {
       approvedMembers: p.filter((x) => x.status === "approved").length,
       totalMembers: p.length,
-      verifiedSellers: (sellers.data ?? []).filter((x) => x.verification_status === "approved").length,
+      verifiedSellers: (sellers.data ?? []).filter((x) => x.verification_status === "approved")
+        .length,
       totalSellers: (sellers.data ?? []).length,
       approvedListings: l.filter((x) => x.status === "approved").length,
       totalListings: l.length,
@@ -202,6 +207,8 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
       accepted: pr.filter((x) => x.status === "accepted").length,
       closed: o.filter((x) => x.status === "completed").length,
     },
-    gmv: o.filter((x) => ["paid", "in_delivery", "completed"].includes(x.status)).reduce((s, x) => s + Number(x.amount), 0),
+    gmv: o
+      .filter((x) => ["paid", "in_delivery", "completed"].includes(x.status))
+      .reduce((s, x) => s + Number(x.amount), 0),
   };
 }

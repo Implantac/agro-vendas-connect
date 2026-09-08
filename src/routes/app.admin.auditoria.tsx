@@ -15,7 +15,10 @@ export const Route = createFileRoute("/app/admin/auditoria")({
 });
 
 function AdminAudit() {
-  const { data: logs = [], isLoading } = useQuery({ queryKey: ["admin", "audit"], queryFn: fetchAuditLogs });
+  const { data: logs = [], isLoading } = useQuery({
+    queryKey: ["admin", "audit"],
+    queryFn: fetchAuditLogs,
+  });
 
   return (
     <AppPage>

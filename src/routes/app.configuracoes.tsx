@@ -4,7 +4,6 @@ import { AppPage } from "@/components/app/AppLayout";
 import { PrivacyRequestsCard } from "@/components/app/PrivacyRequestsCard";
 import { Button } from "@/components/ui/button";
 
-
 export const Route = createFileRoute("/app/configuracoes")({
   head: () => ({
     meta: [
@@ -61,6 +60,5 @@ function Configuracoes() {
 
       <PrivacyRequestsCard />
     </AppPage>
-
   );
 }

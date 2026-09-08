@@ -20,7 +20,11 @@ export const Route = createFileRoute("/app/admin/denuncias")({
 
 function AdminReports() {
   const qc = useQueryClient();
-  const { data: reports = [], isLoading, isError } = useQuery({
+  const {
+    data: reports = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["admin", "reports"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -72,7 +76,10 @@ function AdminReports() {
           {reports.map((r) => {
             const listing = r.listings as { title: string } | null;
             return (
-              <div key={r.id} className="flex flex-wrap items-start justify-between gap-4 rounded-lg border border-border bg-card p-4">
+              <div
+                key={r.id}
+                className="flex flex-wrap items-start justify-between gap-4 rounded-lg border border-border bg-card p-4"
+              >
                 <div className="min-w-0">
                   <p className="font-display text-base font-semibold text-forest">
                     {listing?.title ?? "Denúncia geral"}

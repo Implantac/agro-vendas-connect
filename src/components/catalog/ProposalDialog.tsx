@@ -147,7 +147,11 @@ export function ProposalDialog({
           <Button variant="ghost" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button onClick={() => void submit()} disabled={saving} className="bg-forest hover:bg-forest/90">
+          <Button
+            onClick={() => void submit()}
+            disabled={saving}
+            className="bg-forest hover:bg-forest/90"
+          >
             {saving ? "Enviando..." : "Enviar proposta"}
           </Button>
         </DialogFooter>

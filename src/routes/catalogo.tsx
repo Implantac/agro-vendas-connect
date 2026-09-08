@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search, SlidersHorizontal, ShieldCheck, BadgeCheck, MessagesSquare, X } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  ShieldCheck,
+  BadgeCheck,
+  MessagesSquare,
+  X,
+} from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { ListingCard } from "@/components/catalog/ListingCard";
 import { Input } from "@/components/ui/input";
@@ -10,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { fetchApprovedListings, fetchCategories, fetchCatalogFacetRows } from "@/lib/queries";
 import { formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
-
 
 interface CatalogSearch {
   q?: string | undefined;
@@ -45,7 +51,9 @@ export const Route = createFileRoute("/catalogo")({
     ano_min: num(search["ano_min"]),
     ano_max: num(search["ano_max"]),
     ordem:
-      search["ordem"] === "price_asc" || search["ordem"] === "price_desc" || search["ordem"] === "recent"
+      search["ordem"] === "price_asc" ||
+      search["ordem"] === "price_desc" ||
+      search["ordem"] === "recent"
         ? search["ordem"]
         : undefined,
   }),
@@ -60,7 +68,8 @@ export const Route = createFileRoute("/catalogo")({
       { property: "og:title", content: "Catálogo de implementos agrícolas | DDP AGRO" },
       {
         property: "og:description",
-        content: "Busque implementos agrícolas por categoria, marca, condição, estado, ano e faixa de preço.",
+        content:
+          "Busque implementos agrícolas por categoria, marca, condição, estado, ano e faixa de preço.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -96,8 +105,10 @@ function Catalogo() {
     });
   }, [isApprovedMember, search.q, search.categoria, search.uf, search.condicao, navigate]);
 
-
-  const { data: categories = [] } = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
   const { data: facetRows = [] } = useQuery({
     queryKey: ["catalog-facet-rows"],
     queryFn: fetchCatalogFacetRows,
@@ -125,7 +136,9 @@ function Catalogo() {
   const options = useMemo(() => {
     const brands = [...new Set(facetRows.map((r) => r.brand).filter(Boolean))] as string[];
     const ufs = [...new Set(facetRows.map((r) => r.state).filter(Boolean))] as string[];
-    const years = [...new Set(facetRows.map((r) => r.manufacture_year).filter(Boolean))] as number[];
+    const years = [
+      ...new Set(facetRows.map((r) => r.manufacture_year).filter(Boolean)),
+    ] as number[];
     return {
       brands: brands.sort((a, b) => a.localeCompare(b)),
       ufs: ufs.sort((a, b) => a.localeCompare(b)),
@@ -157,7 +170,10 @@ function Catalogo() {
     });
   if (search.marca) chips.push({ label: search.marca, clear: { marca: undefined } });
   if (search.condicao)
-    chips.push({ label: CONDICAO_LABEL[search.condicao] ?? search.condicao, clear: { condicao: undefined } });
+    chips.push({
+      label: CONDICAO_LABEL[search.condicao] ?? search.condicao,
+      clear: { condicao: undefined },
+    });
   if (search.uf) chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined } });
   if (search.preco_min !== undefined || search.preco_max !== undefined)
     chips.push({
@@ -179,13 +195,15 @@ function Catalogo() {
       {/* Barra de busca em destaque: é o ponto de entrada do catálogo público */}
       <section className="border-b border-border bg-forest">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">Catálogo público</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+            Catálogo público
+          </p>
           <h1 className="mt-3 font-display text-3xl font-bold text-primary-foreground sm:text-4xl">
             Encontre o implemento certo
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-primary-foreground/75">
-            Vitrine aberta a visitantes. Para enviar propostas e falar com o vendedor é preciso ser membro
-            aprovado.
+            Vitrine aberta a visitantes. Para enviar propostas e falar com o vendedor é preciso ser
+            membro aprovado.
           </p>
           <div className="relative mt-6 max-w-2xl">
             <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -263,7 +281,9 @@ function Catalogo() {
                 inputMode="numeric"
                 placeholder="Mínimo"
                 value={search.preco_min ?? ""}
-                onChange={(e) => update({ preco_min: e.target.value ? Number(e.target.value) : undefined })}
+                onChange={(e) =>
+                  update({ preco_min: e.target.value ? Number(e.target.value) : undefined })
+                }
                 aria-label="Preço mínimo"
               />
               <span className="text-xs text-muted-foreground">até</span>
@@ -272,7 +292,9 @@ function Catalogo() {
                 inputMode="numeric"
                 placeholder="Máximo"
                 value={search.preco_max ?? ""}
-                onChange={(e) => update({ preco_max: e.target.value ? Number(e.target.value) : undefined })}
+                onChange={(e) =>
+                  update({ preco_max: e.target.value ? Number(e.target.value) : undefined })
+                }
                 aria-label="Preço máximo"
               />
             </div>
@@ -283,7 +305,9 @@ function Catalogo() {
             <div className="flex items-center gap-2">
               <select
                 value={search.ano_min ?? ""}
-                onChange={(e) => update({ ano_min: e.target.value ? Number(e.target.value) : undefined })}
+                onChange={(e) =>
+                  update({ ano_min: e.target.value ? Number(e.target.value) : undefined })
+                }
                 className={selectClass}
                 aria-label="Ano mínimo"
               >
@@ -296,7 +320,9 @@ function Catalogo() {
               </select>
               <select
                 value={search.ano_max ?? ""}
-                onChange={(e) => update({ ano_max: e.target.value ? Number(e.target.value) : undefined })}
+                onChange={(e) =>
+                  update({ ano_max: e.target.value ? Number(e.target.value) : undefined })
+                }
                 className={selectClass}
                 aria-label="Ano máximo"
               >
@@ -341,7 +367,11 @@ function Catalogo() {
             </select>
           </div>
 
-          <Button variant="ghost" className="w-full" onClick={() => void navigate({ search: () => ({}) })}>
+          <Button
+            variant="ghost"
+            className="w-full"
+            onClick={() => void navigate({ search: () => ({}) })}
+          >
             Limpar filtros
           </Button>
         </aside>
@@ -382,9 +412,7 @@ function Catalogo() {
           {!isLoading && listings.length === 0 ? (
             <div className="rounded-md border border-dashed border-border p-12 text-center">
               <p className="font-display text-base font-semibold text-forest">
-                {chips.length > 0
-                  ? "Nenhum implemento encontrado"
-                  : "Catálogo em atualização"}
+                {chips.length > 0 ? "Nenhum implemento encontrado" : "Catálogo em atualização"}
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
                 {chips.length > 0
@@ -392,7 +420,6 @@ function Catalogo() {
                   : "Os implementos da DDP AGRO estão sendo cadastrados. Volte em breve para ver as máquinas disponíveis."}
               </p>
             </div>
-
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {listings.map((l, i) => (

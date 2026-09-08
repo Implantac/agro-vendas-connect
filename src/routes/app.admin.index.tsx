@@ -35,17 +35,45 @@ function pct(part: number, total: number) {
 }
 
 function AdminHome() {
-  const { data, isLoading } = useQuery({ queryKey: ["admin", "console"], queryFn: fetchAdminConsole });
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "console"],
+    queryFn: fetchAdminConsole,
+  });
 
   const a = data?.alerts;
   const t = data?.trust;
 
   const alerts: { label: string; value: number; to: AppRoute; icon: typeof Users }[] = [
-    { label: "Membros aguardando análise", value: a?.pendingMembers ?? 0, to: "/app/admin/membros", icon: Users },
-    { label: "Anúncios em moderação", value: a?.listingsInReview ?? 0, to: "/app/admin/anuncios", icon: ClipboardList },
-    { label: "Membresias a validar", value: a?.membershipRequests ?? 0, to: "/app/admin/membresias", icon: FileCheck2 },
-    { label: "Denúncias em aberto", value: a?.openReports ?? 0, to: "/app/admin/denuncias", icon: AlertTriangle },
-    { label: "Pedidos sem pagamento", value: a?.ordersAwaitingPayment ?? 0, to: "/app/admin/pedidos", icon: CreditCard },
+    {
+      label: "Membros aguardando análise",
+      value: a?.pendingMembers ?? 0,
+      to: "/app/admin/membros",
+      icon: Users,
+    },
+    {
+      label: "Anúncios em moderação",
+      value: a?.listingsInReview ?? 0,
+      to: "/app/admin/anuncios",
+      icon: ClipboardList,
+    },
+    {
+      label: "Membresias a validar",
+      value: a?.membershipRequests ?? 0,
+      to: "/app/admin/membresias",
+      icon: FileCheck2,
+    },
+    {
+      label: "Denúncias em aberto",
+      value: a?.openReports ?? 0,
+      to: "/app/admin/denuncias",
+      icon: AlertTriangle,
+    },
+    {
+      label: "Pedidos sem pagamento",
+      value: a?.ordersAwaitingPayment ?? 0,
+      to: "/app/admin/pedidos",
+      icon: CreditCard,
+    },
   ];
 
   const totalAlerts = alerts.reduce((s, x) => s + x.value, 0);
@@ -95,7 +123,9 @@ function AdminHome() {
           </p>
         </div>
         <div className="rounded-md border border-border bg-card px-5 py-3 text-right">
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Volume negociado</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Volume negociado
+          </p>
           <p className="font-display text-2xl font-bold text-forest">{formatBRL(data?.gmv ?? 0)}</p>
         </div>
       </header>
@@ -137,8 +167,12 @@ function AdminHome() {
           {badges.map((b) => (
             <div key={b.label} className="rounded-md border border-border bg-card p-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">{b.label}</span>
-                <BadgeCheck className={`h-4 w-4 ${b.pct >= 80 ? "text-accent" : "text-muted-foreground/50"}`} />
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {b.label}
+                </span>
+                <BadgeCheck
+                  className={`h-4 w-4 ${b.pct >= 80 ? "text-accent" : "text-muted-foreground/50"}`}
+                />
               </div>
               <p className="mt-2 font-display text-2xl font-bold text-forest">{b.value}</p>
               <div className="mt-3 h-1.5 w-full rounded-full bg-secondary">
@@ -186,7 +220,9 @@ function AdminHome() {
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <p className="font-display text-base font-bold text-forest">{formatBRL(n.amount)}</p>
+                <p className="font-display text-base font-bold text-forest">
+                  {formatBRL(n.amount)}
+                </p>
                 <Button asChild size="sm" variant="outline">
                   <Link to="/app/negociacao/$id" params={{ id: n.id }}>
                     Abrir
@@ -196,13 +232,16 @@ function AdminHome() {
             </li>
           ))}
           {!isLoading && (data?.negotiations.length ?? 0) === 0 && (
-            <li className="px-5 py-8 text-sm text-muted-foreground">Nenhuma negociação registrada ainda.</li>
+            <li className="px-5 py-8 text-sm text-muted-foreground">
+              Nenhuma negociação registrada ainda.
+            </li>
           )}
         </ul>
       </section>
 
       <p className="mt-8 inline-flex items-center gap-2 text-xs text-muted-foreground">
-        <ShieldAlert className="h-4 w-4" /> Todas as ações administrativas ficam registradas na auditoria.
+        <ShieldAlert className="h-4 w-4" /> Todas as ações administrativas ficam registradas na
+        auditoria.
       </p>
     </AppPage>
   );

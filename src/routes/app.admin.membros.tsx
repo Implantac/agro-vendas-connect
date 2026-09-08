@@ -43,7 +43,6 @@ const ROLES = [
   { value: "admin", label: "Administrador" },
 ] as const;
 
-
 function AdminMembers() {
   const [status, setStatus] = useState<string>("pending");
   const qc = useQueryClient();
@@ -78,9 +77,9 @@ function AdminMembers() {
       toast.success("Perfil de acesso atualizado.");
       void qc.invalidateQueries({ queryKey: ["admin"] });
     },
-    onError: (e: Error) => toast.error("Não foi possível alterar o perfil.", { description: e.message }),
+    onError: (e: Error) =>
+      toast.error("Não foi possível alterar o perfil.", { description: e.message }),
   });
-
 
   return (
     <AppPage>
@@ -100,9 +99,7 @@ function AdminMembers() {
           </Button>
           <AdminCreateMemberDialog />
         </div>
-
       </div>
-
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -125,7 +122,9 @@ function AdminMembers() {
         <ul className="divide-y divide-border">
           {isLoading && <li className="px-5 py-6 text-sm text-muted-foreground">Carregando...</li>}
           {!isLoading && members.length === 0 && (
-            <li className="px-5 py-6 text-sm text-muted-foreground">Nenhum membro nesta situação.</li>
+            <li className="px-5 py-6 text-sm text-muted-foreground">
+              Nenhum membro nesta situação.
+            </li>
           )}
           {members.map((m) => (
             <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
@@ -139,7 +138,9 @@ function AdminMembers() {
                   const req = requestByUser.get(m.id);
                   if (!req) {
                     return (
-                      <p className="mt-1 text-xs text-muted-foreground">Sem solicitação de membresia.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Sem solicitação de membresia.
+                      </p>
                     );
                   }
                   return (
@@ -173,7 +174,6 @@ function AdminMembers() {
               </div>
               <div className="flex gap-2">
                 <AdminEditMemberDialog member={m} />
-
 
                 <Button
                   size="sm"

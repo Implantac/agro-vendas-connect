@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ImagePlus, Star, Trash2 } from "lucide-react";
+import { ArrowLeft, Circle, ImagePlus, Star, Trash2 } from "lucide-react";
+import { listingCompleteness, type CompletenessInput } from "@/features/listings/completeness";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,39 @@ export const Route = createFileRoute("/app/anuncio/$id")({
   }),
   component: EditarAnuncio,
 });
+
+function CompletenessCard({ listing }: { listing: CompletenessInput }) {
+  const { score, missing } = listingCompleteness(listing);
+  return (
+    <section className="mt-6 rounded-lg border border-border bg-card p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-display text-base font-semibold text-forest">
+          Anúncio {score}% completo
+        </h2>
+        <span className="text-xs text-muted-foreground">
+          {score >= 90
+            ? "Excelente — anúncios completos recebem mais propostas."
+            : "Complete os itens abaixo para ganhar confiança do comprador."}
+        </span>
+      </div>
+      <div className="mt-3 h-2 w-full rounded-full bg-secondary">
+        <div
+          className={cn("h-2 rounded-full", score >= 90 ? "bg-success" : "bg-accent")}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+      {missing.length > 0 && (
+        <ul className="mt-3 grid gap-1.5 text-xs text-muted-foreground sm:grid-cols-2">
+          {missing.map((m) => (
+            <li key={m.key} className="inline-flex items-center gap-1.5">
+              <Circle className="h-3 w-3" /> {m.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
 
 const EMPTY: ListingFormValues = {
   categoryId: "",
@@ -203,6 +237,25 @@ function EditarAnuncio() {
             Observação da moderação: {listing.moderation_notes}
           </p>
         )}
+
+        <CompletenessCard
+          listing={{
+            title: values.title,
+            description: values.description,
+            brand: values.brand,
+            model: values.model,
+            manufacture_year: values.year ? Number(values.year) : null,
+            hours_used: values.hours ? Number(values.hours) : null,
+            price: values.price ? Number(values.price) : null,
+            price_on_request: values.priceOnRequest,
+            city: values.city,
+            state: values.state,
+            category_id: values.categoryId,
+            technical_data_json: (listing.technical_data_json as Record<string, unknown>) ?? {},
+            photos: media.length,
+          }}
+        />
+
 
         {/* Fotos */}
         <section className="mt-6 rounded-lg border border-border bg-card p-6">

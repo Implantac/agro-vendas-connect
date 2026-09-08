@@ -12,13 +12,17 @@ export async function fetchNegotiation(proposalId: string) {
   if (error) throw error;
   if (!proposal) return null;
 
-  const [{ data: events }, { data: conversation }] = await Promise.all([
+  const [{ data: events }, { data: conversation }, { data: parties }] = await Promise.all([
     supabase
       .from("proposal_events")
       .select("*")
       .eq("proposal_id", proposalId)
       .order("created_at", { ascending: true }),
     supabase.from("conversations").select("id").eq("proposal_id", proposalId).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("id,full_name,city,state,status,phone")
+      .in("id", [proposal.buyer_id, proposal.seller_id]),
   ]);
 
   let messages: { id: string; sender_id: string; content: string; created_at: string }[] = [];
@@ -31,11 +35,14 @@ export async function fetchNegotiation(proposalId: string) {
     messages = data ?? [];
   }
 
+  const byId = new Map((parties ?? []).map((p) => [p.id, p]));
   return {
     proposal,
     events: events ?? [],
     conversationId: conversation?.id ?? null,
     messages,
+    buyer: byId.get(proposal.buyer_id) ?? null,
+    seller: byId.get(proposal.seller_id) ?? null,
   };
 }
 

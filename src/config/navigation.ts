@@ -28,6 +28,7 @@ export type AppRoute =
   | "/app"
   | "/app/comprar"
   | "/app/favoritos"
+  | "/app/comparar"
   | "/app/negociacoes"
   | "/app/pedidos"
   | "/app/mensagens"
@@ -76,7 +77,7 @@ export const SELLER_ONLY_ROUTES: AppRoute[] = [
 export const ADMIN_ONLY_ROUTES: AppRoute[] = ["/app/admin"];
 
 /** Rotas exclusivas do comprador. */
-export const BUYER_ONLY_ROUTES: AppRoute[] = ["/app/comprar", "/app/favoritos"];
+export const BUYER_ONLY_ROUTES: AppRoute[] = ["/app/comprar", "/app/favoritos", "/app/comparar"];
 
 export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
   comprador: [

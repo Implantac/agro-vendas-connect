@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Handshake, Send, X } from "lucide-react";
+import { ArrowLeft, Check, FileText, Handshake, Send, Timer, Users, X } from "lucide-react";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,18 @@ import {
   PROPOSAL_STATUS_LABELS,
 } from "@/lib/format";
 import { ensureOrderForProposal, fetchOrderByProposal, updateOrderStatus } from "@/lib/orders";
+import { updateProposalTerms } from "@/features/listings/queries";
+import {
+  allowedActions,
+  hoursLeft,
+  isExpired,
+  isOpen,
+  roleIn,
+  TERM_FIELDS,
+  termsFilled,
+  turnOf,
+  type CommercialTerms,
+} from "@/lib/permissions/negotiation";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/negociacao/$id")({
@@ -36,8 +48,9 @@ const EVENT_LABELS: Record<string, string> = {
   created: "Proposta enviada",
   accepted: "Proposta aceita",
   rejected: "Proposta recusada",
-  countered: "Contraproposta registrada",
+  countered: "Contraproposta",
   cancelled: "Proposta cancelada",
+  terms_updated: "Condições comerciais atualizadas",
 };
 
 function NegotiationDetail() {
@@ -46,6 +59,8 @@ function NegotiationDetail() {
   const queryClient = useQueryClient();
   const [counter, setCounter] = useState("");
   const [text, setText] = useState("");
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [termsDraft, setTermsDraft] = useState<CommercialTerms>({});
   const endRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useQuery({
@@ -75,8 +90,34 @@ function NegotiationDetail() {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [data?.messages.length]);
 
+  const saveTerms = useMutation({
+    mutationFn: async () => {
+      if (!data?.proposal) return;
+      await updateProposalTerms(data.proposal.id, termsDraft);
+      const p = data.proposal;
+      const other = p.buyer_id === user?.id ? p.seller_id : p.buyer_id;
+      await notifyCounterpart({
+        userId: other,
+        type: "proposal_terms",
+        title: "Condições comerciais atualizadas",
+        message: "A outra parte registrou condições de pagamento, prazo ou entrega.",
+        proposalId: p.id,
+      });
+    },
+    onSuccess: () => {
+      setTermsOpen(false);
+      toast.success("Condições registradas");
+      void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  useEffect(() => {
+    if (termsOpen) setTermsDraft((data?.proposal?.terms_json ?? {}) as CommercialTerms);
+  }, [termsOpen, data?.proposal?.terms_json]);
+
   const respond = useMutation({
-    mutationFn: async (action: "accepted" | "rejected" | "countered") => {
+    mutationFn: async (action: "accepted" | "rejected" | "countered" | "cancelled") => {
       if (!user || !data?.proposal) return;
       const p = data.proposal;
       const amount =
@@ -169,7 +210,20 @@ function NegotiationDetail() {
     manufacture_year: number | null;
   } | null;
   const isSeller = p.seller_id === user?.id;
-  const openStatus = p.status === "open" || p.status === "countered";
+  const party = { userId: user?.id ?? "", buyerId: p.buyer_id, sellerId: p.seller_id };
+  const actions = allowedActions(p.status, p.expires_at, party);
+  const openStatus = actions.length > 0;
+  const turn = turnOf(p.status);
+  const myTurn = turn === roleIn(party);
+  const left = hoursLeft(p.expires_at);
+  const expired = isOpen(p.status) && isExpired(p.expires_at);
+  const terms = (p.terms_json ?? {}) as CommercialTerms;
+  const nameOf = (id: string | null) =>
+    id === p.buyer_id
+      ? (data.buyer?.full_name ?? "Comprador")
+      : id === p.seller_id
+        ? (data.seller?.full_name ?? "Vendedor")
+        : "Sistema";
 
   return (
     <AppPage>
@@ -202,9 +256,13 @@ function NegotiationDetail() {
                     .filter(Boolean)
                     .join(" • ")}
                 </p>
+                <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Users className="h-3.5 w-3.5" />
+                  {data.buyer?.full_name ?? "Comprador"} ↔ {data.seller?.full_name ?? "Vendedor"}
+                </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-muted-foreground">Valor em negociação</p>
+                <p className="text-xs text-muted-foreground">Proposta atual</p>
                 <p className="font-display text-2xl font-bold text-forest">{formatBRL(p.amount)}</p>
                 {listing?.price != null && (
                   <p className="text-xs text-muted-foreground">
@@ -212,13 +270,23 @@ function NegotiationDetail() {
                   </p>
                 )}
                 <span className="mt-1 inline-block rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
-                  {PROPOSAL_STATUS_LABELS[p.status] ?? p.status}
+                  {expired ? "Expirada" : (PROPOSAL_STATUS_LABELS[p.status] ?? p.status)}
                 </span>
+                {isOpen(p.status) && !expired && left !== null && (
+                  <p className="mt-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <Timer className="h-3 w-3" /> válida por mais {left} h
+                  </p>
+                )}
               </div>
             </div>
 
             {openStatus && (
               <div className="mt-5 space-y-3 border-t border-border pt-5">
+                <p className="text-sm text-muted-foreground">
+                  {myTurn
+                    ? "Sua vez: aceite, recuse ou envie uma contraproposta."
+                    : `Aguardando resposta de ${turn === "buyer" ? "do comprador" : "do vendedor"}. Você ainda pode enviar uma contraproposta.`}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     size="sm"
@@ -226,7 +294,7 @@ function NegotiationDetail() {
                     disabled={respond.isPending}
                     onClick={() => respond.mutate("accepted")}
                   >
-                    <Check className="mr-1.5 h-4 w-4" /> Aceitar
+                    <Check className="mr-1.5 h-4 w-4" /> Aceitar {formatBRL(p.amount)}
                   </Button>
                   <Button
                     size="sm"
@@ -236,6 +304,16 @@ function NegotiationDetail() {
                   >
                     <X className="mr-1.5 h-4 w-4" /> Recusar
                   </Button>
+                  {actions.includes("cancelled" as never) && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={respond.isPending}
+                      onClick={() => respond.mutate("cancelled")}
+                    >
+                      Cancelar minha proposta
+                    </Button>
+                  )}
                 </div>
                 <div className="flex flex-wrap items-end gap-2">
                   <div className="space-y-1">
@@ -260,7 +338,87 @@ function NegotiationDetail() {
                 </div>
               </div>
             )}
+            {expired && (
+              <p className="mt-4 rounded-sm border border-warning/40 bg-warning/10 p-3 text-xs text-warning">
+                Esta proposta expirou após 48 horas sem resposta. O comprador pode enviar uma nova
+                proposta pelo anúncio.
+              </p>
+            )}
           </section>
+
+          {/* Condições comerciais — aparecem depois da proposta (progressivo) */}
+          {(isOpen(p.status) || p.status === "accepted") && !expired && (
+            <section className="rounded-lg border border-border bg-card p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-base font-semibold text-forest">
+                    Condições comerciais
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    {termsFilled(terms)}/{TERM_FIELDS.length} definidas • ficam registradas para as
+                    duas partes
+                  </p>
+                </div>
+                {!termsOpen && (
+                  <Button size="sm" variant="outline" onClick={() => setTermsOpen(true)}>
+                    <FileText className="mr-1.5 h-4 w-4" />
+                    {termsFilled(terms) ? "Editar condições" : "Definir condições"}
+                  </Button>
+                )}
+              </div>
+              {termsOpen ? (
+                <form
+                  className="mt-4 grid gap-3 sm:grid-cols-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    saveTerms.mutate();
+                  }}
+                >
+                  {TERM_FIELDS.map((f) => (
+                    <div key={f.key} className={cn("space-y-1", f.key === "observacoes" && "sm:col-span-2")}>
+                      <Label htmlFor={`t-${f.key}`}>{f.label}</Label>
+                      <Input
+                        id={`t-${f.key}`}
+                        value={termsDraft[f.key] ?? ""}
+                        placeholder={f.placeholder}
+                        onChange={(e) => setTermsDraft((d) => ({ ...d, [f.key]: e.target.value }))}
+                      />
+                    </div>
+                  ))}
+                  <div className="flex gap-2 sm:col-span-2">
+                    <Button type="submit" size="sm" disabled={saveTerms.isPending}>
+                      Salvar condições
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" onClick={() => setTermsOpen(false)}>
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              ) : termsFilled(terms) > 0 ? (
+                <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                  {TERM_FIELDS.filter((f) => terms[f.key]).map((f) => (
+                    <div key={f.key}>
+                      <dt className="text-xs text-muted-foreground">{f.label}</dt>
+                      <dd className="font-medium text-forest">{terms[f.key]}</dd>
+                    </div>
+                  ))}
+                  {order && (
+                    <div>
+                      <dt className="text-xs text-muted-foreground">Comissão da plataforma</dt>
+                      <dd className="font-medium text-forest">
+                        {formatBRL(Number(order.commission_amount))}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              ) : (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Quando chegarem a um valor, registrem aqui pagamento, prazo, transporte, entrega e
+                  documentação — evita mal-entendidos no fechamento.
+                </p>
+              )}
+            </section>
+          )}
 
           {order && (
             <section className="rounded-lg border border-border bg-card p-5">
@@ -378,20 +536,46 @@ function NegotiationDetail() {
         </div>
 
         <aside className="space-y-3 rounded-lg border border-border bg-card p-5 lg:sticky lg:top-24 lg:self-start">
-          <h2 className="font-display text-base font-semibold text-forest">Histórico auditável</h2>
+          <h2 className="font-display text-base font-semibold text-forest">Linha do tempo</h2>
+          <p className="text-xs text-muted-foreground">
+            Quem fez o quê, quando e por quanto. Registro auditável.
+          </p>
           <ol className="space-y-4 border-l border-border pl-4">
-            {data.events.map((ev) => (
-              <li key={ev.id} className="relative">
-                <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-accent" />
-                <p className="text-sm font-semibold text-forest">
-                  {EVENT_LABELS[ev.event_type] ?? ev.event_type}
-                </p>
-                {ev.message && <p className="text-xs text-muted-foreground">{ev.message}</p>}
-                <p className="text-[11px] text-muted-foreground">
-                  {formatDateTimeBR(ev.created_at)}
-                </p>
-              </li>
-            ))}
+            {data.events.map((ev, i) => {
+              const amountInMsg = ev.message?.match(/R\$\s?([\d.,]+)/)?.[1];
+              const value =
+                ev.event_type === "created"
+                  ? formatBRL(Number(data.events.length === 1 ? p.amount : p.amount))
+                  : amountInMsg
+                    ? formatBRL(Number(amountInMsg.replace(/\./g, "").replace(",", ".")))
+                    : null;
+              const last = i === data.events.length - 1;
+              return (
+                <li key={ev.id} className="relative">
+                  <span
+                    className={cn(
+                      "absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full",
+                      last ? "bg-accent ring-4 ring-accent/20" : "bg-border",
+                    )}
+                  />
+                  <p className="text-sm font-semibold text-forest">
+                    {EVENT_LABELS[ev.event_type] ?? ev.event_type}
+                    {ev.event_type === "countered" && value && (
+                      <span className="ml-1 font-display">{value}</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    por {ev.actor_id === user?.id ? "você" : nameOf(ev.actor_id)}
+                  </p>
+                  {ev.message && ev.event_type !== "countered" && (
+                    <p className="text-xs text-muted-foreground">{ev.message}</p>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">
+                    {formatDateTimeBR(ev.created_at)}
+                  </p>
+                </li>
+              );
+            })}
           </ol>
         </aside>
       </div>

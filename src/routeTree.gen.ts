@@ -30,6 +30,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermoDeAceiteRouteImport } from './routes/termo-de-aceite'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppCompararRouteImport } from './routes/app.comparar'
 import { Route as AppComprarRouteImport } from './routes/app.comprar'
 import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
 import { Route as AppDesempenhoRouteImport } from './routes/app.desempenho'
@@ -159,6 +160,11 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCompararRoute = AppCompararRouteImport.update({
+  id: '/comparar',
+  path: '/comparar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppComprarRoute = AppComprarRouteImport.update({
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termo-de-aceite': typeof TermoDeAceiteRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/comparar': typeof AppCompararRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/desempenho': typeof AppDesempenhoRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termo-de-aceite': typeof TermoDeAceiteRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/comparar': typeof AppCompararRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/desempenho': typeof AppDesempenhoRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/termo-de-aceite': typeof TermoDeAceiteRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/app/comparar': typeof AppCompararRoute
   '/app/comprar': typeof AppComprarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/desempenho': typeof AppDesempenhoRoute
@@ -454,6 +463,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/termo-de-aceite'
     | '/termos-de-uso'
+    | '/app/comparar'
     | '/app/comprar'
     | '/app/configuracoes'
     | '/app/desempenho'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/termo-de-aceite'
     | '/termos-de-uso'
+    | '/app/comparar'
     | '/app/comprar'
     | '/app/configuracoes'
     | '/app/desempenho'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/termo-de-aceite'
     | '/termos-de-uso'
+    | '/app/comparar'
     | '/app/comprar'
     | '/app/configuracoes'
     | '/app/desempenho'
@@ -750,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/comparar': {
+      id: '/app/comparar'
+      path: '/comparar'
+      fullPath: '/app/comparar'
+      preLoaderRoute: typeof AppCompararRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/comprar': {
       id: '/app/comprar'
       path: '/comprar'
@@ -929,6 +948,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppCompararRoute: typeof AppCompararRoute
   AppComprarRoute: typeof AppComprarRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDesempenhoRoute: typeof AppDesempenhoRoute
@@ -957,6 +977,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppCompararRoute: AppCompararRoute,
   AppComprarRoute: AppComprarRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDesempenhoRoute: AppDesempenhoRoute,

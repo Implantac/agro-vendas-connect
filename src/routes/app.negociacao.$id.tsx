@@ -375,7 +375,10 @@ function NegotiationDetail() {
                   }}
                 >
                   {TERM_FIELDS.map((f) => (
-                    <div key={f.key} className={cn("space-y-1", f.key === "observacoes" && "sm:col-span-2")}>
+                    <div
+                      key={f.key}
+                      className={cn("space-y-1", f.key === "observacoes" && "sm:col-span-2")}
+                    >
                       <Label htmlFor={`t-${f.key}`}>{f.label}</Label>
                       <Input
                         id={`t-${f.key}`}
@@ -389,7 +392,12 @@ function NegotiationDetail() {
                     <Button type="submit" size="sm" disabled={saveTerms.isPending}>
                       Salvar condições
                     </Button>
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setTermsOpen(false)}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setTermsOpen(false)}
+                    >
                       Cancelar
                     </Button>
                   </div>

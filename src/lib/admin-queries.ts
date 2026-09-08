@@ -164,27 +164,35 @@ export interface AdminConsole {
 /** Painel consolidado do admin: alertas, confiança e negociações em uma única leitura. */
 export async function fetchAdminConsole(): Promise<AdminConsole> {
   const since = new Date(Date.now() - 30 * 864e5).toISOString();
-  const [profiles, listings, reports, requests, orders, sellers, docs, proposals, allProposals, events, media] =
-    await Promise.all([
-      supabase.from("profiles").select("id, role, status"),
-      supabase.from("listings").select("id, status"),
-      supabase.from("reports").select("id, status"),
-      supabase.from("membership_requests").select("id, status"),
-      supabase.from("orders").select("id, status, amount"),
-      supabase.from("seller_profiles").select("id, verification_status"),
-      supabase.from("member_documents").select("id, status"),
-      supabase
-        .from("proposals")
-        .select("id, amount, status, updated_at, listings(title)")
-        .order("updated_at", { ascending: false })
-        .limit(8),
-      supabase.from("proposals").select("id, status, expires_at, created_at, updated_at"),
-      supabase
-        .from("listing_events")
-        .select("listing_id, event_type")
-        .gte("created_at", since),
-      supabase.from("listing_media").select("listing_id"),
-    ]);
+  const [
+    profiles,
+    listings,
+    reports,
+    requests,
+    orders,
+    sellers,
+    docs,
+    proposals,
+    allProposals,
+    events,
+    media,
+  ] = await Promise.all([
+    supabase.from("profiles").select("id, role, status"),
+    supabase.from("listings").select("id, status"),
+    supabase.from("reports").select("id, status"),
+    supabase.from("membership_requests").select("id, status"),
+    supabase.from("orders").select("id, status, amount"),
+    supabase.from("seller_profiles").select("id, verification_status"),
+    supabase.from("member_documents").select("id, status"),
+    supabase
+      .from("proposals")
+      .select("id, amount, status, updated_at, listings(title)")
+      .order("updated_at", { ascending: false })
+      .limit(8),
+    supabase.from("proposals").select("id, status, expires_at, created_at, updated_at"),
+    supabase.from("listing_events").select("listing_id, event_type").gte("created_at", since),
+    supabase.from("listing_media").select("listing_id"),
+  ]);
 
   const p = profiles.data ?? [];
   const l = listings.data ?? [];

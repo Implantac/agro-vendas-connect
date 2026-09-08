@@ -256,7 +256,6 @@ function EditarAnuncio() {
           }}
         />
 
-
         {/* Fotos */}
         <section className="mt-6 rounded-lg border border-border bg-card p-6">
           <h2 className="font-display text-lg font-semibold text-forest">Fotos</h2>

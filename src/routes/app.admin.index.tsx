@@ -303,8 +303,6 @@ function AdminHome() {
         </ul>
       </section>
 
-
-
       <p className="mt-8 inline-flex items-center gap-2 text-xs text-muted-foreground">
         <ShieldAlert className="h-4 w-4" /> Todas as ações administrativas ficam registradas na
         auditoria.

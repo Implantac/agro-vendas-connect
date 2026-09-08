@@ -90,8 +90,34 @@ function NegotiationDetail() {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [data?.messages.length]);
 
+  const saveTerms = useMutation({
+    mutationFn: async () => {
+      if (!data?.proposal) return;
+      await updateProposalTerms(data.proposal.id, termsDraft);
+      const p = data.proposal;
+      const other = p.buyer_id === user?.id ? p.seller_id : p.buyer_id;
+      await notifyCounterpart({
+        userId: other,
+        type: "proposal_terms",
+        title: "Condições comerciais atualizadas",
+        message: "A outra parte registrou condições de pagamento, prazo ou entrega.",
+        proposalId: p.id,
+      });
+    },
+    onSuccess: () => {
+      setTermsOpen(false);
+      toast.success("Condições registradas");
+      void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  useEffect(() => {
+    if (termsOpen) setTermsDraft((data?.proposal?.terms_json ?? {}) as CommercialTerms);
+  }, [termsOpen, data?.proposal?.terms_json]);
+
   const respond = useMutation({
-    mutationFn: async (action: "accepted" | "rejected" | "countered") => {
+    mutationFn: async (action: "accepted" | "rejected" | "countered" | "cancelled") => {
       if (!user || !data?.proposal) return;
       const p = data.proposal;
       const amount =

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
   BadgeCheck,
@@ -238,6 +239,70 @@ function AdminHome() {
           )}
         </ul>
       </section>
+
+      {/* Saúde do marketplace — sinais que pedem ação */}
+      <section className="mt-6 rounded-lg border border-border bg-card">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="inline-flex items-center gap-2 font-display text-base font-semibold text-forest">
+            <Activity className="h-4 w-4 text-accent" /> Saúde do marketplace (30 dias)
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Funil real: visualizações → interessados → propostas → aceites.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 divide-border border-b border-border sm:grid-cols-4 sm:divide-x">
+          {[
+            { label: "Visualizações", value: h?.views30d ?? 0 },
+            { label: "Interessados", value: h?.interested30d ?? 0 },
+            { label: "Propostas", value: h?.proposals30d ?? 0 },
+            { label: "Aceites", value: h?.accepted30d ?? 0 },
+          ].map((s, i, arr) => (
+            <div key={s.label} className="px-5 py-4">
+              <p className="font-display text-2xl font-bold text-forest">{s.value}</p>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">{s.label}</p>
+              {i > 0 && arr[i - 1]!.value > 0 && (
+                <p className="text-[11px] text-muted-foreground">
+                  {pct(s.value, arr[i - 1]!.value)}% da etapa anterior
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+        <ul className="divide-y divide-border text-sm">
+          {[
+            {
+              n: h?.expiredNoReply ?? 0,
+              text: "propostas venceram sem resposta do vendedor",
+              to: "/app/admin/negociacoes" as AppRoute,
+            },
+            {
+              n: h?.staleListings ?? 0,
+              text: "anúncios aprovados sem nenhuma visualização em 30 dias",
+              to: "/app/admin/anuncios" as AppRoute,
+            },
+            {
+              n: h?.listingsWithoutPhoto ?? 0,
+              text: "anúncios aprovados sem foto",
+              to: "/app/admin/anuncios" as AppRoute,
+            },
+          ].map((s) => (
+            <li key={s.text} className="flex items-center justify-between gap-4 px-5 py-3">
+              <p className={s.n > 0 ? "text-foreground" : "text-muted-foreground"}>
+                <span className="font-display font-bold text-forest">{s.n}</span> {s.text}
+              </p>
+              {s.n > 0 && (
+                <Button asChild size="sm" variant="ghost">
+                  <Link to={s.to}>
+                    Revisar <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+
 
       <p className="mt-8 inline-flex items-center gap-2 text-xs text-muted-foreground">
         <ShieldAlert className="h-4 w-4" /> Todas as ações administrativas ficam registradas na

@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/logo.png.asset.json";
+import logoAsset from "@/assets/logo-cropped.png";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -13,11 +13,11 @@ export function Logo({
   return (
     <span className={cn("inline-flex items-center gap-3", className)}>
       <img
-        src={logoAsset.url}
+        src={logoAsset}
         alt="DDP AGRO"
-        width={96}
-        height={96}
-        className="h-20 w-20 shrink-0 object-contain sm:h-24 sm:w-24"
+        width={124}
+        height={148}
+        className="h-24 w-20 shrink-0 object-contain sm:h-28 sm:w-24"
       />
       {variant === "horizontal" && (
         <span className="flex flex-col leading-none">

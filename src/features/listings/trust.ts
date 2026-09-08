@@ -3,12 +3,12 @@
  * Fonte única para página do anúncio, cards e perfil do vendedor.
  */
 export interface TrustInput {
-  sellerStatus?: string | null; // profiles.status
-  sellerPhone?: string | null;
-  companyVerification?: string | null; // seller_profiles.verification_status
-  listingStatus?: string | null; // listings.status
-  photos?: number;
-  technical?: Record<string, unknown> | null;
+  sellerStatus?: string | null | undefined; // profiles.status
+  sellerPhone?: string | null | undefined;
+  companyVerification?: string | null | undefined; // seller_profiles.verification_status
+  listingStatus?: string | null | undefined; // listings.status
+  photos?: number | undefined;
+  technical?: Record<string, unknown> | null | undefined;
 }
 
 export interface TrustBadge {

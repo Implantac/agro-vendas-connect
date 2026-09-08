@@ -3,19 +3,19 @@
  * e pelo painel comercial. Cada item tem peso; o score é 0-100.
  */
 export interface CompletenessInput {
-  title?: string | null;
-  description?: string | null;
-  brand?: string | null;
-  model?: string | null;
-  manufacture_year?: number | null;
-  hours_used?: number | null;
-  price?: number | null;
-  price_on_request?: boolean;
-  city?: string | null;
-  state?: string | null;
-  category_id?: string | null;
-  technical_data_json?: Record<string, unknown> | null;
-  photos?: number;
+  title?: string | null | undefined;
+  description?: string | null | undefined;
+  brand?: string | null | undefined;
+  model?: string | null | undefined;
+  manufacture_year?: number | null | undefined;
+  hours_used?: number | null | undefined;
+  price?: number | null | undefined;
+  price_on_request?: boolean | undefined;
+  city?: string | null | undefined;
+  state?: string | null | undefined;
+  category_id?: string | null | undefined;
+  technical_data_json?: Record<string, unknown> | null | undefined;
+  photos?: number | undefined;
 }
 
 export interface CompletenessItem {

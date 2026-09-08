@@ -15,20 +15,21 @@ export function Logo({
       <img
         src={logoAsset.url}
         alt="DDP AGRO"
-        width={56}
-        height={56}
-        className="h-14 w-14 shrink-0 object-contain"
+        width={96}
+        height={96}
+        className="h-20 w-20 shrink-0 object-contain sm:h-24 sm:w-24"
       />
       {variant === "horizontal" && (
         <span className="flex flex-col leading-none">
           <span
             className={cn(
-              "font-display text-xl font-bold tracking-tight",
+              "font-display text-2xl font-bold tracking-tight sm:text-3xl",
               tone === "light" ? "text-primary-foreground" : "text-forest",
             )}
           >
             DDP <span className="text-accent">AGRO</span>
           </span>
+
           <span
             className={cn(
               "mt-1 text-[11px] font-medium uppercase tracking-[0.18em]",

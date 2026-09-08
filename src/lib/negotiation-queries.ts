@@ -73,19 +73,3 @@ export async function ensureConversation(proposal: {
   if (error) throw error;
   return data.id;
 }
-
-export async function notifyCounterpart(params: {
-  userId: string;
-  title: string;
-  message: string;
-  proposalId: string;
-  type: string;
-}) {
-  await supabase.from("notifications").insert({
-    user_id: params.userId,
-    type: params.type,
-    title: params.title,
-    message: params.message,
-    action_url: `/app/negociacao/${params.proposalId}`,
-  });
-}

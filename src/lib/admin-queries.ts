@@ -59,11 +59,11 @@ export async function setMemberStatus(
     .update({ status, rejection_reason: reason ?? null })
     .eq("id", userId);
   if (error) throw error;
-  await supabase.from("audit_logs").insert({
-    action: `member_${status}`,
-    entity_type: "profile",
-    entity_id: userId,
-    metadata_json: reason ? { reason } : {},
+  await supabase.rpc("admin_write_audit_log", {
+    _action: `member_${status}`,
+    _entity_type: "profile",
+    _entity_id: userId,
+    _metadata: reason ? { reason } : {},
   });
 }
 
@@ -93,11 +93,11 @@ export async function moderateListing(
     })
     .eq("id", listingId);
   if (error) throw error;
-  await supabase.from("audit_logs").insert({
-    action: `listing_${status}`,
-    entity_type: "listing",
-    entity_id: listingId,
-    metadata_json: notes ? { notes } : {},
+  await supabase.rpc("admin_write_audit_log", {
+    _action: `listing_${status}`,
+    _entity_type: "listing",
+    _entity_id: listingId,
+    _metadata: notes ? { notes } : {},
   });
 }
 

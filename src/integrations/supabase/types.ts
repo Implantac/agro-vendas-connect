@@ -1183,6 +1183,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_write_audit_log: {
+        Args: {
+          _action: string
+          _entity_id: string
+          _entity_type: string
+          _metadata?: Json
+        }
+        Returns: undefined
+      }
       cancel_membership_request: {
         Args: { _request_id: string }
         Returns: undefined

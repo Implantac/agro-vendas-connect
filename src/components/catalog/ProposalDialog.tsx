@@ -90,13 +90,7 @@ export function ProposalDialog({
       });
     }
 
-    await supabase.from("notifications").insert({
-      user_id: sellerId,
-      type: "proposal_received",
-      title: "Nova proposta recebida",
-      message: `Você recebeu uma proposta para ${listingTitle}.`,
-      action_url: "/app/negociacoes",
-    });
+    // A notificação ao vendedor é gerada automaticamente pelo banco de dados.
 
     setSaving(false);
     setOpen(false);

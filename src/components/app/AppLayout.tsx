@@ -47,6 +47,7 @@ import {
   type NavGroup,
 } from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
+import { fetchPendingLegalDocs } from "@/lib/legal";
 import { BuyerFilterPanel } from "@/components/app/BuyerFilterPanel";
 import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";

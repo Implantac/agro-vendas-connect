@@ -131,7 +131,14 @@ export function AppLayout() {
 
   // Enquanto o perfil carrega ou há um redirecionamento pendente, não renderiza
   // a tela — isso evitava o "flash" do dashboard antes do redirecionamento.
-  if (loading || !user || blockedRoute || needsAdminHome || awaitingMembership) {
+  if (
+    loading ||
+    !user ||
+    blockedRoute ||
+    needsAdminHome ||
+    awaitingMembership ||
+    needsLegalAcceptance
+  ) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="text-sm text-muted-foreground">Carregando sua área...</p>

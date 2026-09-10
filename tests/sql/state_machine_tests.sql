@@ -5,7 +5,7 @@
 BEGIN;
 
 CREATE TEMP TABLE _sm_results (nome text, ok boolean, detalhe text) ON COMMIT DROP;
-GRANT ALL ON _sm_results TO authenticated;
+GRANT ALL ON _sm_results TO authenticated, service_role;
 
 DO $$
 DECLARE

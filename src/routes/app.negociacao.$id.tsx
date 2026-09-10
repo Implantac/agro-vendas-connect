@@ -83,7 +83,7 @@ function NegotiationDetail() {
       toast.success("Pedido atualizado");
       void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
-    onError: () => toast.error("Não foi possível atualizar o pedido."),
+    onError: (e: Error) => toast.error(e.message || "Não foi possível atualizar o pedido."),
   });
 
   useEffect(() => {

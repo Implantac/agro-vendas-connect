@@ -55,4 +55,11 @@ export function reportLovableError(error: unknown, context: Record<string, unkno
     ...(stack !== undefined && { stack }),
     filename: window.location.pathname,
   });
+
+  // Observabilidade própria: guarda o erro no backend para o painel do admin.
+  void logSystemEvent("error", "frontend", message, {
+    route: window.location.pathname,
+    ...(stack ? { stack: stack.slice(0, 1500) } : {}),
+    ...context,
+  });
 }

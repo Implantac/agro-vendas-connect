@@ -59,11 +59,11 @@ export async function fetchFinancialAlerts(): Promise<FinancialAlerts> {
     supabase
       .from("orders")
       .select("id", { count: "exact", head: true })
-      .eq("status", "payment_pending"),
+      .eq("status", "awaiting_payment"),
     supabase
       .from("orders")
       .select("id", { count: "exact", head: true })
-      .eq("status", "payment_pending")
+      .eq("status", "awaiting_payment")
       .lt("created_at", sevenDaysAgo),
     supabase
       .from("system_events")

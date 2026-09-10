@@ -1,3 +1,5 @@
+import { logSystemEvent } from "@/lib/observability";
+
 type LovableErrorOptions = {
   mechanism?: "manual" | "onerror" | "unhandledrejection" | "react_error_boundary";
   handled?: boolean;
@@ -54,5 +56,12 @@ export function reportLovableError(error: unknown, context: Record<string, unkno
     message,
     ...(stack !== undefined && { stack }),
     filename: window.location.pathname,
+  });
+
+  // Observabilidade própria: guarda o erro no backend para o painel do admin.
+  void logSystemEvent("error", "frontend", message, {
+    route: window.location.pathname,
+    ...(stack ? { stack: stack.slice(0, 1500) } : {}),
+    ...context,
   });
 }

@@ -1146,6 +1146,36 @@ export type Database = {
           },
         ]
       }
+      system_events: {
+        Row: {
+          context: Json
+          created_at: string
+          id: string
+          message: string
+          severity: string
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          id?: string
+          message: string
+          severity?: string
+          source: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          id?: string
+          message?: string
+          severity?: string
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1209,6 +1239,15 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
+      log_system_event: {
+        Args: {
+          _context?: Json
+          _message: string
+          _severity: string
+          _source: string
+        }
+        Returns: string
+      }
       my_member_role: {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]

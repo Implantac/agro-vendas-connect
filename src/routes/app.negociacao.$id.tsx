@@ -77,13 +77,13 @@ function NegotiationDetail() {
   const orderStatus = useMutation({
     mutationFn: async (status: "awaiting_payment" | "in_delivery" | "completed" | "cancelled") => {
       if (!user || !order) return;
-      await updateOrderStatus(order.id, status, user.id);
+      await updateOrderStatus(order.id, status);
     },
     onSuccess: () => {
       toast.success("Pedido atualizado");
       void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
-    onError: () => toast.error("Não foi possível atualizar o pedido."),
+    onError: (e: Error) => toast.error(e.message || "Não foi possível atualizar o pedido."),
   });
 
   useEffect(() => {

@@ -63,17 +63,18 @@ export async function ensureOrderForProposal(input: OrderInput) {
   return data;
 }
 
+/**
+ * Transição de status do pedido.
+ * A validação de permissão, de transição válida e o registro do evento
+ * são feitos no banco (RPC transacional) — o cliente não altera pedidos direto.
+ */
 export async function updateOrderStatus(
   orderId: string,
   status: "awaiting_payment" | "in_delivery" | "completed" | "cancelled",
-  actorId: string,
 ) {
-  const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
-  if (error) throw error;
-  await supabase.from("order_events").insert({
-    order_id: orderId,
-    actor_id: actorId,
-    event_type: `status_${status}`,
-    metadata_json: {},
+  const { error } = await supabase.rpc("set_order_status", {
+    _order_id: orderId,
+    _status: status,
   });
+  if (error) throw error;
 }

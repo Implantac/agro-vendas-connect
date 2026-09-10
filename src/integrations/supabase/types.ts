@@ -1239,6 +1239,32 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      set_order_status: {
+        Args: {
+          _order_id: string
+          _status: Database["public"]["Enums"]["order_status"]
+        }
+        Returns: {
+          amount: number
+          buyer_id: string
+          commission_amount: number
+          created_at: string
+          delivery_notes: string | null
+          id: string
+          listing_id: string | null
+          proposal_id: string | null
+          seller_id: string
+          seller_net_amount: number
+          status: Database["public"]["Enums"]["order_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       shares_deal_with: { Args: { _other: string }; Returns: boolean }
       update_proposal_terms: {
         Args: { _proposal_id: string; _terms: Json }

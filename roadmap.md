@@ -73,3 +73,12 @@
 - [x] Command Center: saúde do marketplace (30 dias) com sinais acionáveis
 - [x] .env.example; .env contém apenas chaves publicáveis (sem service role)
 - [ ] Segunda conta de teste (comprador) para E2E da proposta ponta a ponta
+
+## Fase B — Lote 1 (P0)
+- [x] A-01 `.env` fora do controle de versão (.gitignore)
+- [x] A-04 Solicitação LGPD só em nome do próprio titular
+- [x] A-06 Pedido: UPDATE direto fechado; transições via RPC `set_order_status`
+- [ ] A-02/A-03 Gateway real + webhook assinado (bloqueado: falta credencial do provedor)
+- [ ] A-05 Atendimento LGPD com prazo, responsável e exportação real
+- [ ] A-07 Observabilidade (erros e alertas financeiros)
+- [ ] A-08 Suíte de testes de autorização e máquina de estados

@@ -34,9 +34,9 @@
 
 ## Fase 5 — Admin
 - [x] Dashboard consolidado, membros (criar/editar/senha), moderação, pedidos, denúncias, auditoria, financeiro, membresias
-- [ ] Gestão de categorias e atributos pela tela
-- [ ] Gestão de termos/versões pela tela
-- [ ] Tela de atendimento LGPD (privacy_requests) completa
+- [x] Gestão de categorias pela tela (/app/admin/categorias)
+- [x] Gestão de termos/versões pela tela (/app/admin/termos)
+- [x] Tela de atendimento LGPD com prazo e exportação (/app/admin/privacidade)
 
 ## Fase 6 — Pagamentos e produção
 - [ ] Estrutura de gateway (Asaas) com feature flag — hoje pagamento é simulado
@@ -79,6 +79,6 @@
 - [x] A-04 Solicitação LGPD só em nome do próprio titular
 - [x] A-06 Pedido: UPDATE direto fechado; transições via RPC `set_order_status`
 - [ ] A-02/A-03 Gateway real + webhook assinado (bloqueado: falta credencial do provedor)
-- [ ] A-05 Atendimento LGPD com prazo, responsável e exportação real
+- [x] A-05 Atendimento LGPD com prazo, responsável e exportação real
 - [ ] A-07 Observabilidade (erros e alertas financeiros)
 - [ ] A-08 Suíte de testes de autorização e máquina de estados

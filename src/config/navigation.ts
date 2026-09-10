@@ -48,7 +48,10 @@ export type AppRoute =
   | "/app/admin/pedidos"
   | "/app/admin/denuncias"
   | "/app/admin/financeiro"
-  | "/app/admin/auditoria";
+  | "/app/admin/auditoria"
+  | "/app/admin/categorias"
+  | "/app/admin/termos"
+  | "/app/admin/privacidade";
 
 export interface NavItem {
   to: AppRoute;
@@ -151,6 +154,14 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
       items: [
         { to: "/app/admin/denuncias", label: "Denúncias", icon: Flag },
         { to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck },
+        { to: "/app/admin/privacidade", label: "Privacidade (LGPD)", icon: ShieldCheck },
+      ],
+    },
+    {
+      label: "Conteúdo",
+      items: [
+        { to: "/app/admin/categorias", label: "Categorias", icon: ClipboardList },
+        { to: "/app/admin/termos", label: "Termos e versões", icon: ClipboardList },
         { to: "/app/configuracoes", label: "Configurações", icon: Settings },
       ],
     },

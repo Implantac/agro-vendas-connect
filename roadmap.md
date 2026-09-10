@@ -80,5 +80,6 @@
 - [x] A-06 Pedido: UPDATE direto fechado; transições via RPC `set_order_status`
 - [ ] A-02/A-03 Gateway real + webhook assinado (bloqueado: falta credencial do provedor)
 - [x] A-05 Atendimento LGPD com prazo, responsável e exportação real
-- [ ] A-07 Observabilidade (erros e alertas financeiros)
-- [ ] A-08 Suíte de testes de autorização e máquina de estados
+- [x] A-07 Observabilidade: tabela `system_events`, RPC `log_system_event`, erros do front registrados e painel em /app/admin/auditoria com alertas financeiros
+- [x] A-08 Suíte de testes de autorização (`tests/sql/authz_tests.sql`) — 9/9 ataques bloqueados
+- [ ] A-08b Testes de máquina de estados de pedido/proposta com duas contas reais

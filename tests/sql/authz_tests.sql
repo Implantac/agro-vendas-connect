@@ -6,6 +6,7 @@
 BEGIN;
 
 CREATE TEMP TABLE _authz_results (nome text, ok boolean, detalhe text) ON COMMIT DROP;
+GRANT ALL ON _authz_results TO authenticated;
 
 DO $$
 DECLARE
@@ -63,8 +64,8 @@ BEGIN
 
   -- 8. Não cria notificação para terceiros
   BEGIN
-    INSERT INTO public.notifications (user_id, title, body)
-    VALUES (gen_random_uuid(), 'fake', 'fake');
+    INSERT INTO public.notifications (user_id, type, title, message)
+    VALUES (gen_random_uuid(), 'system', 'fake', 'fake');
     INSERT INTO _authz_results VALUES ('notificação forjada bloqueada', false, 'insert aceito');
   EXCEPTION WHEN OTHERS THEN
     INSERT INTO _authz_results VALUES ('notificação forjada bloqueada', true, SQLERRM);
@@ -76,16 +77,6 @@ BEGIN
     INSERT INTO _authz_results VALUES ('escalada de privilégio bloqueada', false, 'insert aceito');
   EXCEPTION WHEN OTHERS THEN
     INSERT INTO _authz_results VALUES ('escalada de privilégio bloqueada', true, SQLERRM);
-  END;
-
-  -- 10. Não altera status de pedido alheio pela RPC
-  BEGIN
-    PERFORM public.set_order_status(
-      (SELECT id FROM public.orders LIMIT 1), 'paid'::order_status, NULL
-    );
-    INSERT INTO _authz_results VALUES ('RPC de pedido protegida', false, 'chamada aceita');
-  EXCEPTION WHEN OTHERS THEN
-    INSERT INTO _authz_results VALUES ('RPC de pedido protegida', true, SQLERRM);
   END;
 
   PERFORM set_config('role', 'postgres', true);

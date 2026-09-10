@@ -82,4 +82,4 @@
 - [x] A-05 Atendimento LGPD com prazo, responsável e exportação real
 - [x] A-07 Observabilidade: tabela `system_events`, RPC `log_system_event`, erros do front registrados e painel em /app/admin/auditoria com alertas financeiros
 - [x] A-08 Suíte de testes de autorização (`tests/sql/authz_tests.sql`) — 9/9 ataques bloqueados
-- [ ] A-08b Testes de máquina de estados de pedido/proposta com duas contas reais
+- [x] A-08b Testes de máquina de estados com duas contas reais (`tests/sql/state_machine_tests.sql`) — 13/13 aprovados; corrigido o registro do status anterior no histórico e bloqueada resposta a proposta vencida

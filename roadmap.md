@@ -17,7 +17,7 @@
 - [x] Recuperação de senha (/recuperar-senha e /redefinir-senha)
 - [x] Perfis, papéis em tabela separada, status de aprovação (banco + painel /app)
 - [x] /aguardando-aprovacao, /cadastro-rejeitado
-- [ ] /aceite-atualizado (reaceite quando o termo muda de versão)
+- [x] /aceite-atualizado (reaceite quando o termo muda de versão)
 - [x] Termos versionados + registro de aceite no cadastro
 
 ## Fase 3 — Anúncios

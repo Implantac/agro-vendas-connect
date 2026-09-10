@@ -47,6 +47,7 @@ import {
   type NavGroup,
 } from "@/config/navigation";
 import { fetchUnreadNotificationsCount } from "@/lib/app-queries";
+import { fetchPendingLegalDocs } from "@/lib/legal";
 import { BuyerFilterPanel } from "@/components/app/BuyerFilterPanel";
 import { useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { cn } from "@/lib/utils";
@@ -79,6 +80,17 @@ export function AppLayout() {
       replace: true,
     });
   }, [loading, user, memberStatus, navigate]);
+
+  // Reaceite: se algum documento obrigatório mudou de versão, bloqueia a área logada.
+  const { data: pendingLegal = [] } = useQuery({
+    queryKey: ["legal", "pending", user?.id],
+    queryFn: () => fetchPendingLegalDocs(user!.id),
+    enabled: Boolean(user) && memberStatus === "approved",
+  });
+  const needsLegalAcceptance = pendingLegal.length > 0;
+  useEffect(() => {
+    if (needsLegalAcceptance) void navigate({ to: "/aceite-atualizado", replace: true });
+  }, [needsLegalAcceptance, navigate]);
 
   const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
@@ -119,7 +131,14 @@ export function AppLayout() {
 
   // Enquanto o perfil carrega ou há um redirecionamento pendente, não renderiza
   // a tela — isso evitava o "flash" do dashboard antes do redirecionamento.
-  if (loading || !user || blockedRoute || needsAdminHome || awaitingMembership) {
+  if (
+    loading ||
+    !user ||
+    blockedRoute ||
+    needsAdminHome ||
+    awaitingMembership ||
+    needsLegalAcceptance
+  ) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="text-sm text-muted-foreground">Carregando sua área...</p>

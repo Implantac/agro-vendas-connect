@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AceiteAtualizadoRouteImport } from './routes/aceite-atualizado'
 import { Route as AguardandoAprovacaoRouteImport } from './routes/aguardando-aprovacao'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -63,6 +64,11 @@ import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AceiteAtualizadoRoute = AceiteAtualizadoRouteImport.update({
+  id: '/aceite-atualizado',
+  path: '/aceite-atualizado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AguardandoAprovacaoRoute = AguardandoAprovacaoRouteImport.update({
@@ -313,6 +319,7 @@ const AppNegociacaoIdRoute = AppNegociacaoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aceite-atualizado': typeof AceiteAtualizadoRoute
   '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
@@ -365,6 +372,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aceite-atualizado': typeof AceiteAtualizadoRoute
   '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/cadastro': typeof CadastroRoute
   '/cadastro-rejeitado': typeof CadastroRejeitadoRoute
@@ -417,6 +425,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aceite-atualizado': typeof AceiteAtualizadoRoute
   '/aguardando-aprovacao': typeof AguardandoAprovacaoRoute
   '/app': typeof AppRouteWithChildren
   '/cadastro': typeof CadastroRoute
@@ -471,6 +480,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aceite-atualizado'
     | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
@@ -523,6 +533,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aceite-atualizado'
     | '/aguardando-aprovacao'
     | '/cadastro'
     | '/cadastro-rejeitado'
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aceite-atualizado'
     | '/aguardando-aprovacao'
     | '/app'
     | '/cadastro'
@@ -627,6 +639,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AceiteAtualizadoRoute: typeof AceiteAtualizadoRoute
   AguardandoAprovacaoRoute: typeof AguardandoAprovacaoRoute
   AppRoute: typeof AppRouteWithChildren
   CadastroRoute: typeof CadastroRoute
@@ -656,6 +669,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aceite-atualizado': {
+      id: '/aceite-atualizado'
+      path: '/aceite-atualizado'
+      fullPath: '/aceite-atualizado'
+      preLoaderRoute: typeof AceiteAtualizadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/aguardando-aprovacao': {
@@ -1072,6 +1092,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AceiteAtualizadoRoute: AceiteAtualizadoRoute,
   AguardandoAprovacaoRoute: AguardandoAprovacaoRoute,
   AppRoute: AppRouteWithChildren,
   CadastroRoute: CadastroRoute,

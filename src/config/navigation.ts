@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Store,
   Target,
+  Tractor,
   User,
   Users,
   Wallet,
@@ -36,6 +37,7 @@ export type AppRoute =
   | "/app/perfil"
   | "/app/configuracoes"
   | "/app/meus-anuncios"
+  | "/app/maquinas"
   | "/app/publicar"
   | "/app/leads"
   | "/app/desempenho"
@@ -70,6 +72,7 @@ export interface NavGroup {
 /** Rotas exclusivas do vendedor. */
 export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/meus-anuncios",
+  "/app/maquinas",
   "/app/publicar",
   "/app/leads",
   "/app/desempenho",
@@ -113,6 +116,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
         { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
         { to: "/app/publicar", label: "Publicar anúncio", icon: Plus, variant: "primary" },
         { to: "/app/meus-anuncios", label: "Meus anúncios", icon: ClipboardList },
+        { to: "/app/maquinas", label: "Minhas máquinas", icon: Tractor },
         { to: "/app/leads", label: "Leads/Interessados", icon: Target },
       ],
     },

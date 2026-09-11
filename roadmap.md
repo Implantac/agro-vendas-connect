@@ -25,6 +25,7 @@
 - [x] Fluxo de moderação (rascunho > análise > aprovado/rejeitado)
 - [x] Favoritos
 - [x] Cadastro permanente de máquinas separado do anúncio, com vínculo e reaproveitamento no novo anúncio
+- [x] Tela "Minhas máquinas" (/app/maquinas): cadastrar, editar, excluir e ver anúncios vinculados
 
 ## Fase 4 — Negociação
 - [x] Propostas e contrapropostas (validade 48h, RPC transacional)

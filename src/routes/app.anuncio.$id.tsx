@@ -77,6 +77,7 @@ function CompletenessCard({ listing }: { listing: CompletenessInput }) {
 }
 
 const EMPTY: ListingFormValues = {
+  machineId: "",
   categoryId: "",
   title: "",
   brand: "",
@@ -127,7 +128,7 @@ function EditarAnuncio() {
   useEffect(() => {
     if (!listing) return;
     setValues({
-      machineId: listing.machine_id ?? undefined,
+      machineId: listing.machine_id ?? "",
       categoryId: listing.category_id ?? "",
       title: listing.title,
       brand: listing.brand ?? "",

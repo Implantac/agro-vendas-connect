@@ -31,7 +31,6 @@
 - [x] Pedidos com comissão automática
 - [x] Chat entre partes autorizadas (realtime)
 - [x] Notificações in-app
-- [ ] Notificações por e-mail
 - [ ] Notificações por e-mail (bloqueado até configurar um domínio de envio próprio)
 
 ## Fase 5 — Admin

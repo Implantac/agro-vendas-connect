@@ -5,7 +5,7 @@ const BUCKET = "listing-photos";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 anos
 
 export interface ListingFormValues {
-  machineId?: string;
+  machineId: string;
   categoryId: string;
   title: string;
   brand: string;

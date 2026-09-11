@@ -36,7 +36,7 @@ export const Route = createFileRoute("/app/publicar")({
 const STEPS = ["Tipo", "Informações técnicas", "Preço", "Localização", "Revisão"];
 
 interface Draft {
-  machineId?: string;
+  machineId: string;
   categoryId: string;
   title: string;
   brand: string;
@@ -52,7 +52,7 @@ interface Draft {
 }
 
 const INITIAL: Draft = {
-  machineId: undefined,
+  machineId: "",
   categoryId: "",
   title: "",
   brand: "",
@@ -195,7 +195,7 @@ function Publicar() {
               {machines.length > 0 && (
                 <div className="space-y-2">
                   <Label>Máquina cadastrada</Label>
-                  <Select value={draft.machineId ?? "new"} onValueChange={selectMachine}>
+                  <Select value={draft.machineId || "new"} onValueChange={selectMachine}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione uma máquina" />
                     </SelectTrigger>

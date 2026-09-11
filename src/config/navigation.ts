@@ -115,6 +115,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
         { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
         { to: "/app/publicar", label: "Publicar anúncio", icon: Plus, variant: "primary" },
         { to: "/app/meus-anuncios", label: "Meus anúncios", icon: ClipboardList },
+        { to: "/app/maquinas", label: "Minhas máquinas", icon: Tractor },
         { to: "/app/leads", label: "Leads/Interessados", icon: Target },
       ],
     },

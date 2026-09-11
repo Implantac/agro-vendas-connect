@@ -36,6 +36,7 @@ export type AppRoute =
   | "/app/perfil"
   | "/app/configuracoes"
   | "/app/meus-anuncios"
+  | "/app/maquinas"
   | "/app/publicar"
   | "/app/leads"
   | "/app/desempenho"

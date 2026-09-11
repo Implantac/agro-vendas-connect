@@ -24,13 +24,14 @@
 - [x] CRUD de anúncios do vendedor + upload de fotos (padronizadas 4:3)
 - [x] Fluxo de moderação (rascunho > análise > aprovado/rejeitado)
 - [x] Favoritos
+- [x] Cadastro permanente de máquinas separado do anúncio, com vínculo e reaproveitamento no novo anúncio
 
 ## Fase 4 — Negociação
 - [x] Propostas e contrapropostas (validade 48h, RPC transacional)
 - [x] Pedidos com comissão automática
 - [x] Chat entre partes autorizadas (realtime)
 - [x] Notificações in-app
-- [ ] Notificações por e-mail
+- [ ] Notificações por e-mail (bloqueado até configurar um domínio de envio próprio)
 
 ## Fase 5 — Admin
 - [x] Dashboard consolidado, membros (criar/editar/senha), moderação, pedidos, denúncias, auditoria, financeiro, membresias

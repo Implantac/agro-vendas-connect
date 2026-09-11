@@ -5,6 +5,7 @@ const BUCKET = "listing-photos";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 anos
 
 export interface ListingFormValues {
+  machineId: string;
   categoryId: string;
   title: string;
   brand: string;
@@ -47,28 +48,88 @@ function toRow(values: ListingFormValues) {
   };
 }
 
+function toMachineRow(sellerId: string, values: ListingFormValues) {
+  return {
+    owner_id: sellerId,
+    category_id: values.categoryId || null,
+    brand: values.brand.trim() || null,
+    model: values.model.trim() || null,
+    manufacture_year: values.year ? Number(values.year) : null,
+    condition: (values.condition || "used") as "new" | "semi_new" | "used",
+    hours_used: values.hours ? Number(values.hours) : null,
+    technical_data_json: {},
+  };
+}
+
+export async function fetchMyMachines(sellerId: string) {
+  const { data, error } = await supabase
+    .from("machines")
+    .select("id,category_id,brand,model,manufacture_year,condition,hours_used,technical_data_json,updated_at")
+    .eq("owner_id", sellerId)
+    .order("updated_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
 /** Cria um anúncio real do vendedor (rascunho ou enviado para análise). */
 export async function createListing(
   sellerId: string,
   values: ListingFormValues,
   status: "draft" | "in_review",
 ) {
+  let machineId = values.machineId;
+  let createdMachineId: string | null = null;
+  if (!machineId) {
+    const { data: machine, error: machineError } = await supabase
+      .from("machines")
+      .insert(toMachineRow(sellerId, values))
+      .select("id")
+      .single();
+    if (machineError) throw machineError;
+    machineId = machine.id;
+    createdMachineId = machine.id;
+  }
+
   const { data, error } = await supabase
     .from("listings")
     .insert({
       ...toRow(values),
+      machine_id: machineId,
       seller_id: sellerId,
       slug: slugify(values.title),
       status,
     })
     .select("id, slug")
     .single();
-  if (error) throw error;
+  if (error) {
+    if (createdMachineId) await supabase.from("machines").delete().eq("id", createdMachineId);
+    throw error;
+  }
   return data;
 }
 
-export async function updateListing(listingId: string, values: ListingFormValues) {
-  const { error } = await supabase.from("listings").update(toRow(values)).eq("id", listingId);
+export async function updateListing(listingId: string, sellerId: string, values: ListingFormValues) {
+  let machineId = values.machineId;
+  if (machineId) {
+    const { error: machineError } = await supabase
+      .from("machines")
+      .update(toMachineRow(sellerId, values))
+      .eq("id", machineId)
+      .eq("owner_id", sellerId);
+    if (machineError) throw machineError;
+  } else {
+    const { data: machine, error: machineError } = await supabase
+      .from("machines")
+      .insert(toMachineRow(sellerId, values))
+      .select("id")
+      .single();
+    if (machineError) throw machineError;
+    machineId = machine.id;
+  }
+  const { error } = await supabase
+    .from("listings")
+    .update({ ...toRow(values), machine_id: machineId })
+    .eq("id", listingId);
   if (error) throw error;
 }
 

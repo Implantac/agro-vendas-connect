@@ -77,6 +77,7 @@ function CompletenessCard({ listing }: { listing: CompletenessInput }) {
 }
 
 const EMPTY: ListingFormValues = {
+  machineId: "",
   categoryId: "",
   title: "",
   brand: "",
@@ -127,6 +128,7 @@ function EditarAnuncio() {
   useEffect(() => {
     if (!listing) return;
     setValues({
+      machineId: listing.machine_id ?? "",
       categoryId: listing.category_id ?? "",
       title: listing.title,
       brand: listing.brand ?? "",
@@ -158,7 +160,8 @@ function EditarAnuncio() {
     }
     setSaving(true);
     try {
-      await updateListing(id, values);
+      if (!user) return;
+      await updateListing(id, user.id, values);
       if (sendToReview) await setListingStatus(id, "in_review", null);
       toast.success(sendToReview ? "Anúncio enviado para análise." : "Alterações salvas.");
       refresh();

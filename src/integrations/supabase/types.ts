@@ -398,6 +398,7 @@ export type Database = {
           id: string
           latitude: number | null
           longitude: number | null
+          machine_id: string | null
           manufacture_year: number | null
           model: string | null
           moderation_notes: string | null
@@ -424,6 +425,7 @@ export type Database = {
           id?: string
           latitude?: number | null
           longitude?: number | null
+          machine_id?: string | null
           manufacture_year?: number | null
           model?: string | null
           moderation_notes?: string | null
@@ -450,6 +452,7 @@ export type Database = {
           id?: string
           latitude?: number | null
           longitude?: number | null
+          machine_id?: string | null
           manufacture_year?: number | null
           model?: string | null
           moderation_notes?: string | null
@@ -474,8 +477,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "listings_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "listings_seller_id_fkey"
             columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      machines: {
+        Row: {
+          brand: string | null
+          category_id: string | null
+          condition: Database["public"]["Enums"]["listing_condition"]
+          created_at: string
+          hours_used: number | null
+          id: string
+          manufacture_year: number | null
+          model: string | null
+          owner_id: string
+          technical_data_json: Json
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          category_id?: string | null
+          condition?: Database["public"]["Enums"]["listing_condition"]
+          created_at?: string
+          hours_used?: number | null
+          id?: string
+          manufacture_year?: number | null
+          model?: string | null
+          owner_id: string
+          technical_data_json?: Json
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          category_id?: string | null
+          condition?: Database["public"]["Enums"]["listing_condition"]
+          created_at?: string
+          hours_used?: number | null
+          id?: string
+          manufacture_year?: number | null
+          model?: string | null
+          owner_id?: string
+          technical_data_json?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "machines_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "machines_owner_id_fkey"
+            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

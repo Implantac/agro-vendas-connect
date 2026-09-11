@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
-import { createListing, uploadListingPhotos } from "@/lib/listing-manage";
+import { createListing, fetchMyMachines, uploadListingPhotos } from "@/lib/listing-manage";
 import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/app/publicar")({
 const STEPS = ["Tipo", "Informações técnicas", "Preço", "Localização", "Revisão"];
 
 interface Draft {
+  machineId: string;
   categoryId: string;
   title: string;
   brand: string;
@@ -51,6 +52,7 @@ interface Draft {
 }
 
 const INITIAL: Draft = {
+  machineId: "",
   categoryId: "",
   title: "",
   brand: "",
@@ -76,6 +78,31 @@ function Publicar() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+  const { data: machines = [] } = useQuery({
+    queryKey: ["my-machines", user?.id],
+    queryFn: () => (user ? fetchMyMachines(user.id) : Promise.resolve([])),
+    enabled: Boolean(user),
+  });
+
+  function selectMachine(machineId: string) {
+    if (machineId === "new") {
+      setDraft(INITIAL);
+      return;
+    }
+    const machine = machines.find((item) => item.id === machineId);
+    if (!machine) return;
+    setDraft((current) => ({
+      ...current,
+      machineId: machine.id,
+      categoryId: machine.category_id ?? "",
+      brand: machine.brand ?? "",
+      model: machine.model ?? "",
+      year: machine.manufacture_year ? String(machine.manufacture_year) : "",
+      condition: machine.condition,
+      hours: machine.hours_used ? String(machine.hours_used) : "",
+      title: current.title || [machine.brand, machine.model, machine.manufacture_year].filter(Boolean).join(" "),
+    }));
+  }
 
   const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
@@ -165,6 +192,29 @@ function Publicar() {
               <h2 className="font-display text-lg font-semibold text-forest">
                 O que você está anunciando?
               </h2>
+              {machines.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Máquina cadastrada</Label>
+                  <Select value={draft.machineId || "new"} onValueChange={selectMachine}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma máquina" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">Cadastrar uma nova máquina</SelectItem>
+                      {machines.map((machine) => (
+                        <SelectItem key={machine.id} value={machine.id}>
+                          {[machine.brand, machine.model, machine.manufacture_year]
+                            .filter(Boolean)
+                            .join(" ") || "Máquina sem identificação"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Reutilize uma máquina cadastrada ou crie um novo registro.
+                  </p>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {categories.map((c) => (
                   <button

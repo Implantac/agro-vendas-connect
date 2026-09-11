@@ -71,6 +71,7 @@ export interface NavGroup {
 /** Rotas exclusivas do vendedor. */
 export const SELLER_ONLY_ROUTES: AppRoute[] = [
   "/app/meus-anuncios",
+  "/app/maquinas",
   "/app/publicar",
   "/app/leads",
   "/app/desempenho",

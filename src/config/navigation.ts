@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Store,
   Target,
+  Tractor,
   User,
   Users,
   Wallet,

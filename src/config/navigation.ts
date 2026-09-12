@@ -51,6 +51,7 @@ export type AppRoute =
   | "/app/admin/denuncias"
   | "/app/admin/financeiro"
   | "/app/admin/auditoria"
+  | "/app/admin/verificacoes"
   | "/app/admin/categorias"
   | "/app/admin/termos"
   | "/app/admin/privacidade";

@@ -9,6 +9,7 @@ export interface TrustInput {
   listingStatus?: string | null | undefined; // listings.status
   photos?: number | undefined;
   technical?: Record<string, unknown> | null | undefined;
+  machineVerification?: string | null | undefined; // machines.verification_status
 }
 
 export interface TrustBadge {

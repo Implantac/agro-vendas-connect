@@ -62,6 +62,7 @@ function Maquinas() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<MachineFormValues>(EMPTY_MACHINE);
   const [saving, setSaving] = useState(false);
+  const [dossier, setDossier] = useState<{ id: string; name: string } | null>(null);
 
   const { data: machines = [], isLoading } = useQuery({
     queryKey: ["my-machines-full", user?.id],
@@ -261,6 +262,10 @@ function Maquinas() {
                       ]
                         .filter(Boolean)
                         .join(" · ")}
+                    </p>
+                    <p className="mt-1 text-xs font-medium text-forest">
+                      {VERIFICATION_LABEL[machine.verification_status] ??
+                        VERIFICATION_LABEL["unverified"]}
                     </p>
                     <div className="mt-3 space-y-1">
                       {listings.length === 0 ? (

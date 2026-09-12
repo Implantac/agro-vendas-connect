@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, Tractor, Trash2 } from "lucide-react";
+import { FileText, Pencil, Plus, Tractor, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MachineDossierDialog } from "@/components/app/MachineDossierDialog";
+import { VERIFICATION_LABEL } from "@/lib/machine-docs";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCategories } from "@/lib/queries";
 import {

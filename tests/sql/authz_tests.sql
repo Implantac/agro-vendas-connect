@@ -79,6 +79,34 @@ BEGIN
     INSERT INTO _authz_results VALUES ('escalada de privilégio bloqueada', true, SQLERRM);
   END;
 
+  -- 10. Não enxerga máquina alheia sem anúncio aprovado
+  SELECT count(*) INTO n
+  FROM public.machines m
+  WHERE m.owner_id <> intruso
+    AND NOT EXISTS (
+      SELECT 1 FROM public.listings l
+      WHERE l.machine_id = m.id AND l.status = 'approved'
+    );
+  INSERT INTO _authz_results VALUES ('máquina alheia privada invisível', n = 0, n || ' linhas');
+
+  -- 11. Não cria máquina em nome de terceiro
+  BEGIN
+    INSERT INTO public.machines (owner_id, brand, model, condition)
+    VALUES (gen_random_uuid(), 'Fake', 'Fake', 'used');
+    INSERT INTO _authz_results VALUES ('máquina forjada bloqueada', false, 'insert aceito');
+  EXCEPTION WHEN OTHERS THEN
+    INSERT INTO _authz_results VALUES ('máquina forjada bloqueada', true, SQLERRM);
+  END;
+
+  -- 12. Não altera máquina alheia
+  BEGIN
+    UPDATE public.machines SET brand = 'Hackeada' WHERE owner_id <> intruso;
+    GET DIAGNOSTICS n = ROW_COUNT;
+    INSERT INTO _authz_results VALUES ('máquina alheia protegida', n = 0, n || ' linhas alteradas');
+  EXCEPTION WHEN OTHERS THEN
+    INSERT INTO _authz_results VALUES ('máquina alheia protegida', true, 'bloqueado: ' || SQLERRM);
+  END;
+
   PERFORM set_config('role', 'postgres', true);
 END $$;
 

@@ -128,10 +128,11 @@ export async function fetchDocumentsForReview(status: "pending" | "approved" | "
 }
 
 export async function reviewMachineDocument(docId: string, approve: boolean, notes?: string) {
+  const trimmed = notes?.trim();
   const { error } = await supabase.rpc("review_machine_document", {
     _doc_id: docId,
     _approve: approve,
-    _notes: notes?.trim() || undefined,
+    ...(trimmed ? { _notes: trimmed } : {}),
   });
   if (error) throw error;
 }

@@ -51,6 +51,7 @@ export function useCatalogFilters() {
       ano_max: num(search["ano_max"]),
       condicao: str(search["condicao"]),
       uf: str(search["uf"]),
+      raio: num(search["raio"]),
       sort: str(search["sort"]) ?? "relevancia",
       page: num(search["page"]) ?? 1,
     };
@@ -68,6 +69,7 @@ export function useCatalogFilters() {
         ano_max: filters.ano_max,
         condicao: filters.condicao,
         uf: filters.uf,
+        raio: filters.raio,
         sort: filters.sort === "relevancia" ? undefined : filters.sort,
         page: filters.page > 1 ? filters.page : undefined,
       };

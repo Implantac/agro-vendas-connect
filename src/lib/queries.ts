@@ -115,7 +115,9 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
 export async function fetchListingBySlug(slug: string) {
   const { data, error } = await supabase
     .from("listings")
-    .select("*, categories(name,slug), listing_media(url,is_cover,sort_order)")
+    .select(
+      "*, categories(name,slug), listing_media(url,is_cover,sort_order), machines(id,verification_status)",
+    )
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;

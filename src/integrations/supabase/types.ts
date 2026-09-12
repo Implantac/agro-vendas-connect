@@ -492,6 +492,100 @@ export type Database = {
           },
         ]
       }
+      machine_documents: {
+        Row: {
+          created_at: string
+          doc_type: Database["public"]["Enums"]["machine_doc_type"]
+          file_name: string | null
+          file_path: string
+          id: string
+          machine_id: string
+          owner_id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["machine_doc_status"]
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["machine_doc_type"]
+          file_name?: string | null
+          file_path: string
+          id?: string
+          machine_id: string
+          owner_id: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["machine_doc_status"]
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["machine_doc_type"]
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          machine_id?: string
+          owner_id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["machine_doc_status"]
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "machine_documents_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      machine_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          hours_at_event: number | null
+          id: string
+          machine_id: string
+          owner_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          hours_at_event?: number | null
+          id?: string
+          machine_id: string
+          owner_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          hours_at_event?: number | null
+          id?: string
+          machine_id?: string
+          owner_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "machine_events_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       machines: {
         Row: {
           brand: string | null
@@ -505,6 +599,8 @@ export type Database = {
           owner_id: string
           technical_data_json: Json
           updated_at: string
+          verification_status: Database["public"]["Enums"]["machine_verification"]
+          verified_at: string | null
         }
         Insert: {
           brand?: string | null
@@ -518,6 +614,8 @@ export type Database = {
           owner_id: string
           technical_data_json?: Json
           updated_at?: string
+          verification_status?: Database["public"]["Enums"]["machine_verification"]
+          verified_at?: string | null
         }
         Update: {
           brand?: string | null
@@ -531,6 +629,8 @@ export type Database = {
           owner_id?: string
           technical_data_json?: Json
           updated_at?: string
+          verification_status?: Database["public"]["Enums"]["machine_verification"]
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -1319,6 +1419,10 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]
       }
+      refresh_machine_verification: {
+        Args: { _machine_id: string }
+        Returns: undefined
+      }
       register_listing_view: {
         Args: { _listing_id: string }
         Returns: undefined
@@ -1344,6 +1448,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      review_machine_document: {
+        Args: { _approve: boolean; _doc_id: string; _notes?: string }
+        Returns: undefined
       }
       set_order_status: {
         Args: {
@@ -1389,6 +1497,14 @@ export type Database = {
         | "paused"
         | "sold"
         | "archived"
+      machine_doc_status: "pending" | "approved" | "rejected"
+      machine_doc_type:
+        | "crlv"
+        | "nota_fiscal"
+        | "laudo_tecnico"
+        | "manutencao"
+        | "outro"
+      machine_verification: "unverified" | "pending" | "verified" | "rejected"
       member_role: "buyer" | "seller" | "admin"
       member_status: "pending" | "approved" | "rejected" | "suspended"
       membership_payment_status: "pending" | "paid" | "failed" | "refunded"
@@ -1559,6 +1675,15 @@ export const Constants = {
         "sold",
         "archived",
       ],
+      machine_doc_status: ["pending", "approved", "rejected"],
+      machine_doc_type: [
+        "crlv",
+        "nota_fiscal",
+        "laudo_tecnico",
+        "manutencao",
+        "outro",
+      ],
+      machine_verification: ["unverified", "pending", "verified", "rejected"],
       member_role: ["buyer", "seller", "admin"],
       member_status: ["pending", "approved", "rejected", "suspended"],
       membership_payment_status: ["pending", "paid", "failed", "refunded"],

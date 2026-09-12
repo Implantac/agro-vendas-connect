@@ -51,6 +51,7 @@ export type AppRoute =
   | "/app/admin/denuncias"
   | "/app/admin/financeiro"
   | "/app/admin/auditoria"
+  | "/app/admin/verificacoes"
   | "/app/admin/categorias"
   | "/app/admin/termos"
   | "/app/admin/privacidade";
@@ -156,6 +157,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
     {
       label: "Confiança",
       items: [
+        { to: "/app/admin/verificacoes", label: "Verificação de documentos", icon: BadgeCheck },
         { to: "/app/admin/denuncias", label: "Denúncias", icon: Flag },
         { to: "/app/admin/auditoria", label: "Auditoria", icon: ShieldCheck },
         { to: "/app/admin/privacidade", label: "Privacidade (LGPD)", icon: ShieldCheck },

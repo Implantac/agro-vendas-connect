@@ -9,6 +9,7 @@ export interface TrustInput {
   listingStatus?: string | null | undefined; // listings.status
   photos?: number | undefined;
   technical?: Record<string, unknown> | null | undefined;
+  machineVerification?: string | null | undefined; // machines.verification_status
 }
 
 export interface TrustBadge {
@@ -49,12 +50,18 @@ export function trustBadges(t: TrustInput): TrustBadge[] {
       label: "Fotos reais enviadas",
       hint: "Anúncio com 3 ou mais fotos padronizadas pela plataforma.",
     });
+  if (t.machineVerification === "verified")
+    out.push({
+      key: "machine-docs",
+      label: "Documentação verificada",
+      hint: "CRLV, nota fiscal ou laudo conferidos pela equipe DDP AGRO.",
+    });
   const doc = String(t.technical?.["documentacao"] ?? t.technical?.["Documentação"] ?? "").trim();
-  if (doc)
+  if (doc && t.machineVerification !== "verified")
     out.push({
       key: "docs",
-      label: "Documentação informada",
-      hint: `Declarado pelo vendedor: ${doc}`,
+      label: "Documentação informada pelo vendedor",
+      hint: `Declarado pelo vendedor, ainda sem conferência de documentos: ${doc}`,
     });
   return out;
 }

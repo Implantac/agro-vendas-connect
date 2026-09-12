@@ -34,7 +34,7 @@ export async function fetchMachinesWithListings(ownerId: string) {
   const { data, error } = await supabase
     .from("machines")
     .select(
-      "id,category_id,brand,model,manufacture_year,condition,hours_used,updated_at,categories(name),listings(id,title,status)",
+      "id,category_id,brand,model,manufacture_year,condition,hours_used,verification_status,updated_at,categories(name),listings(id,title,status)",
     )
     .eq("owner_id", ownerId)
     .order("updated_at", { ascending: false });

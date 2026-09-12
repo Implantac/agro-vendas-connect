@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, Tractor, Trash2 } from "lucide-react";
+import { FileText, Pencil, Plus, Tractor, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MachineDossierDialog } from "@/components/app/MachineDossierDialog";
+import { VERIFICATION_LABEL } from "@/lib/machine-docs";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCategories } from "@/lib/queries";
 import {
@@ -60,6 +62,7 @@ function Maquinas() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<MachineFormValues>(EMPTY_MACHINE);
   const [saving, setSaving] = useState(false);
+  const [dossier, setDossier] = useState<{ id: string; name: string } | null>(null);
 
   const { data: machines = [], isLoading } = useQuery({
     queryKey: ["my-machines-full", user?.id],
@@ -260,6 +263,10 @@ function Maquinas() {
                         .filter(Boolean)
                         .join(" · ")}
                     </p>
+                    <p className="mt-1 text-xs font-medium text-forest">
+                      {VERIFICATION_LABEL[machine.verification_status] ??
+                        VERIFICATION_LABEL["unverified"]}
+                    </p>
                     <div className="mt-3 space-y-1">
                       {listings.length === 0 ? (
                         <p className="text-xs text-muted-foreground">Sem anúncio vinculado.</p>
@@ -279,7 +286,21 @@ function Maquinas() {
                       )}
                     </div>
                   </div>
-                  <div className="mt-4 flex gap-2 sm:mt-0">
+                  <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setDossier({
+                          id: machine.id,
+                          name:
+                            [machine.brand, machine.model].filter(Boolean).join(" ") ||
+                            "Máquina sem identificação",
+                        })
+                      }
+                    >
+                      <FileText className="mr-1.5 h-4 w-4" /> Documentos e histórico
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => startEdit(machine)}>
                       <Pencil className="mr-1.5 h-4 w-4" /> Editar
                     </Button>
@@ -302,6 +323,15 @@ function Maquinas() {
           </Button>
         </div>
       </div>
+
+      {user && (
+        <MachineDossierDialog
+          machineId={dossier?.id ?? null}
+          machineName={dossier?.name ?? ""}
+          ownerId={user.id}
+          onOpenChange={(open) => !open && setDossier(null)}
+        />
+      )}
     </AppPage>
   );
 }

@@ -9,9 +9,12 @@ import type { AppMode } from "@/config/navigation";
 export function useAppRole() {
   const { profile, isAdmin } = useAuth();
   const role = profile?.role;
-  // Admin mantém acesso irrestrito (isAdmin), mas pode alternar o próprio
-  // perfil para comprador/vendedor a fim de testar as experiências.
-  const mode: AppMode = role === "admin" ? "admin" : role === "seller" ? "vendedor" : "comprador";
+  // O shell de administrador depende exclusivamente do papel real em user_roles.
+  // Somente um admin verdadeiro pode alternar entre as telas de comprador,
+  // vendedor e administrador.
+  const mode: AppMode =
+    role === "admin" && isAdmin ? "admin" : role === "seller" ? "vendedor" : "comprador";
+
 
   return {
     role,

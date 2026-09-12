@@ -96,9 +96,10 @@ export function AppLayout() {
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
-  // Admin é superusuário: navega livremente pelas telas de comprador e vendedor.
-  // Admin é superusuário mesmo quando testa o app como comprador/vendedor.
-  const isSuperAdmin = isAdmin || mode === "admin";
+  // Apenas administradores reais (user_roles) podem transitar entre as telas de
+  // comprador, vendedor e administração.
+  const isSuperAdmin = isAdmin;
+
   const viewMode: AppMode = isSuperAdmin
     ? isSellerOnlyRoute
       ? "vendedor"

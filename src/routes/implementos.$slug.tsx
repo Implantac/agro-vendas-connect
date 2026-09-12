@@ -299,6 +299,8 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                 </p>
               )}
             </section>
+
+            <MachineHistory machineId={l.machine_id ?? l.machines?.id ?? null} />
           </div>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">

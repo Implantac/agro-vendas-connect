@@ -1,6 +1,7 @@
 import { type MouseEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MapPin, Clock, Calendar, Heart, Gauge, Lock, ImageOff } from "lucide-react";
+import { MapPin, Clock, Calendar, Heart, Gauge, Lock, ImageOff, Navigation } from "lucide-react";
+import { formatKm } from "@/lib/geo";
 import { Button } from "@/components/ui/button";
 import { CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,7 +24,16 @@ export interface ListingCardData {
   listing_media?: { url: string; is_cover: boolean; sort_order: number }[] | null;
 }
 
-export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; index?: number }) {
+export function ListingCard({
+  listing,
+  index = 0,
+  distanceKm,
+}: {
+  listing: ListingCardData;
+  index?: number;
+  /** Distância aproximada até o comprador, em km. */
+  distanceKm?: number | null;
+}) {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const isMember = profile?.status === "approved";
@@ -115,6 +125,14 @@ export function ListingCard({ listing, index = 0 }: { listing: ListingCardData; 
           {listing.city && (
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" /> {listing.city}/{listing.state}
+            </span>
+          )}
+          {distanceKm != null && (
+            <span
+              className="inline-flex items-center gap-1 font-medium text-forest"
+              title="Distância aproximada, calculada pelo centro do estado do anúncio"
+            >
+              <Navigation className="h-3.5 w-3.5" /> ~{formatKm(distanceKm)} de você
             </span>
           )}
         </div>

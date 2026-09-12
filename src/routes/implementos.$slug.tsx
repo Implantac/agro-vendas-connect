@@ -145,6 +145,8 @@ type ListingData = {
     verification_status: string;
     logo_url?: string | null;
   } | null;
+  machine_id?: string | null;
+  machines?: { id: string; verification_status: string } | null;
 };
 
 function ListingView({ listing, userId }: { listing: unknown; userId: string }) {
@@ -170,6 +172,7 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
     listingStatus: l.status,
     photos: media.length,
     technical: l.technical_data_json,
+    machineVerification: l.machines?.verification_status,
   });
   const available = l.status === "approved";
   const headline = [l.brand, l.model].filter(Boolean).join(" ");

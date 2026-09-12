@@ -205,5 +205,6 @@ export function countActiveFilters(f: CatalogFilters) {
   if (f.ano_min !== undefined || f.ano_max !== undefined) n++;
   if (f.condicao) n++;
   if (f.uf) n++;
+  if (f.raio !== undefined) n++;
   return n;
 }

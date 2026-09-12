@@ -25,11 +25,14 @@ function isInstalled() {
 export function InstallAppPrompt() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [showAppleGuide, setShowAppleGuide] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const mobileOrTablet = window.matchMedia("(max-width: 1024px) and (pointer: coarse)").matches;
-    if (!mobileOrTablet || isInstalled() || localStorage.getItem(DISMISSED_KEY)) return;
+    if (!mobileOrTablet || isInstalled() || localStorage.getItem(DISMISSED_KEY)) {
+      setVisible(false);
+      return;
+    }
 
     if (isAppleMobile()) {
       setShowAppleGuide(true);
@@ -72,7 +75,7 @@ export function InstallAppPrompt() {
   return (
     <aside
       aria-label="Instalar DDP AGRO"
-      className="fixed inset-x-3 bottom-20 z-[60] mx-auto max-w-md rounded-md border border-border bg-card p-4 shadow-xl md:bottom-4"
+      className="fixed inset-x-3 bottom-20 z-[60] mx-auto max-w-md rounded-md border border-border bg-card p-4 shadow-xl md:bottom-4 lg:hidden"
     >
       <Button
         type="button"
@@ -94,9 +97,13 @@ export function InstallAppPrompt() {
               Toque em <Share className="mx-1 inline h-4 w-4 text-forest" aria-label="Compartilhar" />
               e depois em <strong className="font-semibold text-foreground">Adicionar à Tela de Início</strong>.
             </p>
-          ) : (
+          ) : installEvent ? (
             <p className="mt-1 text-sm text-muted-foreground">
               Acesse a plataforma direto pela tela inicial do seu aparelho.
+            </p>
+          ) : (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Abra o menu do navegador e escolha <strong className="font-semibold text-foreground">Instalar aplicativo</strong>.
             </p>
           )}
         </div>

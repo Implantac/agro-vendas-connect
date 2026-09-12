@@ -26,6 +26,7 @@ import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import { fetchSellerTrust, registerListingView } from "@/features/listings/queries";
 import { listingCode, orderedSpecs } from "@/features/listings/completeness";
 import { trustBadges } from "@/features/listings/trust";
+import { fetchMachineEvents } from "@/lib/machine-docs";
 
 export const Route = createFileRoute("/implementos/$slug")({
   head: ({ params }) => ({
@@ -379,5 +380,37 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
         </div>
       </div>
     </PublicLayout>
+  );
+}
+
+/** Histórico da máquina informado pelo vendedor (manutenções, reparos, uso). */
+function MachineHistory({ machineId }: { machineId: string | null }) {
+  const { data: events = [] } = useQuery({
+    queryKey: ["machine-events-public", machineId],
+    queryFn: () => fetchMachineEvents(machineId!),
+    enabled: Boolean(machineId),
+  });
+
+  if (!machineId || events.length === 0) return null;
+
+  return (
+    <section className="mt-10">
+      <h2 className="font-display text-lg font-semibold text-forest">Histórico da máquina</h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Registros informados pelo vendedor para esta máquina, válidos em todos os anúncios dela.
+      </p>
+      <ul className="mt-4 space-y-2">
+        {events.map((ev) => (
+          <li key={ev.id} className="rounded-md border border-border bg-card px-4 py-3">
+            <p className="text-sm font-medium text-forest">{ev.title}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {new Date(`${ev.event_date}T12:00:00`).toLocaleDateString("pt-BR")}
+              {ev.hours_at_event ? ` · ${ev.hours_at_event} h` : ""}
+              {ev.description ? ` · ${ev.description}` : ""}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

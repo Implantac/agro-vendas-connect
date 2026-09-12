@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { SALE_CONDITION_LABELS as CONDITION_LABELS } from "@/lib/format";
 import { useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
+import { DistanceFilter } from "@/components/app/DistanceFilter";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
@@ -259,6 +260,14 @@ export function BuyerFilterPanel({
             ))}
           </SelectContent>
         </Select>
+      </section>
+
+      {/* Distância / raio de busca */}
+      <section className="border-t border-border px-5 py-4">
+        <DistanceFilter
+          radius={filters.raio}
+          onRadiusChange={(km) => setFilters({ raio: km })}
+        />
       </section>
 
       {/* Ações */}

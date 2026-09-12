@@ -13,6 +13,8 @@ export interface CatalogFilters {
   ano_max?: number | undefined;
   condicao?: string | undefined;
   uf?: string | undefined;
+  /** Raio de busca em km a partir da localização de referência do comprador. */
+  raio?: number | undefined;
   sort: string;
   page: number;
 }
@@ -49,6 +51,7 @@ export function useCatalogFilters() {
       ano_max: num(search["ano_max"]),
       condicao: str(search["condicao"]),
       uf: str(search["uf"]),
+      raio: num(search["raio"]),
       sort: str(search["sort"]) ?? "relevancia",
       page: num(search["page"]) ?? 1,
     };
@@ -66,6 +69,7 @@ export function useCatalogFilters() {
         ano_max: filters.ano_max,
         condicao: filters.condicao,
         uf: filters.uf,
+        raio: filters.raio,
         sort: filters.sort === "relevancia" ? undefined : filters.sort,
         page: filters.page > 1 ? filters.page : undefined,
       };
@@ -201,5 +205,6 @@ export function countActiveFilters(f: CatalogFilters) {
   if (f.ano_min !== undefined || f.ano_max !== undefined) n++;
   if (f.condicao) n++;
   if (f.uf) n++;
+  if (f.raio !== undefined) n++;
   return n;
 }

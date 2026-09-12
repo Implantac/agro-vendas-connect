@@ -22,6 +22,8 @@ import {
   useCatalogFilters,
 } from "@/features/catalog/useCatalogFilters";
 import { SavedSearches } from "@/components/app/SavedSearches";
+import { useBuyerLocation } from "@/features/catalog/useBuyerLocation";
+import { distanceToState } from "@/lib/geo";
 import { useState } from "react";
 
 const searchSchema = z.object({
@@ -34,6 +36,7 @@ const searchSchema = z.object({
   ano_max: z.coerce.number().optional(),
   condicao: z.string().optional(),
   uf: z.string().optional(),
+  raio: z.coerce.number().optional(),
   sort: z.string().optional(),
   page: z.coerce.number().optional(),
 });
@@ -55,6 +58,7 @@ const SORT_OPTIONS = [
   { value: "price_asc", label: "Menor preço" },
   { value: "price_desc", label: "Maior preço" },
   { value: "year_desc", label: "Ano (mais novo)" },
+  { value: "distance", label: "Mais perto de mim" },
 ];
 
 const PAGE_SIZE = 12;
@@ -63,6 +67,7 @@ function Comprar() {
   const { filters, setFilters, clearAll } = useCatalogFilters();
   const [mobileFilters, setMobileFilters] = useState(false);
   const facets = useCatalogFacets(filters);
+  const { location } = useBuyerLocation();
 
   const { data: allListings = [], isLoading } = useQuery({
     queryKey: ["listings", "comprar", filters],
@@ -83,10 +88,27 @@ function Comprar() {
       }),
   });
 
+  // Distância aproximada: centro do estado do anúncio até a referência do comprador.
+  const withDistance = allListings.map((l) => ({
+    listing: l,
+    distance: distanceToState(location, (l as { state: string | null }).state),
+  }));
+
+  const inRadius =
+    location && filters.raio
+      ? withDistance.filter((r) => r.distance !== null && r.distance <= filters.raio!)
+      : withDistance;
+
   const sorted =
     filters.sort === "year_desc"
-      ? [...allListings].sort((a, b) => (b.manufacture_year ?? 0) - (a.manufacture_year ?? 0))
-      : allListings;
+      ? [...inRadius].sort(
+          (a, b) =>
+            ((b.listing as { manufacture_year: number | null }).manufacture_year ?? 0) -
+            ((a.listing as { manufacture_year: number | null }).manufacture_year ?? 0),
+        )
+      : filters.sort === "distance"
+        ? [...inRadius].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
+        : inRadius;
 
   const total = sorted.length;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -134,6 +156,12 @@ function Comprar() {
     });
   if (filters.uf)
     chips.push({ key: "uf", label: filters.uf, remove: () => setFilters({ uf: undefined }) });
+  if (filters.raio && location)
+    chips.push({
+      key: "raio",
+      label: `Até ${filters.raio.toLocaleString("pt-BR")} km de ${location.label.toLowerCase()}`,
+      remove: () => setFilters({ raio: undefined }),
+    });
 
   return (
     <AppPage>
@@ -227,8 +255,13 @@ function Comprar() {
             {total}
           </p>
           <div className="mt-3 grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
-            {listings.map((l, i) => (
-              <ListingCard key={l.id} listing={l as never} index={i} />
+            {listings.map((row, i) => (
+              <ListingCard
+                key={row.listing.id}
+                listing={row.listing as never}
+                index={i}
+                distanceKm={row.distance}
+              />
             ))}
           </div>
           {pageCount > 1 && (

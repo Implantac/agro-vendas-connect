@@ -323,6 +323,15 @@ function Maquinas() {
           </Button>
         </div>
       </div>
+
+      {user && (
+        <MachineDossierDialog
+          machineId={dossier?.id ?? null}
+          machineName={dossier?.name ?? ""}
+          ownerId={user.id}
+          onOpenChange={(open) => !open && setDossier(null)}
+        />
+      )}
     </AppPage>
   );
 }

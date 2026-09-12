@@ -4,6 +4,7 @@
 - [x] Ativar Lovable Cloud (auth, DB, storage)
 - [x] Design system exclusivo (paleta verde mata/campo, argila, areia; Sora/Manrope + Inter)
 - [x] Logo, símbolo, favicon
+- [x] Instalação no celular/tablet pela tela inicial (Android e iPhone/iPad)
 
 ## Fase 1 — Público
 - [x] Landing /

@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
+import { InstallAppPrompt } from "@/components/pwa/InstallAppPrompt";
 
 function NotFoundComponent() {
   return (
@@ -86,6 +87,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Plataforma fechada de compra e venda de tratores, colheitadeiras e implementos agrícolas entre membros verificados.",
       },
       { name: "author", content: "DDP AGRO" },
+      { name: "theme-color", content: "#123D2A" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "DDP AGRO" },
       { property: "og:title", content: "DDP AGRO | Máquinas e implementos agrícolas" },
       {
         property: "og:description",
@@ -101,6 +107,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
   }),
   shellComponent: RootShell,
@@ -131,6 +139,7 @@ function RootComponent() {
       <AuthProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <InstallAppPrompt />
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>

@@ -13,6 +13,8 @@ export interface CatalogFilters {
   ano_max?: number | undefined;
   condicao?: string | undefined;
   uf?: string | undefined;
+  /** Raio de busca em km a partir da localização de referência do comprador. */
+  raio?: number | undefined;
   sort: string;
   page: number;
 }

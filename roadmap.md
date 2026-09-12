@@ -26,6 +26,11 @@
 - [x] Favoritos
 - [x] Cadastro permanente de máquinas separado do anúncio, com vínculo e reaproveitamento no novo anúncio
 - [x] Tela "Minhas máquinas" (/app/maquinas): cadastrar, editar, excluir e ver anúncios vinculados
+- [x] Dossiê da máquina: documentos/laudos privados + histórico próprio reaproveitado em todos os anúncios
+- [x] Verificação real de documentos pela equipe (/app/admin/verificacoes) — selo "Documentação verificada" x "informado pelo vendedor"
+- [ ] Localização por distância (raio de busca e mapa)
+- [ ] Inteligência de preço, busca em linguagem natural e recomendações
+- [ ] Documentação de operação e relatório final consolidado
 
 ## Fase 4 — Negociação
 - [x] Propostas e contrapropostas (validade 48h, RPC transacional)

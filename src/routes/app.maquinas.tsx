@@ -286,7 +286,21 @@ function Maquinas() {
                       )}
                     </div>
                   </div>
-                  <div className="mt-4 flex gap-2 sm:mt-0">
+                  <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setDossier({
+                          id: machine.id,
+                          name:
+                            [machine.brand, machine.model].filter(Boolean).join(" ") ||
+                            "Máquina sem identificação",
+                        })
+                      }
+                    >
+                      <FileText className="mr-1.5 h-4 w-4" /> Documentos e histórico
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => startEdit(machine)}>
                       <Pencil className="mr-1.5 h-4 w-4" /> Editar
                     </Button>

@@ -339,6 +339,9 @@ export function AppLayout() {
               showFilters={showFilters}
               pathname={pathname}
               onNavigate={() => setMobileMenu(false)}
+              switcher={
+                viewMode === "admin" ? null : <ModeSwitch mode={viewMode} onChange={switchMode} />
+              }
             />
           </div>
         </div>
@@ -392,14 +395,17 @@ function SidebarNav({
   showFilters,
   pathname,
   onNavigate,
+  switcher,
 }: {
   groups: NavGroup[];
   showFilters: boolean;
   pathname: string;
   onNavigate: () => void;
+  switcher?: ReactNode;
 }) {
   return (
     <>
+      {switcher && <div className="shrink-0 border-b border-border px-3 py-3">{switcher}</div>}
       <nav className={cn("space-y-3 px-3 py-4", showFilters ? "shrink-0" : "flex-1")}>
         {groups.map((group) => (
           <div key={group.label}>

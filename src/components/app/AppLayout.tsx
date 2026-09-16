@@ -390,6 +390,50 @@ export function AppLayout() {
   );
 }
 
+/** Seletor "Quero comprar | Quero vender": todo membro aprovado usa as duas áreas. */
+function ModeSwitch({
+  mode,
+  onChange,
+}: {
+  mode: AppMode;
+  onChange: (next: AppMode) => void;
+}) {
+  const options: { value: AppMode; label: string; icon: typeof Search }[] = [
+    { value: "comprador", label: "Quero comprar", icon: Search },
+    { value: "vendedor", label: "Quero vender", icon: Store },
+  ];
+  return (
+    <div
+      role="group"
+      aria-label="Escolher área"
+      className="flex w-full items-center gap-1 rounded-full bg-secondary p-1"
+    >
+      {options.map((option) => {
+        const active = mode === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            aria-pressed={active}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+              active
+                ? "bg-card text-forest shadow-sm"
+                : "text-muted-foreground hover:text-forest",
+            )}
+          >
+            <option.icon className="h-3.5 w-3.5" />
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+
 function SidebarNav({
   groups,
   showFilters,

@@ -20,6 +20,7 @@ import {
   User,
   X,
   ClipboardList,
+  Store,
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ import { cn } from "@/lib/utils";
 
 export function AppLayout() {
   const { user, profile, loading, signOut, isAdmin } = useAuth();
-  const { mode, ready } = useAppRole();
+  const { mode, ready, setMode } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -96,33 +97,33 @@ export function AppLayout() {
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
-  // Apenas administradores reais (user_roles) podem transitar entre as telas de
-  // comprador, vendedor e administração.
+  // Apenas administradores reais (user_roles) acessam as telas de administração.
   const isSuperAdmin = isAdmin;
 
-  const viewMode: AppMode = isSuperAdmin
-    ? isSellerOnlyRoute
-      ? "vendedor"
-      : isBuyerOnlyRoute
-        ? "comprador"
-        : mode
-    : mode;
+  // Todo membro aprovado pode comprar e vender: a tela aberta define a visão.
+  const viewMode: AppMode = isSellerOnlyRoute
+    ? "vendedor"
+    : isBuyerOnlyRoute
+      ? "comprador"
+      : mode;
 
-  const blockedRoute =
-    ready &&
-    !isSuperAdmin &&
-    ((mode !== "vendedor" && isSellerOnlyRoute) ||
-      isAdminOnlyRoute ||
-      (mode !== "comprador" && isBuyerOnlyRoute));
+  const blockedRoute = ready && !isSuperAdmin && isAdminOnlyRoute;
   // Admin entra direto no command center.
   const needsAdminHome = ready && mode === "admin" && pathname === "/app";
   const awaitingMembership = Boolean(memberStatus) && memberStatus !== "approved";
 
+  // Ao entrar numa área de compra ou de venda, o modo escolhido acompanha a tela.
+  useEffect(() => {
+    if (!ready || mode === "admin") return;
+    if (isSellerOnlyRoute && mode !== "vendedor") setMode("vendedor");
+    if (isBuyerOnlyRoute && mode !== "comprador") setMode("comprador");
+  }, [ready, mode, isSellerOnlyRoute, isBuyerOnlyRoute, setMode]);
+
   useEffect(() => {
     if (!ready) return;
     if (blockedRoute) {
-      toast.info("Esta área não pertence ao seu perfil de acesso.");
-      void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
+      toast.info("Esta área é exclusiva da administração.");
+      void navigate({ to: HOME_ROUTE_BY_MODE[mode === "admin" ? "comprador" : mode], replace: true });
       return;
     }
     if (needsAdminHome) {
@@ -155,7 +156,13 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const navGroups = isSuperAdmin
     ? [...NAV_BY_ROLE[viewMode], ...(viewMode === "admin" ? ADMIN_VIEWS_GROUP : ADMIN_BACK_GROUP)]
-    : NAV_BY_ROLE[mode];
+    : NAV_BY_ROLE[viewMode];
+
+  function switchMode(next: AppMode) {
+    setMode(next);
+    void navigate({ to: next === "vendedor" ? "/app/meus-anuncios" : "/app/comprar" });
+    setMobileMenu(false);
+  }
   const showFilters = viewMode === "comprador" && pathname.startsWith("/app/comprar");
   const showSearch = true;
   const searchTarget = viewMode === "admin" ? "/app/admin/anuncios" : "/app/comprar";
@@ -209,11 +216,15 @@ export function AppLayout() {
           )}
 
           <div className="ml-auto flex items-center gap-2">
-            <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
-              {isSuperAdmin && viewMode !== "admin"
-                ? `Admin · visão ${MODE_LABEL[viewMode].toLowerCase()}`
-                : MODE_LABEL[viewMode]}
-            </span>
+            {viewMode === "admin" ? (
+              <span className="hidden rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-forest md:inline-flex">
+                {MODE_LABEL.admin}
+              </span>
+            ) : (
+              <div className="hidden md:block">
+                <ModeSwitch mode={viewMode} onChange={switchMode} />
+              </div>
+            )}
 
             <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">
               <Link to="/central-de-ajuda">
@@ -303,6 +314,9 @@ export function AppLayout() {
           showFilters={showFilters}
           pathname={pathname}
           onNavigate={() => setMobileMenu(false)}
+          switcher={
+            viewMode === "admin" ? null : <ModeSwitch mode={viewMode} onChange={switchMode} />
+          }
         />
       </aside>
 
@@ -326,6 +340,9 @@ export function AppLayout() {
               showFilters={showFilters}
               pathname={pathname}
               onNavigate={() => setMobileMenu(false)}
+              switcher={
+                viewMode === "admin" ? null : <ModeSwitch mode={viewMode} onChange={switchMode} />
+              }
             />
           </div>
         </div>
@@ -374,19 +391,66 @@ export function AppLayout() {
   );
 }
 
+/** Seletor "Quero comprar | Quero vender": todo membro aprovado usa as duas áreas. */
+function ModeSwitch({
+  mode,
+  onChange,
+}: {
+  mode: AppMode;
+  onChange: (next: AppMode) => void;
+}) {
+  const options: { value: AppMode; label: string; icon: typeof Search }[] = [
+    { value: "comprador", label: "Quero comprar", icon: Search },
+    { value: "vendedor", label: "Quero vender", icon: Store },
+  ];
+  return (
+    <div
+      role="group"
+      aria-label="Escolher área"
+      className="flex w-full items-center gap-1 rounded-full bg-secondary p-1"
+    >
+      {options.map((option) => {
+        const active = mode === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            aria-pressed={active}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+              active
+                ? "bg-card text-forest shadow-sm"
+                : "text-muted-foreground hover:text-forest",
+            )}
+          >
+            <option.icon className="h-3.5 w-3.5" />
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+
 function SidebarNav({
   groups,
   showFilters,
   pathname,
   onNavigate,
+  switcher,
 }: {
   groups: NavGroup[];
   showFilters: boolean;
   pathname: string;
   onNavigate: () => void;
+  switcher?: ReactNode;
 }) {
   return (
     <>
+      {switcher && <div className="shrink-0 border-b border-border px-3 py-3">{switcher}</div>}
       <nav className={cn("space-y-3 px-3 py-4", showFilters ? "shrink-0" : "flex-1")}>
         {groups.map((group) => (
           <div key={group.label}>

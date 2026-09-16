@@ -20,6 +20,7 @@ import {
   User,
   X,
   ClipboardList,
+  Store,
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";

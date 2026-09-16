@@ -155,7 +155,13 @@ export function AppLayout() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Membro";
   const navGroups = isSuperAdmin
     ? [...NAV_BY_ROLE[viewMode], ...(viewMode === "admin" ? ADMIN_VIEWS_GROUP : ADMIN_BACK_GROUP)]
-    : NAV_BY_ROLE[mode];
+    : NAV_BY_ROLE[viewMode];
+
+  function switchMode(next: AppMode) {
+    setMode(next);
+    void navigate({ to: next === "vendedor" ? "/app/meus-anuncios" : "/app/comprar" });
+    setMobileMenu(false);
+  }
   const showFilters = viewMode === "comprador" && pathname.startsWith("/app/comprar");
   const showSearch = true;
   const searchTarget = viewMode === "admin" ? "/app/admin/anuncios" : "/app/comprar";

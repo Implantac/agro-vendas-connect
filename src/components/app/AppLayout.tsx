@@ -313,6 +313,9 @@ export function AppLayout() {
           showFilters={showFilters}
           pathname={pathname}
           onNavigate={() => setMobileMenu(false)}
+          switcher={
+            viewMode === "admin" ? null : <ModeSwitch mode={viewMode} onChange={switchMode} />
+          }
         />
       </aside>
 

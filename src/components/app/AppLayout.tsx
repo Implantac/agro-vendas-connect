@@ -54,7 +54,7 @@ import { cn } from "@/lib/utils";
 
 export function AppLayout() {
   const { user, profile, loading, signOut, isAdmin } = useAuth();
-  const { mode, ready } = useAppRole();
+  const { mode, ready, setMode } = useAppRole();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -96,33 +96,33 @@ export function AppLayout() {
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isBuyerOnlyRoute = BUYER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
 
-  // Apenas administradores reais (user_roles) podem transitar entre as telas de
-  // comprador, vendedor e administração.
+  // Apenas administradores reais (user_roles) acessam as telas de administração.
   const isSuperAdmin = isAdmin;
 
-  const viewMode: AppMode = isSuperAdmin
-    ? isSellerOnlyRoute
-      ? "vendedor"
-      : isBuyerOnlyRoute
-        ? "comprador"
-        : mode
-    : mode;
+  // Todo membro aprovado pode comprar e vender: a tela aberta define a visão.
+  const viewMode: AppMode = isSellerOnlyRoute
+    ? "vendedor"
+    : isBuyerOnlyRoute
+      ? "comprador"
+      : mode;
 
-  const blockedRoute =
-    ready &&
-    !isSuperAdmin &&
-    ((mode !== "vendedor" && isSellerOnlyRoute) ||
-      isAdminOnlyRoute ||
-      (mode !== "comprador" && isBuyerOnlyRoute));
+  const blockedRoute = ready && !isSuperAdmin && isAdminOnlyRoute;
   // Admin entra direto no command center.
   const needsAdminHome = ready && mode === "admin" && pathname === "/app";
   const awaitingMembership = Boolean(memberStatus) && memberStatus !== "approved";
 
+  // Ao entrar numa área de compra ou de venda, o modo escolhido acompanha a tela.
+  useEffect(() => {
+    if (!ready || mode === "admin") return;
+    if (isSellerOnlyRoute && mode !== "vendedor") setMode("vendedor");
+    if (isBuyerOnlyRoute && mode !== "comprador") setMode("comprador");
+  }, [ready, mode, isSellerOnlyRoute, isBuyerOnlyRoute, setMode]);
+
   useEffect(() => {
     if (!ready) return;
     if (blockedRoute) {
-      toast.info("Esta área não pertence ao seu perfil de acesso.");
-      void navigate({ to: HOME_ROUTE_BY_MODE[mode], replace: true });
+      toast.info("Esta área é exclusiva da administração.");
+      void navigate({ to: HOME_ROUTE_BY_MODE[mode === "admin" ? "comprador" : mode], replace: true });
       return;
     }
     if (needsAdminHome) {

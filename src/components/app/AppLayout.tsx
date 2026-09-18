@@ -231,7 +231,13 @@ export function AppLayout() {
               </div>
             )}
 
-            <Button asChild variant="ghost" size="icon" className="text-forest" aria-label="Ajuda">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="hidden text-forest sm:inline-flex"
+              aria-label="Ajuda"
+            >
               <Link to="/central-de-ajuda">
                 <HelpCircle className="h-5 w-5" />
               </Link>
@@ -240,7 +246,7 @@ export function AppLayout() {
               asChild
               variant="ghost"
               size="icon"
-              className="text-forest"
+              className="hidden text-forest md:inline-flex"
               aria-label="Mensagens"
             >
               <Link to="/app/mensagens">

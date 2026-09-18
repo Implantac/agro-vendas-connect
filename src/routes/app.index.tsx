@@ -23,7 +23,8 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { AppPage } from "@/components/app/AppLayout";
-import { ListingCard } from "@/components/catalog/ListingCard";
+import { NearbyMachines } from "@/components/app/NearbyMachines";
+import { ListingCard, type ListingCardData } from "@/components/catalog/ListingCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
@@ -608,6 +609,8 @@ function BuyerDashboard() {
           </div>
         )}
       </section>
+
+      <NearbyMachines listings={opportunities as unknown as ListingCardData[]} />
 
       <section className="mt-12 rounded-lg border border-border bg-card p-5">
         <div className="flex items-center justify-between">

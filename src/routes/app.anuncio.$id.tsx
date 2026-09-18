@@ -218,6 +218,23 @@ function EditarAnuncio() {
     );
   }
 
+  if (!listing) {
+    return (
+      <AppPage>
+        <div className="rounded-lg border border-dashed border-border p-10 text-center">
+          <p className="font-display text-lg text-forest">Anúncio não encontrado</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            O anúncio pode ter sido excluído ou o endereço está incorreto.
+          </p>
+          <Button asChild className="mt-4">
+            <Link to="/app/meus-anuncios">Voltar para meus anúncios</Link>
+          </Button>
+        </div>
+      </AppPage>
+    );
+  }
+
+
   if (listing && !canEdit) {
     return (
       <AppPage>

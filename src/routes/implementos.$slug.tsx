@@ -192,7 +192,17 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
       label: "Horas de uso",
       value: l.hours_used != null ? `${l.hours_used.toLocaleString("pt-BR")} h` : "Não informado",
     },
-    { icon: Zap, label: "Potência", value: power ? String(power) : "Não informada" },
+    ...(showPower
+      ? [
+          {
+            icon: Zap,
+            label: "Potência",
+            value: power ? `${String(power)} cv`.replace(/ cv cv$/, " cv") : "Não informada",
+          },
+        ]
+      : highlightSpec
+        ? [{ icon: Zap, label: highlightSpec.label, value: highlightSpec.value }]
+        : []),
     {
       icon: MapPin,
       label: "Localização",

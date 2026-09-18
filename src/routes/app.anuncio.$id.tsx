@@ -180,7 +180,7 @@ function EditarAnuncio() {
   }
 
   async function handleFiles(files: FileList | null) {
-    if (!files?.length || !user) return;
+    if (!files?.length || !user || !canEdit) return;
     setUploading(true);
     try {
       await uploadListingPhotos(user.id, id, Array.from(files), media.length);
@@ -195,6 +195,10 @@ function EditarAnuncio() {
   }
 
   async function removeListing() {
+    if (!canEdit) {
+      toast.error("Você não tem permissão para excluir este anúncio.");
+      return;
+    }
     if (!window.confirm("Excluir definitivamente este anúncio?")) return;
     try {
       await deleteListing(id);

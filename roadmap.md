@@ -48,8 +48,10 @@
 - [x] Tela de atendimento LGPD com prazo e exportação (/app/admin/privacidade)
 
 ## Fase 6 — Pagamentos e produção
-- [ ] Estrutura de gateway (Asaas) com feature flag — hoje pagamento é simulado
-- [ ] Webhook assinado de pagamento/assinatura
+- [x] Fim do pagamento simulado: usuário não confirma mais o próprio pagamento
+- [x] Webhook assinado `/api/public/webhooks/payments` com idempotência, valor divergente, cancelamento e estorno
+- [x] Registro manual de pagamento conferido (admin, auditado)
+- [ ] Credenciais do gateway (Asaas): aguardando configuração (PAYMENT_WEBHOOK_SECRET + chave de API)
 - [x] Busca salva com alertas (in-app)
 - [x] Pipeline de leads por etapa (derivado de eventos reais; sem etapas manuais por decisão de produto)
 - [ ] Documentação final de operação
@@ -87,7 +89,7 @@
 - [x] A-01 `.env` fora do controle de versão (.gitignore)
 - [x] A-04 Solicitação LGPD só em nome do próprio titular
 - [x] A-06 Pedido: UPDATE direto fechado; transições via RPC `set_order_status`
-- [ ] A-02/A-03 Gateway real + webhook assinado (bloqueado: falta credencial do provedor)
+- [x] A-02/A-03 Pagamento simulado removido + webhook assinado e idempotente (falta apenas a credencial do provedor)
 - [x] A-05 Atendimento LGPD com prazo, responsável e exportação real
 - [x] A-07 Observabilidade: tabela `system_events`, RPC `log_system_event`, erros do front registrados e painel em /app/admin/auditoria com alertas financeiros
 - [x] A-08 Suíte de testes de autorização (`tests/sql/authz_tests.sql`) — 12/12 ataques bloqueados (inclui máquinas)

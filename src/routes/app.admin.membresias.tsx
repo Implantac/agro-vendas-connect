@@ -83,6 +83,22 @@ function AdminMemberships() {
         Confira o pagamento, analise os dados e libere o acesso do novo membro.
       </p>
 
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {summary.map((s) => (
+          <button
+            key={s.value}
+            onClick={() => setStatus(s.value)}
+            className={cn(
+              "rounded-md border bg-card p-4 text-left transition hover:border-accent",
+              status === s.value ? "border-accent bg-accent/5" : "border-border",
+            )}
+          >
+            <p className="font-display text-3xl font-bold text-forest">{s.count}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{s.label}</p>
+          </button>
+        ))}
+      </div>
+
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button

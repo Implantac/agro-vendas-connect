@@ -44,11 +44,13 @@ const ROLES = [
 ] as const;
 
 function AdminMembers() {
+  const { isAdmin } = useAuth();
   const [status, setStatus] = useState<string>("pending");
   const qc = useQueryClient();
 
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["admin", "members", status],
+    enabled: isAdmin,
     queryFn: () => fetchAdminMembers(status || undefined),
   });
 

@@ -88,8 +88,18 @@ function Comprar() {
       }),
   });
 
+  // Características técnicas escolhidas nos filtros (technical_data_json).
+  const specEntries = Object.entries(filters.specs).filter(([, v]) => v);
+  const bySpecs = specEntries.length
+    ? allListings.filter((l) => {
+        const tech = ((l as { technical_data_json?: Record<string, unknown> })
+          .technical_data_json ?? {}) as Record<string, unknown>;
+        return specEntries.every(([key, value]) => String(tech[key] ?? "") === value);
+      })
+    : allListings;
+
   // Distância aproximada: centro do estado do anúncio até a referência do comprador.
-  const withDistance = allListings.map((l) => ({
+  const withDistance = bySpecs.map((l) => ({
     listing: l,
     distance: distanceToState(location, (l as { state: string | null }).state),
   }));
@@ -146,6 +156,12 @@ function Comprar() {
       key: "ano",
       label: `Ano: ${filters.ano_min ?? "—"} a ${filters.ano_max ?? "—"}`,
       remove: () => setFilters({ ano_min: undefined, ano_max: undefined }),
+    });
+  for (const [key, value] of specEntries)
+    chips.push({
+      key: `esp-${key}`,
+      label: value,
+      remove: () => setFilters({ specs: { ...filters.specs, [key]: "" } }),
     });
   if (filters.condicao)
     chips.push({

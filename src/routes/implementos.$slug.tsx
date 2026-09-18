@@ -247,11 +247,10 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
             badges={badges}
             className="w-full justify-start lg:w-auto lg:max-w-md lg:justify-end"
           />
-
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-          <div>
+          <div className="order-2 lg:order-1">
             <ListingGallery media={media} title={l.title} />
 
             {/* Resumo comercial */}

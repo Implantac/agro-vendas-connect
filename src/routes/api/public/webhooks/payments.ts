@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/public/webhooks/payments")({
           _event_type: parsed.event,
           _charge_reference: parsed.charge.reference,
           _payment_status: parsed.charge.status,
-          _amount: parsed.charge.amount ?? null,
+          _amount: parsed.charge.amount ?? 0,
           _payload: JSON.parse(raw),
         });
 

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatBRL, formatDateTimeBR } from "@/lib/format";
 import {
+  adminConfirmMembershipPayment,
   fetchAdminMembershipRequests,
   PAYMENT_METHOD_LABELS,
   PAYMENT_STATUS_LABELS,

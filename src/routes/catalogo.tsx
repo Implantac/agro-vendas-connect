@@ -82,6 +82,9 @@ export const Route = createFileRoute("/catalogo")({
   component: Catalogo,
 });
 
+/** Faixas de horímetro usadas no filtro (limite superior). */
+const HOUR_LIMITS = [1000, 2000, 4000, 6000, 8000, 12000];
+
 const CONDICAO_LABEL: Record<string, string> = {
   new: "Novo",
   semi_new: "Seminovo",
@@ -375,11 +378,30 @@ function Catalogo() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="horas">Horas de uso (até)</Label>
+            <select
+              id="horas"
+              value={search.horas_max ?? ""}
+              onChange={(e) =>
+                update({ horas_max: e.target.value ? Number(e.target.value) : undefined })
+              }
+              className={selectClass}
+            >
+              <option value="">Qualquer</option>
+              {HOUR_LIMITS.map((h) => (
+                <option key={h} value={h}>
+                  Até {h.toLocaleString("pt-BR")} h
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="uf">Estado</Label>
             <select
               id="uf"
               value={search.uf ?? ""}
-              onChange={(e) => update({ uf: e.target.value || undefined })}
+              onChange={(e) => update({ uf: e.target.value || undefined, cidade: undefined })}
               className={selectClass}
             >
               <option value="">Todos</option>
@@ -390,6 +412,25 @@ function Catalogo() {
               ))}
             </select>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cidade">Cidade</Label>
+            <select
+              id="cidade"
+              value={search.cidade ?? ""}
+              onChange={(e) => update({ cidade: e.target.value || undefined })}
+              className={selectClass}
+              disabled={options.cities.length === 0}
+            >
+              <option value="">Todas</option>
+              {options.cities.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
 
           <Button
             variant="ghost"

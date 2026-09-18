@@ -19,8 +19,9 @@ function loadImage(file: File): Promise<HTMLImageElement> {
 }
 
 /**
- * Redimensiona/recorta qualquer imagem (qualquer formato ou tamanho) para
- * 1600x1200 JPEG, mantendo o enquadramento central.
+ * Redimensiona qualquer imagem (qualquer formato ou tamanho) para 1600x1200 JPEG.
+ * A máquina inteira é preservada: a foto é encaixada dentro do quadro 4:3 e as
+ * sobras ficam em fundo branco, então todos os cards ficam do mesmo tamanho.
  */
 export async function normalizeListingPhoto(file: File): Promise<File> {
   if (typeof document === "undefined" || !file.type.startsWith("image/")) return file;
@@ -35,7 +36,7 @@ export async function normalizeListingPhoto(file: File): Promise<File> {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, PHOTO_WIDTH, PHOTO_HEIGHT);
 
-    const scale = Math.max(PHOTO_WIDTH / img.width, PHOTO_HEIGHT / img.height);
+    const scale = Math.min(PHOTO_WIDTH / img.width, PHOTO_HEIGHT / img.height);
     const w = img.width * scale;
     const h = img.height * scale;
     ctx.drawImage(img, (PHOTO_WIDTH - w) / 2, (PHOTO_HEIGHT - h) / 2, w, h);

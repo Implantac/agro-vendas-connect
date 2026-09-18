@@ -73,13 +73,15 @@ export function ListingCard({
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-[0_12px_30px_-18px_oklch(0.3_0.055_158/0.6)]">
-      <GatedLink className="relative block aspect-4/3 overflow-hidden bg-secondary">
+      <GatedLink className="relative block aspect-4/3 overflow-hidden bg-white">
         {cover ? (
           <img
             src={cover}
             alt={listing.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            width={1600}
+            height={1200}
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
           <span className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-muted-foreground">

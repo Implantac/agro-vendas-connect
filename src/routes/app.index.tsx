@@ -292,6 +292,13 @@ function SellerDashboard() {
       hint: formatBRL(sum(closedSales)),
       to: "/app/pedidos",
     },
+    {
+      icon: Package,
+      title: "Pedidos",
+      value: summary?.orders ?? 0,
+      hint: "negócios fechados na plataforma",
+      to: "/app/pedidos",
+    },
   ];
 
   const pipeline = [

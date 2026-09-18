@@ -87,7 +87,7 @@ export async function createMembershipRequest(params: {
       requested_role: params.plan.target_role,
       amount: params.plan.price,
       payment_method: params.method,
-      payment_reference: pixReference(),
+      payment_reference: chargeReference(),
       applicant_notes: params.notes ?? null,
     })
     .select("id")
@@ -96,10 +96,20 @@ export async function createMembershipRequest(params: {
   return data.id;
 }
 
-export async function confirmMembershipPayment(requestId: string, method: string) {
-  const { error } = await supabase.rpc("confirm_membership_payment", {
+/**
+ * Registro de pagamento conferido manualmente pela administração.
+ * O caminho normal é o webhook do provedor; isto cobre comprovante conferido
+ * fora do gateway e fica registrado na auditoria.
+ */
+export async function adminConfirmMembershipPayment(
+  requestId: string,
+  method: string,
+  reference: string,
+) {
+  const { error } = await supabase.rpc("admin_confirm_membership_payment", {
     _request_id: requestId,
     _method: method,
+    _reference: reference,
   });
   if (error) throw error;
 }

@@ -18,6 +18,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { createListing, fetchMyMachines, uploadListingPhotos } from "@/lib/listing-manage";
 import { PhotoUploader } from "@/components/app/PhotoUploader";
+import { AiDescriptionPanel } from "@/components/app/AiDescriptionPanel";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -153,6 +154,18 @@ function Publicar() {
   }
 
   const categoryName = categories.find((c) => c.id === draft.categoryId)?.name;
+
+  const aiBriefing = {
+    category: categoryName ?? "",
+    brand: draft.brand,
+    model: draft.model,
+    year: draft.year,
+    hours: draft.hours,
+    condition: draft.condition ? (SALE_CONDITION_LABELS[draft.condition] ?? draft.condition) : "",
+    city: draft.city,
+    state: draft.state,
+    price: draft.priceOnRequest ? "Sob consulta" : draft.price,
+  };
 
   return (
     <AppPage>
@@ -319,6 +332,24 @@ function Publicar() {
                   rows={5}
                 />
               </div>
+              <AiDescriptionPanel
+                briefing={aiBriefing}
+                photos={photos}
+                onApply={(copy) =>
+                  setDraft((d) => ({
+                    ...d,
+                    title: copy.title || d.title,
+                    description: [
+                      copy.description,
+                      copy.highlights.length
+                        ? `\n\nDestaques:\n${copy.highlights.map((h) => `• ${h}`).join("\n")}`
+                        : "",
+                    ]
+                      .join("")
+                      .trim(),
+                  }))
+                }
+              />
             </div>
           )}
 

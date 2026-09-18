@@ -90,6 +90,7 @@ const EMPTY: ListingFormValues = {
   priceOnRequest: false,
   city: "",
   state: "",
+  specs: {},
 };
 
 function EditarAnuncio() {

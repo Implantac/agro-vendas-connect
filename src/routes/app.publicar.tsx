@@ -319,6 +319,24 @@ function Publicar() {
                   rows={5}
                 />
               </div>
+              <AiDescriptionPanel
+                briefing={aiBriefing}
+                photos={photos}
+                onApply={(copy) =>
+                  setDraft((d) => ({
+                    ...d,
+                    title: copy.title || d.title,
+                    description: [
+                      copy.description,
+                      copy.highlights.length
+                        ? `\n\nDestaques:\n${copy.highlights.map((h) => `• ${h}`).join("\n")}`
+                        : "",
+                    ]
+                      .join("")
+                      .trim(),
+                  }))
+                }
+              />
             </div>
           )}
 

@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatBRL, formatDateTimeBR } from "@/lib/format";
 import {
   cancelMembershipRequest,
-  confirmMembershipPayment,
+  fetchPaymentsEnabled,
   createMembershipRequest,
   fetchMembershipPlans,
   fetchMyMembershipRequests,
@@ -102,14 +102,9 @@ function Membresia() {
       toast.error("Não foi possível criar a solicitação", { description: e.message }),
   });
 
-  const payMutation = useMutation({
-    mutationFn: () => confirmMembershipPayment(active!.id, active!.payment_method ?? method),
-    onSuccess: () => {
-      toast.success("Pagamento confirmado", { description: "Sua solicitação entrou em análise." });
-      void qc.invalidateQueries({ queryKey: ["membership"] });
-    },
-    onError: (e: Error) =>
-      toast.error("Falha ao confirmar o pagamento", { description: e.message }),
+  const { data: paymentsEnabled = false } = useQuery({
+    queryKey: ["membership", "payments-enabled"],
+    queryFn: fetchPaymentsEnabled,
   });
 
   const cancelMutation = useMutation({

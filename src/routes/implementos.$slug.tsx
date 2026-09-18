@@ -165,7 +165,13 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
   const specs = orderedSpecs(l.technical_data_json);
+  const categoryFields = specFieldsFor(l.categories?.slug ?? null);
   const power = l.technical_data_json?.["potencia"] ?? l.technical_data_json?.["potencia_cv"];
+  // Só destacamos potência quando ela faz sentido para a categoria da máquina.
+  const showPower = Boolean(power) || categoryFields.some((f) => f.key === "potencia");
+  const highlightSpec = !showPower
+    ? specs.find((s) => categoryFields.some((f) => f.key === s.key))
+    : undefined;
   const badges = trustBadges({
     sellerStatus: sellerTrust?.profile?.status,
     sellerPhone: sellerTrust?.profile?.phone,

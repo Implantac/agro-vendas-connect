@@ -311,7 +311,8 @@ function EditarAnuncio() {
             city: values.city,
             state: values.state,
             category_id: values.categoryId,
-            technical_data_json: (listing.technical_data_json as Record<string, unknown>) ?? {},
+            categorySlug,
+            technical_data_json: values.specs ?? {},
             photos: media.length,
           }}
         />

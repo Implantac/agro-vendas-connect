@@ -154,6 +154,28 @@ function AdminMemberships() {
               </span>
             </div>
 
+            <ol className="mt-4 space-y-2 border-l border-border pl-4 text-xs text-muted-foreground">
+              <li>
+                <span className="font-semibold text-forest">Solicitação enviada</span> •{" "}
+                {formatDateTimeBR(r.created_at)}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Pagamento</span> •{" "}
+                {r.paid_at
+                  ? `confirmado em ${formatDateTimeBR(r.paid_at)}`
+                  : PAYMENT_STATUS_LABELS[r.payment_status]}
+                {r.payment_reference ? ` • ref. ${r.payment_reference}` : ""}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Análise</span> •{" "}
+                {r.reviewed_at ? formatDateTimeBR(r.reviewed_at) : "aguardando"}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Situação atual</span> •{" "}
+                {REQUEST_STATUS_LABELS[r.status]} • atualizada em {formatDateTimeBR(r.updated_at)}
+              </li>
+            </ol>
+
             {(r.status === "in_review" || r.status === "payment_pending") && (
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <Input

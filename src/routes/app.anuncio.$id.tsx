@@ -94,7 +94,7 @@ const EMPTY: ListingFormValues = {
 
 function EditarAnuncio() {
   const { id } = Route.useParams();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -144,6 +144,9 @@ function EditarAnuncio() {
     });
   }, [listing]);
 
+  const isOwner = !!listing && !!user && listing.seller_id === user.id;
+  const canEdit = isOwner || isAdmin;
+
   const set = <K extends keyof ListingFormValues>(key: K, value: ListingFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }));
 
@@ -154,14 +157,18 @@ function EditarAnuncio() {
   }
 
   async function save(sendToReview: boolean) {
+    if (!canEdit) {
+      toast.error("Você não tem permissão para editar este anúncio.");
+      return;
+    }
     if (!values.title.trim()) {
       toast.error("Informe o título do anúncio.");
       return;
     }
     setSaving(true);
     try {
-      if (!user) return;
-      await updateListing(id, user.id, values);
+      if (!user || !listing) return;
+      await updateListing(id, listing.seller_id, values);
       if (sendToReview) await setListingStatus(id, "in_review", null);
       toast.success(sendToReview ? "Anúncio enviado para análise." : "Alterações salvas.");
       refresh();
@@ -173,7 +180,7 @@ function EditarAnuncio() {
   }
 
   async function handleFiles(files: FileList | null) {
-    if (!files?.length || !user) return;
+    if (!files?.length || !user || !canEdit) return;
     setUploading(true);
     try {
       await uploadListingPhotos(user.id, id, Array.from(files), media.length);
@@ -188,6 +195,10 @@ function EditarAnuncio() {
   }
 
   async function removeListing() {
+    if (!canEdit) {
+      toast.error("Você não tem permissão para excluir este anúncio.");
+      return;
+    }
     if (!window.confirm("Excluir definitivamente este anúncio?")) return;
     try {
       await deleteListing(id);
@@ -203,6 +214,22 @@ function EditarAnuncio() {
     return (
       <AppPage>
         <div className="h-40 animate-pulse rounded-lg bg-secondary/60" />
+      </AppPage>
+    );
+  }
+
+  if (listing && !canEdit) {
+    return (
+      <AppPage>
+        <div className="rounded-lg border border-dashed border-border p-10 text-center">
+          <p className="text-sm text-muted-foreground">
+            Este anúncio pertence a outro vendedor. Apenas quem criou o anúncio (ou a
+            administração) pode editá-lo.
+          </p>
+          <Button asChild className="mt-4">
+            <Link to="/app/meus-anuncios">Voltar para meus anúncios</Link>
+          </Button>
+        </div>
       </AppPage>
     );
   }

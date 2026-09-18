@@ -215,3 +215,83 @@ export async function markAllNotificationsRead(userId: string) {
     .eq("user_id", userId)
     .is("read_at", null);
 }
+
+/* ------------------------------------------------------- painéis por papel */
+
+/** Números reais do painel do comprador (nenhum valor estimado). */
+export async function fetchBuyerSummary(userId: string) {
+  const [myTurn, negotiating, orders, favorites, savedSearches, alerts] = await Promise.all([
+    supabase
+      .from("proposals")
+      .select("id", { count: "exact", head: true })
+      .eq("buyer_id", userId)
+      .eq("status", "countered"),
+    supabase
+      .from("proposals")
+      .select("id", { count: "exact", head: true })
+      .eq("buyer_id", userId)
+      .in("status", ["open", "countered"]),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("buyer_id", userId),
+    supabase.from("favorites").select("id", { count: "exact", head: true }).eq("user_id", userId),
+    supabase
+      .from("saved_searches")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .is("read_at", null),
+  ]);
+  return {
+    awaitingMyAnswer: myTurn.count ?? 0,
+    negotiating: negotiating.count ?? 0,
+    orders: orders.count ?? 0,
+    favorites: favorites.count ?? 0,
+    savedSearches: savedSearches.count ?? 0,
+    alerts: alerts.count ?? 0,
+  };
+}
+
+/** Números reais do painel do vendedor. */
+export async function fetchSellerSummary(userId: string) {
+  const [machines, approved, inReview, drafts, proposalsOpen, orders, pendingDocs] =
+    await Promise.all([
+      supabase.from("machines").select("id", { count: "exact", head: true }).eq("owner_id", userId),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", userId)
+        .eq("status", "approved"),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", userId)
+        .eq("status", "in_review"),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", userId)
+        .eq("status", "draft"),
+      supabase
+        .from("proposals")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", userId)
+        .eq("status", "open"),
+      supabase.from("orders").select("id", { count: "exact", head: true }).eq("seller_id", userId),
+      supabase
+        .from("machines")
+        .select("id", { count: "exact", head: true })
+        .eq("owner_id", userId)
+        .in("verification_status", ["unverified", "pending", "rejected"]),
+    ]);
+  return {
+    machines: machines.count ?? 0,
+    approvedListings: approved.count ?? 0,
+    inReviewListings: inReview.count ?? 0,
+    draftListings: drafts.count ?? 0,
+    proposalsAwaiting: proposalsOpen.count ?? 0,
+    orders: orders.count ?? 0,
+    machinesWithPendingDocs: pendingDocs.count ?? 0,
+  };
+}

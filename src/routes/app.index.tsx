@@ -481,25 +481,46 @@ function BuyerDashboard() {
 
   const cards: KpiCard[] = [
     {
+      icon: HeartHandshake,
+      title: "Propostas aguardando você",
+      value: summary?.awaitingMyAnswer ?? 0,
+      hint: "contrapropostas para responder",
+      to: "/app/negociacoes",
+    },
+    {
       icon: Handshake,
-      title: "Minhas compras em negociação",
-      value: purchases.filter((p) => OPEN_STATUSES.includes(p.status)).length,
+      title: "Negociações em andamento",
+      value: summary?.negotiating ?? 0,
       hint: "propostas enviadas em aberto",
       to: "/app/negociacoes",
     },
     {
+      icon: ListChecks,
+      title: "Pedidos",
+      value: summary?.orders ?? 0,
+      hint: "compras fechadas",
+      to: "/app/pedidos",
+    },
+    {
       icon: Heart,
       title: "Favoritos",
-      value: counts?.favorites ?? 0,
+      value: summary?.favorites ?? 0,
       hint: "máquinas salvas",
       to: "/app/favoritos",
     },
     {
-      icon: ListChecks,
-      title: "Pedidos",
-      value: purchases.filter((p) => p.status === "accepted").length,
-      hint: "compras aceitas",
-      to: "/app/pedidos",
+      icon: Eye,
+      title: "Buscas salvas",
+      value: summary?.savedSearches ?? 0,
+      hint: "perfis de máquina acompanhados",
+      to: "/app/favoritos",
+    },
+    {
+      icon: ShieldAlert,
+      title: "Alertas",
+      value: summary?.alerts ?? 0,
+      hint: "avisos não lidos",
+      to: "/app/notificacoes",
     },
   ];
 

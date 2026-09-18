@@ -745,7 +745,9 @@ export type Database = {
           created_at: string
           id: string
           paid_at: string | null
+          payment_confirmed_by: string | null
           payment_method: string | null
+          payment_provider: string | null
           payment_reference: string | null
           payment_status: Database["public"]["Enums"]["membership_payment_status"]
           plan_id: string | null
@@ -763,7 +765,9 @@ export type Database = {
           created_at?: string
           id?: string
           paid_at?: string | null
+          payment_confirmed_by?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: Database["public"]["Enums"]["membership_payment_status"]
           plan_id?: string | null
@@ -781,7 +785,9 @@ export type Database = {
           created_at?: string
           id?: string
           paid_at?: string | null
+          payment_confirmed_by?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: Database["public"]["Enums"]["membership_payment_status"]
           plan_id?: string | null
@@ -965,6 +971,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_webhook_events: {
+        Row: {
+          amount: number | null
+          charge_reference: string | null
+          created_at: string
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          payment_status: string | null
+          processed_at: string | null
+          processing_status: string
+          provider: string
+        }
+        Insert: {
+          amount?: number | null
+          charge_reference?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload?: Json
+          payment_status?: string | null
+          processed_at?: string | null
+          processing_status?: string
+          provider: string
+        }
+        Update: {
+          amount?: number | null
+          charge_reference?: string | null
+          created_at?: string
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          payment_status?: string | null
+          processed_at?: string | null
+          processing_status?: string
+          provider?: string
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -1369,6 +1420,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_confirm_membership_payment: {
+        Args: { _method: string; _reference: string; _request_id: string }
+        Returns: undefined
+      }
       admin_review_membership: {
         Args: { _approve: boolean; _notes?: string; _request_id: string }
         Returns: undefined
@@ -1393,9 +1448,17 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
-      confirm_membership_payment: {
-        Args: { _method: string; _request_id: string }
-        Returns: undefined
+      gateway_apply_payment: {
+        Args: {
+          _amount: number
+          _charge_reference: string
+          _event_id: string
+          _event_type: string
+          _payload?: Json
+          _payment_status: string
+          _provider: string
+        }
+        Returns: Json
       }
       has_role: {
         Args: {

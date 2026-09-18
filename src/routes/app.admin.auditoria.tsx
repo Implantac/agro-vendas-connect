@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AppPage } from "@/components/app/AppLayout";
 import { fetchAuditLogs } from "@/lib/admin-queries";
-import { fetchFinancialAlerts, fetchSystemEvents } from "@/lib/observability";
+import {
+  EVENT_CATEGORIES,
+  EVENT_CATEGORY_LABELS,
+  fetchFinancialAlerts,
+  fetchSystemEvents,
+  type EventCategory,
+} from "@/lib/observability";
 
 export const Route = createFileRoute("/app/admin/auditoria")({
   head: () => ({

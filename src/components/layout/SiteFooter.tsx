@@ -5,10 +5,10 @@ const COLUMNS = [
   {
     title: "Plataforma",
     links: [
-      { to: "/catalogo", label: "Catálogo" },
       { to: "/como-funciona", label: "Como funciona" },
-      { to: "/seguranca", label: "Negociação segura" },
-      { to: "/cadastro", label: "Solicitar acesso" },
+      { to: "/catalogo", label: "Catálogo" },
+      { to: "/planos", label: "Planos" },
+      { to: "/seguranca", label: "Segurança" },
     ],
   },
   {
@@ -16,6 +16,8 @@ const COLUMNS = [
     links: [
       { to: "/central-de-ajuda", label: "Central de ajuda" },
       { to: "/contato", label: "Contato" },
+      { to: "/entrar", label: "Entrar" },
+      { to: "/cadastro", label: "Seja membro" },
     ],
   },
   {
@@ -36,8 +38,8 @@ export function SiteFooter() {
         <div className="space-y-4">
           <Logo tone="light" />
           <p className="max-w-xs text-sm text-primary-foreground/70">
-            Plataforma fechada de negociação de implementos agrícolas. Membros aprovados, anúncios
-            moderados e propostas registradas.
+            Marketplace privado de máquinas e implementos agrícolas usados. Membros aprovados,
+            anúncios moderados e negociação registrada.
           </p>
         </div>
         {COLUMNS.map((col) => (

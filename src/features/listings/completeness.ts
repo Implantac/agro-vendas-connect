@@ -2,7 +2,11 @@
  * Índice de completude do anúncio — regra única usada pela edição do vendedor
  * e pelo painel comercial. Cada item tem peso; o score é 0-100.
  */
+import { specFieldsFor, specLabel } from "./category-specs";
+
 export interface CompletenessInput {
+  /** Slug da categoria — define quais características técnicas são cobradas. */
+  categorySlug?: string | null | undefined;
   title?: string | null | undefined;
   description?: string | null | undefined;
   brand?: string | null | undefined;

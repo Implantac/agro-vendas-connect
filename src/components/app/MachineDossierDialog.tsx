@@ -53,7 +53,7 @@ interface Props {
   machineId: string | null;
   machineName: string;
   ownerId: string;
-  identification?: MachineIdentification;
+  identification?: MachineIdentification | undefined;
   onOpenChange: (open: boolean) => void;
 }
 

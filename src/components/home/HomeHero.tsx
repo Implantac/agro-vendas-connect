@@ -15,7 +15,7 @@ export function HomeHero() {
     <section className="relative isolate overflow-hidden bg-forest">
       <img
         src={heroImg}
-        alt="Trator com plantadeira trabalhando em lavoura ao entardecer"
+        alt="Trator com plantadeira, colheitadeira colhendo e pulverizador trabalhando em lavoura ao entardecer"
         width={1920}
         height={1088}
         fetchPriority="high"

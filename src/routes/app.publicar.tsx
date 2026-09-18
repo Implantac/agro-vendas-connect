@@ -120,7 +120,6 @@ function Publicar() {
     setDraft((d) => ({ ...d, specs: { ...d.specs, [key]: value } }));
 
   const categorySlug = categories.find((c) => c.id === draft.categoryId)?.slug ?? null;
-  const specFields = specFieldsFor(categorySlug);
 
   function canAdvance(): boolean {
     switch (step) {

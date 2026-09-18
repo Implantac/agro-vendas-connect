@@ -53,6 +53,7 @@ export const Route = createFileRoute("/catalogo")({
     preco_max: num(search["preco_max"]),
     ano_min: num(search["ano_min"]),
     ano_max: num(search["ano_max"]),
+    horas_max: num(search["horas_max"]),
     ordem:
       search["ordem"] === "price_asc" ||
       search["ordem"] === "price_desc" ||

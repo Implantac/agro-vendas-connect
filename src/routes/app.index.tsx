@@ -34,7 +34,7 @@ import {
   fetchSellerLeads,
   fetchSellerSummary,
 } from "@/lib/app-queries";
-import { fetchSavedSearches } from "@/lib/saved-searches";
+import { describeFilters, fetchSavedSearches, jsonToSearchParams } from "@/lib/saved-searches";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
 import { formatBRL, LISTING_STATUS_LABELS, PROPOSAL_STATUS_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";

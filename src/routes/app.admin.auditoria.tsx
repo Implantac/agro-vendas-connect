@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AppPage } from "@/components/app/AppLayout";
 import { fetchAuditLogs } from "@/lib/admin-queries";
-import { fetchFinancialAlerts, fetchSystemEvents } from "@/lib/observability";
+import {
+  EVENT_CATEGORIES,
+  EVENT_CATEGORY_LABELS,
+  fetchFinancialAlerts,
+  fetchSystemEvents,
+  type EventCategory,
+} from "@/lib/observability";
 
 export const Route = createFileRoute("/app/admin/auditoria")({
   head: () => ({
@@ -23,13 +30,14 @@ const SEVERITY_LABEL: Record<string, string> = {
 };
 
 function AdminAudit() {
+  const [category, setCategory] = useState<EventCategory | "">("");
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ["admin", "audit"],
     queryFn: fetchAuditLogs,
   });
   const { data: events = [], isLoading: loadingEvents } = useQuery({
-    queryKey: ["admin", "system-events"],
-    queryFn: () => fetchSystemEvents(),
+    queryKey: ["admin", "system-events", category],
+    queryFn: () => fetchSystemEvents(undefined, category || undefined),
     refetchInterval: 60_000,
   });
   const { data: alerts } = useQuery({
@@ -59,6 +67,29 @@ function AdminAudit() {
       </div>
 
       <h2 className="mt-10 font-display text-lg font-semibold text-forest">Falhas e eventos</h2>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setCategory("")}
+          className={`rounded-full border px-3 py-1 text-xs ${
+            category === "" ? "border-forest bg-forest text-white" : "border-border text-forest"
+          }`}
+        >
+          Todas
+        </button>
+        {EVENT_CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => setCategory(cat)}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              category === cat ? "border-forest bg-forest text-white" : "border-border text-forest"
+            }`}
+          >
+            {EVENT_CATEGORY_LABELS[cat]}
+          </button>
+        ))}
+      </div>
       <div className="mt-3 overflow-hidden rounded-md border border-border bg-card">
         <ul className="divide-y divide-border">
           {loadingEvents && (
@@ -72,7 +103,8 @@ function AdminAudit() {
           {events.map((event) => (
             <li key={event.id} className="px-5 py-3 text-sm">
               <p className="font-medium text-forest">
-                {SEVERITY_LABEL[event.severity] ?? event.severity} • {event.source}
+                {SEVERITY_LABEL[event.severity] ?? event.severity} •{" "}
+                {EVENT_CATEGORY_LABELS[event.category] ?? event.category} • {event.source}
               </p>
               <p className="mt-0.5 break-words text-muted-foreground">{event.message}</p>
               <p className="mt-1 text-xs text-muted-foreground">

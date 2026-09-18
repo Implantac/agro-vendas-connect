@@ -87,6 +87,10 @@ function Maquinas() {
       year: machine.manufacture_year ? String(machine.manufacture_year) : "",
       condition: machine.condition,
       hours: machine.hours_used ? String(machine.hours_used) : "",
+      serialNumber: machine.serial_number ?? "",
+      city: machine.city ?? "",
+      state: machine.state ?? "",
+      availability: machine.availability ?? "available",
     });
   }
 

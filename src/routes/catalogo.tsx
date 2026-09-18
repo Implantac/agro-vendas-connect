@@ -23,11 +23,13 @@ interface CatalogSearch {
   categoria?: string | undefined;
   condicao?: string | undefined;
   uf?: string | undefined;
+  cidade?: string | undefined;
   marca?: string | undefined;
   preco_min?: number | undefined;
   preco_max?: number | undefined;
   ano_min?: number | undefined;
   ano_max?: number | undefined;
+  horas_max?: number | undefined;
   ordem?: "recent" | "price_asc" | "price_desc" | undefined;
 }
 
@@ -45,11 +47,13 @@ export const Route = createFileRoute("/catalogo")({
     categoria: str(search["categoria"]),
     condicao: str(search["condicao"]),
     uf: str(search["uf"]),
+    cidade: str(search["cidade"]),
     marca: str(search["marca"]),
     preco_min: num(search["preco_min"]),
     preco_max: num(search["preco_max"]),
     ano_min: num(search["ano_min"]),
     ano_max: num(search["ano_max"]),
+    horas_max: num(search["horas_max"]),
     ordem:
       search["ordem"] === "price_asc" ||
       search["ordem"] === "price_desc" ||
@@ -77,6 +81,9 @@ export const Route = createFileRoute("/catalogo")({
   }),
   component: Catalogo,
 });
+
+/** Faixas de horímetro usadas no filtro (limite superior). */
+const HOUR_LIMITS = [1000, 2000, 4000, 6000, 8000, 12000];
 
 const CONDICAO_LABEL: Record<string, string> = {
   new: "Novo",
@@ -123,11 +130,13 @@ function Catalogo() {
         ...(search.categoria ? { category: search.categoria } : {}),
         ...(search.condicao ? { condition: search.condicao } : {}),
         ...(search.uf ? { state: search.uf } : {}),
+        ...(search.cidade ? { city: search.cidade } : {}),
         ...(search.marca ? { brands: [search.marca] } : {}),
         ...(search.preco_min !== undefined ? { minPrice: search.preco_min } : {}),
         ...(search.preco_max !== undefined ? { maxPrice: search.preco_max } : {}),
         ...(search.ano_min !== undefined ? { yearMin: search.ano_min } : {}),
         ...(search.ano_max !== undefined ? { yearMax: search.ano_max } : {}),
+        ...(search.horas_max !== undefined ? { hoursMax: search.horas_max } : {}),
         sort: search.ordem ?? "recent",
       }),
   });
@@ -139,12 +148,22 @@ function Catalogo() {
     const years = [
       ...new Set(facetRows.map((r) => r.manufacture_year).filter(Boolean)),
     ] as number[];
+    // Cidades acompanham o estado escolhido; assim a lista não mistura regiões.
+    const cities = [
+      ...new Set(
+        facetRows
+          .filter((r) => (search.uf ? r.state === search.uf : true))
+          .map((r) => r.city)
+          .filter(Boolean),
+      ),
+    ] as string[];
     return {
       brands: brands.sort((a, b) => a.localeCompare(b)),
       ufs: ufs.sort((a, b) => a.localeCompare(b)),
       years: years.sort((a, b) => b - a),
+      cities: cities.sort((a, b) => a.localeCompare(b)),
     };
-  }, [facetRows]);
+  }, [facetRows, search.uf]);
 
   function update(patch: Partial<CatalogSearch>) {
     void navigate({ search: (prev) => ({ ...prev, ...patch }) });
@@ -174,7 +193,10 @@ function Catalogo() {
       label: CONDICAO_LABEL[search.condicao] ?? search.condicao,
       clear: { condicao: undefined },
     });
-  if (search.uf) chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined } });
+  if (search.uf)
+    chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined, cidade: undefined } });
+  if (search.cidade)
+    chips.push({ label: `Cidade: ${search.cidade}`, clear: { cidade: undefined } });
   if (search.preco_min !== undefined || search.preco_max !== undefined)
     chips.push({
       label: `Preço ${search.preco_min ? formatBRL(search.preco_min) : "0"} – ${
@@ -186,6 +208,11 @@ function Catalogo() {
     chips.push({
       label: `Ano ${search.ano_min ?? "—"} a ${search.ano_max ?? "—"}`,
       clear: { ano_min: undefined, ano_max: undefined },
+    });
+  if (search.horas_max !== undefined)
+    chips.push({
+      label: `Até ${search.horas_max.toLocaleString("pt-BR")} h`,
+      clear: { horas_max: undefined },
     });
 
   const selectClass = "h-10 w-full rounded-sm border border-input bg-background px-3 text-sm";
@@ -351,11 +378,30 @@ function Catalogo() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="horas">Horas de uso (até)</Label>
+            <select
+              id="horas"
+              value={search.horas_max ?? ""}
+              onChange={(e) =>
+                update({ horas_max: e.target.value ? Number(e.target.value) : undefined })
+              }
+              className={selectClass}
+            >
+              <option value="">Qualquer</option>
+              {HOUR_LIMITS.map((h) => (
+                <option key={h} value={h}>
+                  Até {h.toLocaleString("pt-BR")} h
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="uf">Estado</Label>
             <select
               id="uf"
               value={search.uf ?? ""}
-              onChange={(e) => update({ uf: e.target.value || undefined })}
+              onChange={(e) => update({ uf: e.target.value || undefined, cidade: undefined })}
               className={selectClass}
             >
               <option value="">Todos</option>
@@ -366,6 +412,25 @@ function Catalogo() {
               ))}
             </select>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cidade">Cidade</Label>
+            <select
+              id="cidade"
+              value={search.cidade ?? ""}
+              onChange={(e) => update({ cidade: e.target.value || undefined })}
+              className={selectClass}
+              disabled={options.cities.length === 0}
+            >
+              <option value="">Todas</option>
+              {options.cities.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
 
           <Button
             variant="ghost"

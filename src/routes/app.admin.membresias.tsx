@@ -45,6 +45,16 @@ function AdminMemberships() {
     queryFn: () => fetchAdminMembershipRequests(status || undefined),
   });
 
+  // Situação real de todas as solicitações, usada no resumo do topo.
+  const { data: allRequests = [] } = useQuery({
+    queryKey: ["admin", "memberships", "all"],
+    queryFn: () => fetchAdminMembershipRequests(),
+  });
+  const summary = FILTERS.filter((f) => f.value).map((f) => ({
+    ...f,
+    count: allRequests.filter((r) => r.status === f.value).length,
+  }));
+
   const review = useMutation({
     mutationFn: ({ id, approve, note }: { id: string; approve: boolean; note?: string }) =>
       reviewMembershipRequest(id, approve, note),
@@ -72,6 +82,22 @@ function AdminMemberships() {
       <p className="mt-1 text-sm text-muted-foreground">
         Confira o pagamento, analise os dados e libere o acesso do novo membro.
       </p>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {summary.map((s) => (
+          <button
+            key={s.value}
+            onClick={() => setStatus(s.value)}
+            className={cn(
+              "rounded-md border bg-card p-4 text-left transition hover:border-accent",
+              status === s.value ? "border-accent bg-accent/5" : "border-border",
+            )}
+          >
+            <p className="font-display text-3xl font-bold text-forest">{s.count}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{s.label}</p>
+          </button>
+        ))}
+      </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -127,6 +153,28 @@ function AdminMemberships() {
                 {REQUEST_STATUS_LABELS[r.status]}
               </span>
             </div>
+
+            <ol className="mt-4 space-y-2 border-l border-border pl-4 text-xs text-muted-foreground">
+              <li>
+                <span className="font-semibold text-forest">Solicitação enviada</span> •{" "}
+                {formatDateTimeBR(r.created_at)}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Pagamento</span> •{" "}
+                {r.paid_at
+                  ? `confirmado em ${formatDateTimeBR(r.paid_at)}`
+                  : PAYMENT_STATUS_LABELS[r.payment_status]}
+                {r.payment_reference ? ` • ref. ${r.payment_reference}` : ""}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Análise</span> •{" "}
+                {r.reviewed_at ? formatDateTimeBR(r.reviewed_at) : "aguardando"}
+              </li>
+              <li>
+                <span className="font-semibold text-forest">Situação atual</span> •{" "}
+                {REQUEST_STATUS_LABELS[r.status]} • atualizada em {formatDateTimeBR(r.updated_at)}
+              </li>
+            </ol>
 
             {(r.status === "in_review" || r.status === "payment_pending") && (
               <div className="mt-4 flex flex-wrap items-center gap-2">

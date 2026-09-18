@@ -64,12 +64,14 @@ export interface CatalogFilters {
   category?: string;
   condition?: string;
   state?: string;
+  city?: string;
   minPrice?: number;
   maxPrice?: number;
   brands?: string[];
   year?: number;
   yearMin?: number;
   yearMax?: number;
+  hoursMax?: number;
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
@@ -91,6 +93,8 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.condition)
     query = query.eq("condition", filters.condition as "new" | "semi_new" | "used");
   if (filters.state) query = query.eq("state", filters.state);
+  if (filters.city) query = query.eq("city", filters.city);
+  if (filters.hoursMax !== undefined) query = query.lte("hours_used", filters.hoursMax);
   if (filters.minPrice) query = query.gte("price", filters.minPrice);
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
   if (filters.brands?.length) query = query.in("brand", filters.brands);
@@ -157,6 +161,8 @@ export interface CatalogFacetRow {
   price: number | null;
   condition: "new" | "semi_new" | "used";
   state: string | null;
+  city: string | null;
+  hours_used: number | null;
   title: string;
   model: string | null;
   categorySlug: string | null;
@@ -169,7 +175,7 @@ export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
   const { data, error } = await supabase
     .from("listings")
     .select(
-      "id,title,model,brand,manufacture_year,price,condition,state,technical_data_json,categories(name,slug)",
+      "id,title,model,brand,manufacture_year,price,condition,state,city,hours_used,technical_data_json,categories(name,slug)",
     )
     .eq("status", "approved");
   if (error) throw error;
@@ -184,6 +190,8 @@ export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
       price: row.price,
       condition: row.condition,
       state: row.state,
+      city: row.city,
+      hours_used: row.hours_used,
       categorySlug: row.categories?.slug ?? null,
       categoryName: row.categories?.name ?? null,
       specs: Object.fromEntries(

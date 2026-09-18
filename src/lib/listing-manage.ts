@@ -18,6 +18,14 @@ export interface ListingFormValues {
   priceOnRequest: boolean;
   city: string;
   state: string;
+  /** Características técnicas por categoria (technical_data_json). */
+  specs?: Record<string, string>;
+}
+
+function cleanSpecs(specs: Record<string, string> | undefined) {
+  return Object.fromEntries(
+    Object.entries(specs ?? {}).filter(([, v]) => String(v ?? "").trim() !== ""),
+  );
 }
 
 export function slugify(title: string) {
@@ -45,6 +53,7 @@ function toRow(values: ListingFormValues) {
     price_on_request: values.priceOnRequest,
     city: values.city.trim() || null,
     state: values.state || null,
+    technical_data_json: cleanSpecs(values.specs),
   };
 }
 
@@ -57,7 +66,7 @@ function toMachineRow(sellerId: string, values: ListingFormValues) {
     manufacture_year: values.year ? Number(values.year) : null,
     condition: (values.condition || "used") as "new" | "semi_new" | "used",
     hours_used: values.hours ? Number(values.hours) : null,
-    technical_data_json: {},
+    technical_data_json: cleanSpecs(values.specs),
   };
 }
 

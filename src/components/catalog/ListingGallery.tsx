@@ -36,7 +36,7 @@ export function ListingGallery({
         <img
           src={current!.url}
           alt={`${title} — foto ${index + 1} de ${photos.length}`}
-          className="aspect-4/3 w-full object-cover"
+          className="aspect-4/3 w-full object-contain"
           width={1600}
           height={1200}
         />
@@ -91,7 +91,7 @@ export function ListingGallery({
                 src={m.url}
                 alt=""
                 loading="lazy"
-                className="aspect-4/3 w-24 object-cover sm:w-28"
+                className="aspect-4/3 w-24 bg-card object-contain sm:w-28"
               />
             </button>
           ))}

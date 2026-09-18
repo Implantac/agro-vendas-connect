@@ -65,7 +65,8 @@ export function PhotoUploader({
           Arraste as fotos do implemento ou clique para selecionar
         </p>
         <p className="text-xs text-muted-foreground">
-          JPG, PNG ou WEBP • até {max} fotos • recortamos tudo para o padrão 4:3 da plataforma
+          JPG, PNG ou WEBP • até {max} fotos • ajustamos tudo para o padrão 4:3 da plataforma, sem
+          cortar a máquina
         </p>
       </div>
       <input
@@ -84,9 +85,9 @@ export function PhotoUploader({
           {previews.map((src, i) => (
             <div
               key={src}
-              className="group relative aspect-4/3 overflow-hidden rounded-md border border-border bg-secondary"
+              className="group relative aspect-4/3 overflow-hidden rounded-md border border-border bg-card"
             >
-              <img src={src} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" />
+              <img src={src} alt={`Foto ${i + 1}`} className="h-full w-full object-contain" />
               {i === 0 && (
                 <span className="absolute left-1.5 top-1.5 rounded-sm bg-forest/90 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
                   Capa

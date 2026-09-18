@@ -462,6 +462,7 @@ function Publicar() {
                     draft.priceOnRequest ? "Sob consulta" : formatBRL(Number(draft.price) || 0),
                   ],
                   ["Localização", [draft.city, draft.state].filter(Boolean).join(" • ") || "—"],
+                  ...orderedSpecs(draft.specs).map((s) => [s.label, s.value] as [string, string]),
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between gap-4">
                     <dt className="text-muted-foreground">{label}</dt>

@@ -452,6 +452,11 @@ function EditarAnuncio() {
               ))}
             </div>
           </div>
+          <SpecFieldsEditor
+            categorySlug={categorySlug}
+            values={values.specs ?? {}}
+            onChange={setSpec}
+          />
           <div className="space-y-2">
             <Label htmlFor="description">Descrição</Label>
             <Textarea

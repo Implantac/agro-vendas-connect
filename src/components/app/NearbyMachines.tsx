@@ -174,6 +174,3 @@ function RadiusChip({
     </button>
   );
 }
-
-// formatKm é usado dentro de ListingCard; mantido aqui para referência futura.
-export { formatKm };

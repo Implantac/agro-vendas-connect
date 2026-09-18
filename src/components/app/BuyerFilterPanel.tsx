@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Boxes, Cog, Droplets, Sprout, Tractor, Wheat, X, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -13,6 +14,7 @@ import {
 import { SALE_CONDITION_LABELS as CONDITION_LABELS } from "@/lib/format";
 import { useCatalogFacets, useCatalogFilters } from "@/features/catalog/useCatalogFilters";
 import { DistanceFilter } from "@/components/app/DistanceFilter";
+import { specFieldsFor } from "@/features/listings/category-specs";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
@@ -261,6 +263,57 @@ export function BuyerFilterPanel({
           </SelectContent>
         </Select>
       </section>
+
+      {/* Características técnicas da categoria escolhida */}
+      {filters.categoria && (
+        <section className="border-t border-border px-5 py-4">
+          <h2 className="mb-3 font-display text-sm font-bold text-forest">
+            Características técnicas
+          </h2>
+          {specFieldsFor(filters.categoria).filter((f) => facets.specValues[f.key]?.length).length ===
+          0 ? (
+            <p className="text-xs text-muted-foreground">
+              Os anúncios desta categoria ainda não têm características técnicas preenchidas.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {specFieldsFor(filters.categoria)
+                .filter((f) => facets.specValues[f.key]?.length)
+                .map((field) => (
+                  <div key={field.key} className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      {field.label}
+                      {field.unit ? ` (${field.unit})` : ""}
+                    </Label>
+                    <Select
+                      value={filters.specs[field.key] ?? "todos"}
+                      onValueChange={(v) =>
+                        setFilters({
+                          specs: {
+                            ...filters.specs,
+                            [field.key]: v === "todos" ? "" : v,
+                          },
+                        })
+                      }
+                    >
+                      <SelectTrigger className="h-9 text-xs">
+                        <SelectValue placeholder="Todos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="todos">Todos</SelectItem>
+                        {(facets.specValues[field.key] ?? []).map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.value} ({opt.count})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Distância / raio de busca */}
       <section className="border-t border-border px-5 py-4">

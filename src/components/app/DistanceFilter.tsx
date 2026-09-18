@@ -11,7 +11,7 @@ import {
 import { UF_LIST } from "@/lib/geo";
 import { useBuyerLocation } from "@/features/catalog/useBuyerLocation";
 
-export const RADIUS_OPTIONS = [100, 250, 500, 1000];
+export const RADIUS_OPTIONS = [50, 100, 250, 500];
 
 /** Define a localização de referência do comprador e o raio de busca. */
 export function DistanceFilter({
@@ -87,7 +87,7 @@ export function DistanceFilter({
           <SelectValue placeholder="Raio de busca" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">Qualquer distância</SelectItem>
+          <SelectItem value="all">Todo o Brasil</SelectItem>
           {RADIUS_OPTIONS.map((km) => (
             <SelectItem key={km} value={String(km)}>
               Até {km.toLocaleString("pt-BR")} km

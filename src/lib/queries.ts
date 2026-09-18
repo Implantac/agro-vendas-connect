@@ -157,13 +157,16 @@ export interface CatalogFacetRow {
   model: string | null;
   categorySlug: string | null;
   categoryName: string | null;
+  specs: Record<string, string>;
 }
 
 /** Base de dados usada para calcular contagens cruzadas de facetas. */
 export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
   const { data, error } = await supabase
     .from("listings")
-    .select("id,title,model,brand,manufacture_year,price,condition,state,categories(name,slug)")
+    .select(
+      "id,title,model,brand,manufacture_year,price,condition,state,technical_data_json,categories(name,slug)",
+    )
     .eq("status", "approved");
   if (error) throw error;
   return (data ?? []).map((r) => {
@@ -179,6 +182,12 @@ export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
       state: row.state,
       categorySlug: row.categories?.slug ?? null,
       categoryName: row.categories?.name ?? null,
+      specs: Object.fromEntries(
+        Object.entries((row.technical_data_json ?? {}) as Record<string, unknown>).map(([k, v]) => [
+          k,
+          String(v ?? ""),
+        ]),
+      ),
     };
   });
 }

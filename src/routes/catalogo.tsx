@@ -23,11 +23,13 @@ interface CatalogSearch {
   categoria?: string | undefined;
   condicao?: string | undefined;
   uf?: string | undefined;
+  cidade?: string | undefined;
   marca?: string | undefined;
   preco_min?: number | undefined;
   preco_max?: number | undefined;
   ano_min?: number | undefined;
   ano_max?: number | undefined;
+  horas_max?: number | undefined;
   ordem?: "recent" | "price_asc" | "price_desc" | undefined;
 }
 
@@ -45,6 +47,7 @@ export const Route = createFileRoute("/catalogo")({
     categoria: str(search["categoria"]),
     condicao: str(search["condicao"]),
     uf: str(search["uf"]),
+    cidade: str(search["cidade"]),
     marca: str(search["marca"]),
     preco_min: num(search["preco_min"]),
     preco_max: num(search["preco_max"]),

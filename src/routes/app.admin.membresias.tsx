@@ -45,6 +45,16 @@ function AdminMemberships() {
     queryFn: () => fetchAdminMembershipRequests(status || undefined),
   });
 
+  // Situação real de todas as solicitações, usada no resumo do topo.
+  const { data: allRequests = [] } = useQuery({
+    queryKey: ["admin", "memberships", "all"],
+    queryFn: () => fetchAdminMembershipRequests(),
+  });
+  const summary = FILTERS.filter((f) => f.value).map((f) => ({
+    ...f,
+    count: allRequests.filter((r) => r.status === f.value).length,
+  }));
+
   const review = useMutation({
     mutationFn: ({ id, approve, note }: { id: string; approve: boolean; note?: string }) =>
       reviewMembershipRequest(id, approve, note),

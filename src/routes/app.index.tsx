@@ -453,9 +453,14 @@ function BuyerDashboard() {
   const { user, profile } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "membro";
 
-  const { data: counts } = useQuery({
-    queryKey: ["dashboard", "counts", user?.id],
-    queryFn: () => fetchDashboardCounts(user!.id),
+  const { data: summary } = useQuery({
+    queryKey: ["dashboard", "buyer-summary", user?.id],
+    queryFn: () => fetchBuyerSummary(user!.id),
+    enabled: Boolean(user),
+  });
+  const { data: savedSearches = [] } = useQuery({
+    queryKey: ["saved-searches", user?.id],
+    queryFn: () => fetchSavedSearches(user!.id),
     enabled: Boolean(user),
   });
   const { data: opportunities = [] } = useQuery({

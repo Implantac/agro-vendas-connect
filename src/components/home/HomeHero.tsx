@@ -15,15 +15,15 @@ export function HomeHero() {
     <section className="relative isolate overflow-hidden bg-forest">
       <img
         src={heroImg}
-        alt="Trator com plantadeira trabalhando em lavoura ao entardecer"
+        alt="Trator com plantadeira, colheitadeira colhendo e pulverizador trabalhando em lavoura ao entardecer"
         width={1920}
         height={1088}
         fetchPriority="high"
-        className="absolute inset-0 h-full w-full object-cover opacity-60"
+        className="absolute inset-0 h-full w-full object-cover opacity-80"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-forest via-forest/85 to-forest/35"
+        className="absolute inset-0 bg-gradient-to-br from-forest/80 via-forest/45 to-forest/10"
       />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-32">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">

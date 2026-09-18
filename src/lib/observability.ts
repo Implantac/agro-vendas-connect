@@ -2,9 +2,43 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type EventSeverity = "info" | "warning" | "error" | "critical";
 
+/** Categorias operacionais usadas no painel administrativo. */
+export const EVENT_CATEGORIES = [
+  "auth",
+  "payment",
+  "membership",
+  "listing",
+  "machine",
+  "proposal",
+  "negotiation",
+  "order",
+  "document",
+  "lgpd",
+  "security",
+  "system",
+] as const;
+
+export type EventCategory = (typeof EVENT_CATEGORIES)[number];
+
+export const EVENT_CATEGORY_LABELS: Record<EventCategory, string> = {
+  auth: "Acesso",
+  payment: "Pagamento",
+  membership: "Membresia",
+  listing: "Anúncio",
+  machine: "Máquina",
+  proposal: "Proposta",
+  negotiation: "Negociação",
+  order: "Pedido",
+  document: "Documento",
+  lgpd: "Privacidade",
+  security: "Segurança",
+  system: "Sistema",
+};
+
 export interface SystemEvent {
   id: string;
   severity: EventSeverity;
+  category: EventCategory;
   source: string;
   message: string;
   context: Record<string, unknown>;
@@ -21,6 +55,7 @@ export async function logSystemEvent(
   source: string,
   message: string,
   context: Record<string, unknown> = {},
+  category: EventCategory = "system",
 ): Promise<void> {
   try {
     await supabase.rpc("log_system_event", {
@@ -28,22 +63,27 @@ export async function logSystemEvent(
       _source: source,
       _message: message,
       _context: context as never,
-    });
+      _category: category,
+    } as never);
   } catch {
     // silencioso por design
   }
 }
 
-export async function fetchSystemEvents(severity?: EventSeverity): Promise<SystemEvent[]> {
+export async function fetchSystemEvents(
+  severity?: EventSeverity,
+  category?: EventCategory,
+): Promise<SystemEvent[]> {
   let query = supabase
     .from("system_events")
-    .select("id,severity,source,message,context,user_id,created_at")
+    .select("id,severity,category,source,message,context,user_id,created_at")
     .order("created_at", { ascending: false })
     .limit(100);
   if (severity) query = query.eq("severity", severity);
+  if (category) query = query.eq("category", category as never);
   const { data, error } = await query;
   if (error) throw error;
-  return (data ?? []) as SystemEvent[];
+  return (data ?? []) as unknown as SystemEvent[];
 }
 
 export interface FinancialAlerts {

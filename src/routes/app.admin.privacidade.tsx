@@ -116,15 +116,19 @@ function AdminPrivacy() {
   }
 
   function exportCsv() {
-    const header = "email;tipo;status;criada_em;atendida_em;detalhes";
+    const header =
+      "email;tipo;status;criada_em;prazo;atendida_em;detalhes;atendimento;evidencia";
     const rows = requests.map((r) =>
       [
         r.email,
         REQUEST_LABEL[r.request_type] ?? r.request_type,
-        r.status,
+        STATUS_LABEL[r.status] ?? r.status,
         r.created_at,
+        r.due_at ?? "",
         r.handled_at ?? "",
         (r.details ?? "").replace(/[;\n]/g, " "),
+        (r.handler_notes ?? "").replace(/[;\n]/g, " "),
+        r.evidence_url ?? "",
       ].join(";"),
     );
     const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8" });

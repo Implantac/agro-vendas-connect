@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Circle, ImagePlus, Star, Trash2 } from "lucide-react";
 import { listingCompleteness, type CompletenessInput } from "@/features/listings/completeness";
+import { SpecFieldsEditor } from "@/components/app/SpecFieldsEditor";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { respondProposal } from "@/lib/app-queries";
+import { reportError } from "@/lib/report-error";
 import { ensureConversation, fetchNegotiation } from "@/lib/negotiation-queries";
 import { sendMessage } from "@/lib/app-queries";
 import {
@@ -44,6 +45,27 @@ export const Route = createFileRoute("/app/negociacao/$id")({
   component: NegotiationDetail,
 });
 
+type OrderAction = "awaiting_payment" | "in_delivery" | "completed" | "cancelled";
+
+/** Espelha as transições validadas pelo banco em set_order_status. */
+const ORDER_NEXT_STEPS: Record<string, { status: OrderAction; label: string }[]> = {
+  created: [
+    { status: "awaiting_payment", label: "Pagamento a combinar" },
+    { status: "cancelled", label: "Cancelar pedido" },
+  ],
+  awaiting_payment: [{ status: "cancelled", label: "Cancelar pedido" }],
+  paid: [
+    { status: "in_delivery", label: "Em entrega" },
+    { status: "cancelled", label: "Cancelar pedido" },
+  ],
+  in_delivery: [
+    { status: "completed", label: "Negócio concluído" },
+    { status: "cancelled", label: "Cancelar pedido" },
+  ],
+  completed: [],
+  cancelled: [],
+};
+
 const EVENT_LABELS: Record<string, string> = {
   created: "Proposta enviada",
   accepted: "Proposta aceita",
@@ -75,7 +97,7 @@ function NegotiationDetail() {
   });
 
   const orderStatus = useMutation({
-    mutationFn: async (status: "awaiting_payment" | "in_delivery" | "completed" | "cancelled") => {
+    mutationFn: async (status: OrderAction) => {
       if (!user || !order) return;
       await updateOrderStatus(order.id, status);
     },
@@ -83,7 +105,8 @@ function NegotiationDetail() {
       toast.success("Pedido atualizado");
       void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
-    onError: (e: Error) => toast.error(e.message || "Não foi possível atualizar o pedido."),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Atualizar situação do pedido", category: "order" }),
   });
 
   useEffect(() => {
@@ -101,7 +124,8 @@ function NegotiationDetail() {
       toast.success("Condições registradas");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Salvar condições comerciais", category: "negotiation" }),
   });
 
   useEffect(() => {
@@ -137,7 +161,8 @@ function NegotiationDetail() {
       void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Responder proposta", category: "proposal" }),
   });
 
   const send = useMutation({
@@ -158,7 +183,7 @@ function NegotiationDetail() {
       setText("");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
     },
-    onError: () => toast.error("Não foi possível enviar a mensagem."),
+    onError: (e: Error) => reportError(e, { operation: "Enviar mensagem", category: "negotiation" }),
   });
 
   if (isLoading) {
@@ -436,43 +461,34 @@ function NegotiationDetail() {
                 </div>
               </dl>
               <p className="mt-3 text-xs text-muted-foreground">
-                Pagamento online ainda não habilitado: combinem forma de pagamento, vistoria e
-                entrega entre as partes. A DDP AGRO registra o histórico, mas não garante a
+                A confirmação de pagamento é registrada pela DDP AGRO quando o provedor confirma;
+                nenhuma das partes muda esse status sozinha. A DDP AGRO registra o histórico, mas não garante a
                 conclusão do negócio.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={orderStatus.isPending || order.status !== "created"}
-                  onClick={() => orderStatus.mutate("awaiting_payment")}
-                >
-                  Pagamento a combinar
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  disabled={orderStatus.isPending || order.status === "completed"}
-                  onClick={() => orderStatus.mutate("in_delivery")}
-                >
-                  Em entrega
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-accent text-accent-foreground hover:bg-accent/90"
-                  disabled={orderStatus.isPending || order.status === "completed"}
-                  onClick={() => orderStatus.mutate("completed")}
-                >
-                  Negócio concluído
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={orderStatus.isPending || order.status === "cancelled"}
-                  onClick={() => orderStatus.mutate("cancelled")}
-                >
-                  Cancelar pedido
-                </Button>
+                {ORDER_NEXT_STEPS[order.status]?.length ? (
+                  ORDER_NEXT_STEPS[order.status]!.map((step) => (
+                    <Button
+                      key={step.status}
+                      size="sm"
+                      variant={step.status === "cancelled" ? "outline" : "secondary"}
+                      className={
+                        step.status === "completed"
+                          ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                          : undefined
+                      }
+                      disabled={orderStatus.isPending}
+                      onClick={() => orderStatus.mutate(step.status)}
+                    >
+                      {step.label}
+                    </Button>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Este pedido está {(ORDER_STATUS_LABELS[order.status] ?? order.status).toLowerCase()} e
+                    não muda mais de situação.
+                  </p>
+                )}
               </div>
             </section>
           )}
@@ -568,6 +584,11 @@ function NegotiationDetail() {
               );
             })}
           </ol>
+          {expired && (
+            <p className="mt-4 border-l border-border pl-4 text-xs text-warning">
+              Proposta expirada em {formatDateTimeBR(p.expires_at)} sem resposta.
+            </p>
+          )}
         </aside>
       </div>
     </AppPage>

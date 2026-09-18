@@ -29,7 +29,12 @@ export function PrivacyRequestsCard() {
     });
     setPending(null);
     if (error) {
-      toast.error("Não foi possível registrar a solicitação", { description: error.message });
+      reportError(error, {
+        operation: "registrar solicitação de privacidade",
+        category: "lgpd",
+        context: { request_type: type },
+        retry: () => void submit(type),
+      });
       return;
     }
     setDetails("");
@@ -37,7 +42,7 @@ export function PrivacyRequestsCard() {
       type === "export"
         ? "Solicitação de exportação registrada"
         : "Solicitação de exclusão registrada",
-      { description: "Nossa equipe responderá pelos canais oficiais da DDP AGRO." },
+      { description: "A resposta é dada em até 15 dias pelos canais oficiais da DDP AGRO." },
     );
   }
 

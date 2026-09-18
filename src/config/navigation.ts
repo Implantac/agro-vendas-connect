@@ -184,25 +184,25 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
 
 export const BOTTOM_NAV_BY_ROLE: Record<AppMode, NavItem[]> = {
   comprador: [
-    { to: "/app/comprar", label: "Buscar", icon: Search },
-    { to: "/app/favoritos", label: "Favoritos", icon: Heart },
-    { to: "/app/negociacoes", label: "Negócios", icon: Handshake },
+    { to: "/app", label: "Início", icon: Home, exact: true },
+    { to: "/app/comprar", label: "Comprar", icon: Search },
+    { to: "/app/negociacoes", label: "Negociações", icon: Handshake },
     { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
-    { to: "/app/perfil", label: "Perfil", icon: User },
+    { to: "/app/perfil", label: "Conta", icon: User },
   ],
   vendedor: [
-    { to: "/app", label: "Painel", icon: Home, exact: true },
-    { to: "/app/meus-anuncios", label: "Anúncios", icon: ClipboardList },
-    { to: "/app/publicar", label: "Publicar", icon: Plus, variant: "primary" },
-    { to: "/app/leads", label: "Leads", icon: Target },
-    { to: "/app/perfil", label: "Perfil", icon: User },
+    { to: "/app", label: "Início", icon: Home, exact: true },
+    { to: "/app/maquinas", label: "Máquinas", icon: Tractor },
+    { to: "/app/negociacoes", label: "Propostas", icon: Handshake },
+    { to: "/app/mensagens", label: "Mensagens", icon: MessageSquare },
+    { to: "/app/perfil", label: "Conta", icon: User },
   ],
   admin: [
     { to: "/app/admin", label: "Painel", icon: Home, exact: true },
-    { to: "/app/admin/membros", label: "Usuários", icon: Users },
-    { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
-    { to: "/app/admin/denuncias", label: "Denúncias", icon: Flag },
-    { to: "/app/perfil", label: "Perfil", icon: User },
+    { to: "/app/admin/anuncios", label: "Pendências", icon: ClipboardList },
+    { to: "/app/admin/membros", label: "Operação", icon: Users },
+    { to: "/app/admin/denuncias", label: "Alertas", icon: Flag },
+    { to: "/app/perfil", label: "Mais", icon: User },
   ],
 };
 

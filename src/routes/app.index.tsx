@@ -341,6 +341,21 @@ function SellerDashboard() {
 
       <KpiGrid cards={cards} />
 
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/maquinas">Cadastrar máquina</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/publicar">Criar anúncio</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/negociacoes">Ver propostas</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/empresa">Completar documentação</Link>
+        </Button>
+      </div>
+
       {/* Pipeline de vendas */}
       <section className="mt-12">
         <div className="flex items-end justify-between gap-4">

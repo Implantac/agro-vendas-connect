@@ -91,7 +91,7 @@ export function orderedSpecs(tech: Record<string, unknown> | null | undefined) {
   return entries
     .map(([k, v]) => ({
       key: k,
-      label: TECH_SPEC_ORDER.find((s) => s.key === k)?.label ?? k,
+      label: TECH_SPEC_ORDER.find((s) => s.key === k)?.label ?? specLabel(k) ?? k,
       value: String(v),
       order: known.get(k) ?? 999,
     }))

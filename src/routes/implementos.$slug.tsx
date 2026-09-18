@@ -307,7 +307,7 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
             <MachineHistory machineId={l.machine_id ?? l.machines?.id ?? null} />
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="order-1 lg:order-2 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-md border border-border bg-card p-6">
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Preço</p>
               <p className="mt-1 font-display text-3xl font-bold text-forest">

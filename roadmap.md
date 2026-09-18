@@ -58,6 +58,8 @@
 - [x] Etapa D — pedido só aceita transições válidas na tela; expiração na linha do tempo; erros padronizados
 - [x] Etapa E — características técnicas por categoria (cadastro e filtros) e distâncias 50/100/250/500 km
 - [x] Etapa G — listagem do catálogo com campos selecionados; testes SQL de proposta/pedido (13/13 ok)
+- [x] Etapa G — revisão mobile: painel/busca/anúncio/negociação/publicação/tabelas admin a 407 px sem transbordo, filtros em gaveta, header enxuto (ajuda e mensagens só a partir de telas maiores), mensagem de anúncio não encontrado
+- [x] "Máquinas próximas de você" no painel do comprador (raios 50/100/250/500 km e todo o Brasil, distância aproximada pelo centro do estado)
 - [x] Busca salva com alertas (in-app)
 - [x] Pipeline de leads por etapa (derivado de eventos reais; sem etapas manuais por decisão de produto)
 - [ ] Documentação final de operação

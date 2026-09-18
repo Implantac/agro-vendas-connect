@@ -27,12 +27,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
 import {
-  fetchDashboardCounts,
+  fetchBuyerSummary,
   fetchMyListings,
   fetchMyProposals,
   fetchNotifications,
   fetchSellerLeads,
+  fetchSellerSummary,
 } from "@/lib/app-queries";
+import { fetchSavedSearches } from "@/lib/saved-searches";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
 import { formatBRL, LISTING_STATUS_LABELS, PROPOSAL_STATUS_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";

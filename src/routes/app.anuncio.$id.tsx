@@ -142,6 +142,11 @@ function EditarAnuncio() {
       priceOnRequest: listing.price_on_request,
       city: listing.city ?? "",
       state: listing.state ?? "",
+      specs: Object.fromEntries(
+        Object.entries((listing.technical_data_json ?? {}) as Record<string, unknown>).map(
+          ([k, v]) => [k, String(v ?? "")],
+        ),
+      ),
     });
   }, [listing]);
 

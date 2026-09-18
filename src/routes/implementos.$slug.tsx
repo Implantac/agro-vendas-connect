@@ -315,8 +315,8 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
               </dl>
               {specs.length === 0 && (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  O vendedor ainda não detalhou potência, transmissão e demais itens. Pergunte na
-                  negociação.
+                  O vendedor ainda não detalhou as características técnicas desta máquina. Pergunte
+                  na negociação.
                 </p>
               )}
             </section>

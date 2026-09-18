@@ -609,6 +609,8 @@ function BuyerDashboard() {
         )}
       </section>
 
+      <NearbyMachines listings={opportunities as unknown as ListingCardData[]} />
+
       <section className="mt-12 rounded-lg border border-border bg-card p-5">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-lg font-bold text-forest">Buscas salvas</h2>

@@ -156,6 +156,12 @@ function EditarAnuncio() {
   const set = <K extends keyof ListingFormValues>(key: K, value: ListingFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }));
 
+  const setSpec = (key: string, value: string) =>
+    setValues((v) => ({ ...v, specs: { ...(v.specs ?? {}), [key]: value } }));
+
+  const categorySlug = categories.find((c) => c.id === values.categoryId)?.slug ?? null;
+
+
   function refresh() {
     void queryClient.invalidateQueries({ queryKey: ["listing-edit", id] });
     void queryClient.invalidateQueries({ queryKey: ["listing-media", id] });

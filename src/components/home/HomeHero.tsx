@@ -19,11 +19,11 @@ export function HomeHero() {
         width={1920}
         height={1088}
         fetchPriority="high"
-        className="absolute inset-0 h-full w-full object-cover opacity-40"
+        className="absolute inset-0 h-full w-full object-cover opacity-60"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-forest via-forest/95 to-forest/55"
+        className="absolute inset-0 bg-gradient-to-br from-forest via-forest/85 to-forest/35"
       />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-32">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-accent">

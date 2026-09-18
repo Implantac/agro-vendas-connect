@@ -73,7 +73,7 @@ export function ListingCard({
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-[0_12px_30px_-18px_oklch(0.3_0.055_158/0.6)]">
-      <GatedLink className="relative block aspect-4/3 overflow-hidden bg-white">
+      <GatedLink className="relative block aspect-4/3 overflow-hidden bg-card">
         {cover ? (
           <img
             src={cover}

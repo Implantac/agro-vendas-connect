@@ -15,11 +15,18 @@ export interface CatalogFilters {
   uf?: string | undefined;
   /** Raio de busca em km a partir da localização de referência do comprador. */
   raio?: number | undefined;
+  /** Características técnicas por categoria (chave -> valor exato). */
+  specs: Record<string, string>;
   sort: string;
   page: number;
 }
 
-export type CatalogFilterPatch = Partial<Omit<CatalogFilters, "marcas">> & { marcas?: string[] };
+export type CatalogFilterPatch = Partial<Omit<CatalogFilters, "marcas" | "specs">> & {
+  marcas?: string[];
+  specs?: Record<string, string>;
+};
+
+export const SPEC_PARAM_PREFIX = "esp_";
 
 const CATALOG_PATH = "/app/comprar";
 
@@ -52,6 +59,11 @@ export function useCatalogFilters() {
       condicao: str(search["condicao"]),
       uf: str(search["uf"]),
       raio: num(search["raio"]),
+      specs: Object.fromEntries(
+        Object.entries(search)
+          .filter(([k, v]) => k.startsWith(SPEC_PARAM_PREFIX) && typeof v === "string" && v)
+          .map(([k, v]) => [k.slice(SPEC_PARAM_PREFIX.length), v as string]),
+      ),
       sort: str(search["sort"]) ?? "relevancia",
       page: num(search["page"]) ?? 1,
     };
@@ -70,10 +82,22 @@ export function useCatalogFilters() {
         condicao: filters.condicao,
         uf: filters.uf,
         raio: filters.raio,
+        ...Object.fromEntries(
+          Object.entries(filters.specs).map(([k, v]) => [`${SPEC_PARAM_PREFIX}${k}`, v]),
+        ),
         sort: filters.sort === "relevancia" ? undefined : filters.sort,
         page: filters.page > 1 ? filters.page : undefined,
       };
+      if (patch.specs) {
+        for (const key of Object.keys(next)) {
+          if (key.startsWith(SPEC_PARAM_PREFIX)) delete next[key];
+        }
+        for (const [k, v] of Object.entries(patch.specs)) {
+          if (v) next[`${SPEC_PARAM_PREFIX}${k}`] = v;
+        }
+      }
       for (const [key, value] of Object.entries(patch)) {
+        if (key === "specs") continue;
         next[key] =
           key === "marcas"
             ? (value as string[])?.length
@@ -97,7 +121,16 @@ export function useCatalogFilters() {
   return { filters, setFilters, clearAll };
 }
 
-type FacetKey = "categoria" | "marcas" | "preco" | "ano" | "condicao" | "uf" | "q" | "none";
+type FacetKey =
+  | "categoria"
+  | "marcas"
+  | "preco"
+  | "ano"
+  | "condicao"
+  | "uf"
+  | "q"
+  | "specs"
+  | "none";
 
 function matches(row: CatalogFacetRow, f: CatalogFilters, ignore: FacetKey) {
   if (ignore !== "q" && f.q) {
@@ -120,6 +153,11 @@ function matches(row: CatalogFacetRow, f: CatalogFilters, ignore: FacetKey) {
   }
   if (ignore !== "condicao" && f.condicao && row.condition !== f.condicao) return false;
   if (ignore !== "uf" && f.uf && row.state !== f.uf) return false;
+  if (ignore !== "specs") {
+    for (const [key, value] of Object.entries(f.specs)) {
+      if ((row.specs[key] ?? "") !== value) return false;
+    }
+  }
   return true;
 }
 
@@ -129,6 +167,8 @@ export interface CatalogFacets {
   conditions: { value: string; count: number }[];
   states: { uf: string; count: number }[];
   years: number[];
+  /** Valores disponíveis para cada característica técnica no recorte atual. */
+  specValues: Record<string, { value: string; count: number }[]>;
   maxPrice: number;
   total: number;
   isLoading: boolean;
@@ -168,6 +208,21 @@ export function useCatalogFacets(filters: CatalogFilters): CatalogFacets {
     const allMax = rows.reduce((max, r) => Math.max(max, r.price ?? 0), 0);
     const ceiling = Math.max(maxListingPrice, allMax, 100_000) + 50_000;
 
+    const specScope = rows.filter((r) => matches(r, filters, "specs"));
+    const specValues: Record<string, { value: string; count: number }[]> = {};
+    for (const row of specScope) {
+      for (const [key, value] of Object.entries(row.specs)) {
+        if (!value) continue;
+        const list = (specValues[key] ??= []);
+        const found = list.find((i) => i.value === value);
+        if (found) found.count += 1;
+        else list.push({ value, count: 1 });
+      }
+    }
+    for (const list of Object.values(specValues)) {
+      list.sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
+    }
+
     const years = [...new Set(rows.map((r) => r.manufacture_year).filter(Boolean))] as number[];
 
     return {
@@ -189,6 +244,7 @@ export function useCatalogFacets(filters: CatalogFilters): CatalogFacets {
         .map(([uf, c]) => ({ uf: uf as string, count: c }))
         .sort((a, b) => a.uf.localeCompare(b.uf)),
       years: years.sort((a, b) => b - a),
+      specValues,
       maxPrice: Math.ceil(ceiling / 25_000) * 25_000,
       total: rows.filter((r) => matches(r, filters, "none")).length,
       isLoading,
@@ -206,5 +262,6 @@ export function countActiveFilters(f: CatalogFilters) {
   if (f.condicao) n++;
   if (f.uf) n++;
   if (f.raio !== undefined) n++;
+  n += Object.values(f.specs).filter(Boolean).length;
   return n;
 }

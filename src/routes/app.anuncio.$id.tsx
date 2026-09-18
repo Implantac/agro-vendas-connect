@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Circle, ImagePlus, Star, Trash2 } from "lucide-react";
 import { listingCompleteness, type CompletenessInput } from "@/features/listings/completeness";
+import { SpecFieldsEditor } from "@/components/app/SpecFieldsEditor";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,7 @@ const EMPTY: ListingFormValues = {
   priceOnRequest: false,
   city: "",
   state: "",
+  specs: {},
 };
 
 function EditarAnuncio() {
@@ -141,6 +143,11 @@ function EditarAnuncio() {
       priceOnRequest: listing.price_on_request,
       city: listing.city ?? "",
       state: listing.state ?? "",
+      specs: Object.fromEntries(
+        Object.entries((listing.technical_data_json ?? {}) as Record<string, unknown>).map(
+          ([k, v]) => [k, String(v ?? "")],
+        ),
+      ),
     });
   }, [listing]);
 
@@ -149,6 +156,12 @@ function EditarAnuncio() {
 
   const set = <K extends keyof ListingFormValues>(key: K, value: ListingFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }));
+
+  const setSpec = (key: string, value: string) =>
+    setValues((v) => ({ ...v, specs: { ...(v.specs ?? {}), [key]: value } }));
+
+  const categorySlug = categories.find((c) => c.id === values.categoryId)?.slug ?? null;
+
 
   function refresh() {
     void queryClient.invalidateQueries({ queryKey: ["listing-edit", id] });
@@ -298,7 +311,8 @@ function EditarAnuncio() {
             city: values.city,
             state: values.state,
             category_id: values.categoryId,
-            technical_data_json: (listing.technical_data_json as Record<string, unknown>) ?? {},
+            categorySlug,
+            technical_data_json: values.specs ?? {},
             photos: media.length,
           }}
         />
@@ -440,6 +454,11 @@ function EditarAnuncio() {
               ))}
             </div>
           </div>
+          <SpecFieldsEditor
+            categorySlug={categorySlug}
+            values={values.specs ?? {}}
+            onChange={setSpec}
+          />
           <div className="space-y-2">
             <Label htmlFor="description">Descrição</Label>
             <Textarea

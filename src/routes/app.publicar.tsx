@@ -19,7 +19,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { createListing, fetchMyMachines, uploadListingPhotos } from "@/lib/listing-manage";
 import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { AiDescriptionPanel } from "@/components/app/AiDescriptionPanel";
-import { specFieldsFor } from "@/features/listings/category-specs";
+import { SpecFieldsEditor } from "@/components/app/SpecFieldsEditor";
+import { orderedSpecs } from "@/features/listings/completeness";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -120,7 +121,6 @@ function Publicar() {
     setDraft((d) => ({ ...d, specs: { ...d.specs, [key]: value } }));
 
   const categorySlug = categories.find((c) => c.id === draft.categoryId)?.slug ?? null;
-  const specFields = specFieldsFor(categorySlug);
 
   function canAdvance(): boolean {
     switch (step) {
@@ -336,53 +336,11 @@ function Publicar() {
                   ))}
                 </div>
               </div>
-              <div className="space-y-3">
-                <Label>Características técnicas</Label>
-                <p className="text-xs text-muted-foreground">
-                  Só aparecem os itens que fazem sentido para a categoria escolhida. Deixe em branco
-                  o que não souber — nada é preenchido automaticamente.
-                </p>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {specFields.map((field) => (
-                    <div key={field.key} className="space-y-2">
-                      <Label htmlFor={`spec-${field.key}`}>
-                        {field.label}
-                        {field.unit ? ` (${field.unit})` : ""}
-                      </Label>
-                      {field.options ? (
-                        <Select
-                          value={draft.specs[field.key] ?? ""}
-                          onValueChange={(v) => setSpec(field.key, v)}
-                        >
-                          <SelectTrigger id={`spec-${field.key}`}>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {field.options.map((opt) => (
-                              <SelectItem key={opt} value={opt}>
-                                {opt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Input
-                          id={`spec-${field.key}`}
-                          value={draft.specs[field.key] ?? ""}
-                          inputMode={field.numeric ? "numeric" : "text"}
-                          placeholder={field.placeholder ?? ""}
-                          onChange={(e) =>
-                            setSpec(
-                              field.key,
-                              field.numeric ? e.target.value.replace(/\D/g, "") : e.target.value,
-                            )
-                          }
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <SpecFieldsEditor
+                categorySlug={categorySlug}
+                values={draft.specs}
+                onChange={setSpec}
+              />
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição</Label>
                 <Textarea
@@ -505,6 +463,7 @@ function Publicar() {
                     draft.priceOnRequest ? "Sob consulta" : formatBRL(Number(draft.price) || 0),
                   ],
                   ["Localização", [draft.city, draft.state].filter(Boolean).join(" • ") || "—"],
+                  ...orderedSpecs(draft.specs).map((s) => [s.label, s.value] as [string, string]),
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between gap-4">
                     <dt className="text-muted-foreground">{label}</dt>

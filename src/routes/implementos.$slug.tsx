@@ -25,6 +25,7 @@ import { TrustBadges } from "@/components/catalog/TrustBadges";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import { fetchSellerTrust, registerListingView } from "@/features/listings/queries";
 import { listingCode, orderedSpecs } from "@/features/listings/completeness";
+import { specFieldsFor } from "@/features/listings/category-specs";
 import { trustBadges } from "@/features/listings/trust";
 import { fetchMachineEvents } from "@/lib/machine-docs";
 
@@ -165,7 +166,13 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
   const specs = orderedSpecs(l.technical_data_json);
+  const categoryFields = specFieldsFor(l.categories?.slug ?? null);
   const power = l.technical_data_json?.["potencia"] ?? l.technical_data_json?.["potencia_cv"];
+  // Só destacamos potência quando ela faz sentido para a categoria da máquina.
+  const showPower = Boolean(power) || categoryFields.some((f) => f.key === "potencia");
+  const highlightSpec = !showPower
+    ? specs.find((s) => categoryFields.some((f) => f.key === s.key))
+    : undefined;
   const badges = trustBadges({
     sellerStatus: sellerTrust?.profile?.status,
     sellerPhone: sellerTrust?.profile?.phone,
@@ -185,7 +192,17 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
       label: "Horas de uso",
       value: l.hours_used != null ? `${l.hours_used.toLocaleString("pt-BR")} h` : "Não informado",
     },
-    { icon: Zap, label: "Potência", value: power ? String(power) : "Não informada" },
+    ...(showPower
+      ? [
+          {
+            icon: Zap,
+            label: "Potência",
+            value: power ? `${String(power)} cv`.replace(/ cv cv$/, " cv") : "Não informada",
+          },
+        ]
+      : highlightSpec
+        ? [{ icon: Zap, label: highlightSpec.label, value: highlightSpec.value }]
+        : []),
     {
       icon: MapPin,
       label: "Localização",
@@ -298,8 +315,8 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
               </dl>
               {specs.length === 0 && (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  O vendedor ainda não detalhou potência, transmissão e demais itens. Pergunte na
-                  negociação.
+                  O vendedor ainda não detalhou as características técnicas desta máquina. Pergunte
+                  na negociação.
                 </p>
               )}
             </section>

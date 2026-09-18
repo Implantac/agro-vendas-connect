@@ -55,6 +55,17 @@ function AdminMemberships() {
     onError: (e: Error) => toast.error("Não foi possível analisar.", { description: e.message }),
   });
 
+  const confirmPayment = useMutation({
+    mutationFn: ({ id, method, reference }: { id: string; method: string; reference: string }) =>
+      adminConfirmMembershipPayment(id, method, reference),
+    onSuccess: () => {
+      toast.success("Pagamento registrado.", { description: "A solicitação entrou em análise." });
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) =>
+      toast.error("Não foi possível registrar o pagamento.", { description: e.message }),
+  });
+
   return (
     <AppPage>
       <h1 className="font-display text-2xl font-bold text-forest">Membresias</h1>
@@ -154,9 +165,31 @@ function AdminMemberships() {
                   Recusar
                 </Button>
                 {r.payment_status !== "paid" && (
-                  <span className="text-xs text-muted-foreground">
-                    Aguardando confirmação do pagamento para aprovar.
-                  </span>
+                  <>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={confirmPayment.isPending}
+                      onClick={() => {
+                        const reference = window.prompt(
+                          "Comprovante conferido — informe o identificador do pagamento:",
+                          r.payment_reference ?? "",
+                        );
+                        if (!reference) return;
+                        confirmPayment.mutate({
+                          id: r.id,
+                          method: r.payment_method ?? "pix",
+                          reference,
+                        });
+                      }}
+                    >
+                      Registrar pagamento conferido
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                      O pagamento é confirmado pelo provedor. Use o registro manual apenas com
+                      comprovante conferido.
+                    </span>
+                  </>
                 )}
               </div>
             )}

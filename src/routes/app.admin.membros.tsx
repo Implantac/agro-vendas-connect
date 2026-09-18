@@ -84,6 +84,20 @@ function AdminMembers() {
       toast.error("Não foi possível alterar o perfil.", { description: e.message }),
   });
 
+  if (!isAdmin) {
+    return (
+      <AppPage>
+        <div className="mx-auto max-w-lg rounded-lg border border-border bg-card p-8 text-center">
+          <h1 className="font-display text-xl font-bold text-forest">Área restrita</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Apenas a administração pode ver os dados de outros membros. No seu perfil você acessa e
+            edita somente as suas próprias informações.
+          </p>
+        </div>
+      </AppPage>
+    );
+  }
+
   return (
     <AppPage>
       <div className="flex flex-wrap items-start justify-between gap-3">

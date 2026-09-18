@@ -161,6 +161,8 @@ export interface CatalogFacetRow {
   price: number | null;
   condition: "new" | "semi_new" | "used";
   state: string | null;
+  city: string | null;
+  hours_used: number | null;
   title: string;
   model: string | null;
   categorySlug: string | null;

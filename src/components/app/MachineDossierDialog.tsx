@@ -33,11 +33,37 @@ import {
   type MachineDocType,
 } from "@/lib/machine-docs";
 
+export interface MachineIdentification {
+  category?: string | null;
+  brand?: string | null;
+  model?: string | null;
+  year?: number | null;
+  serialNumber?: string | null;
+  hours?: number | null;
+  condition?: string | null;
+  city?: string | null;
+  state?: string | null;
+  availability?: string | null;
+  verificationStatus?: string | null;
+  verifiedAt?: string | null;
+}
+
 interface Props {
   machineId: string | null;
   machineName: string;
   ownerId: string;
+  identification?: MachineIdentification;
   onOpenChange: (open: boolean) => void;
+}
+
+const CONDITION_LABEL: Record<string, string> = {
+  new: "Nova",
+  semi_new: "Seminova",
+  used: "Usada",
+};
+
+function dateBR(value?: string | null) {
+  return value ? new Date(value).toLocaleDateString("pt-BR") : null;
 }
 
 const TODAY = () => new Date().toISOString().slice(0, 10);

@@ -34,10 +34,14 @@ export function planBenefits(plan: Pick<MembershipPlan, "benefits_json">): strin
   return Array.isArray(raw) ? raw.filter((b): b is string => typeof b === "string") : [];
 }
 
+/** Campos do plano usados nas telas públicas (sem select("*")). */
+export const PLAN_PUBLIC_SELECT =
+  "id,code,name,description,target_role,price,period,benefits_json,highlight,highlight_label,listing_limit,machine_limit,commission_percent,active,sort_order";
+
 export async function fetchMembershipPlans() {
   const { data, error } = await supabase
     .from("membership_plans")
-    .select("*")
+    .select(PLAN_PUBLIC_SELECT)
     .eq("active", true)
     .order("sort_order", { ascending: true });
   if (error) throw error;

@@ -246,7 +246,7 @@ export function AppLayout() {
               asChild
               variant="ghost"
               size="icon"
-              className="text-forest"
+              className="hidden text-forest md:inline-flex"
               aria-label="Mensagens"
             >
               <Link to="/app/mensagens">

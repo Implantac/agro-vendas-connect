@@ -31,6 +31,13 @@ const REQUEST_LABEL: Record<string, string> = {
 
 const DEADLINE_DAYS = 15;
 
+const STATUS_LABEL: Record<string, string> = {
+  open: "Aberta",
+  in_progress: "Em atendimento",
+  done: "Atendida",
+  rejected: "Recusada",
+};
+
 interface RequestRow {
   id: string;
   email: string;
@@ -39,6 +46,9 @@ interface RequestRow {
   status: string;
   created_at: string;
   handled_at: string | null;
+  due_at: string | null;
+  handler_notes: string | null;
+  evidence_url: string | null;
 }
 
 function AdminPrivacy() {
@@ -49,25 +59,34 @@ function AdminPrivacy() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("privacy_requests")
-        .select("id,email,request_type,details,status,created_at,handled_at")
+        .select(
+          "id,email,request_type,details,status,created_at,handled_at,due_at,handler_notes,evidence_url",
+        )
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return (data ?? []) as RequestRow[];
+      return (data ?? []) as unknown as RequestRow[];
     },
   });
 
   const setStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { data: auth } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("privacy_requests")
-        .update({
-          status,
-          handled_at: new Date().toISOString(),
-          handled_by: auth.user?.id ?? null,
-        })
-        .eq("id", id);
+    mutationFn: async ({
+      id,
+      status,
+      notes,
+      evidence,
+    }: {
+      id: string;
+      status: string;
+      notes?: string;
+      evidence?: string;
+    }) => {
+      const { error } = await supabase.rpc("admin_resolve_privacy_request", {
+        _request_id: id,
+        _status: status,
+        _notes: notes ?? null,
+        _evidence_url: evidence ?? null,
+      } as never);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -76,6 +95,25 @@ function AdminPrivacy() {
     },
     onError: (e: Error) => toast.error(e.message || "Não foi possível atualizar."),
   });
+
+  function resolve(id: string, status: "done" | "rejected") {
+    const notes = window.prompt(
+      status === "done"
+        ? "Como o pedido foi atendido? (registro obrigatório)"
+        : "Motivo da recusa (registro obrigatório)",
+    );
+    if (!notes || notes.trim().length < 5) {
+      toast.error("Descreva o atendimento com pelo menos 5 caracteres.");
+      return;
+    }
+    const evidence = window.prompt("Link da evidência (opcional)") ?? "";
+    setStatus.mutate({
+      id,
+      status,
+      notes: notes.trim(),
+      ...(evidence.trim() ? { evidence: evidence.trim() } : {}),
+    });
+  }
 
   function exportCsv() {
     const header = "email;tipo;status;criada_em;atendida_em;detalhes";

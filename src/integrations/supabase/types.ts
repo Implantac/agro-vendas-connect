@@ -1071,9 +1071,12 @@ export type Database = {
         Row: {
           created_at: string
           details: string | null
+          due_at: string | null
           email: string
+          evidence_url: string | null
           handled_at: string | null
           handled_by: string | null
+          handler_notes: string | null
           id: string
           request_type: string
           status: string
@@ -1082,9 +1085,12 @@ export type Database = {
         Insert: {
           created_at?: string
           details?: string | null
+          due_at?: string | null
           email: string
+          evidence_url?: string | null
           handled_at?: string | null
           handled_by?: string | null
+          handler_notes?: string | null
           id?: string
           request_type: string
           status?: string
@@ -1093,9 +1099,12 @@ export type Database = {
         Update: {
           created_at?: string
           details?: string | null
+          due_at?: string | null
           email?: string
+          evidence_url?: string | null
           handled_at?: string | null
           handled_by?: string | null
+          handler_notes?: string | null
           id?: string
           request_type?: string
           status?: string
@@ -1366,6 +1375,7 @@ export type Database = {
       }
       system_events: {
         Row: {
+          category: string
           context: Json
           created_at: string
           id: string
@@ -1375,6 +1385,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          category?: string
           context?: Json
           created_at?: string
           id?: string
@@ -1384,6 +1395,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          category?: string
           context?: Json
           created_at?: string
           id?: string
@@ -1423,6 +1435,34 @@ export type Database = {
       admin_confirm_membership_payment: {
         Args: { _method: string; _reference: string; _request_id: string }
         Returns: undefined
+      }
+      admin_resolve_privacy_request: {
+        Args: {
+          _evidence_url?: string
+          _notes?: string
+          _request_id: string
+          _status: string
+        }
+        Returns: {
+          created_at: string
+          details: string | null
+          due_at: string | null
+          email: string
+          evidence_url: string | null
+          handled_at: string | null
+          handled_by: string | null
+          handler_notes: string | null
+          id: string
+          request_type: string
+          status: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "privacy_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       admin_review_membership: {
         Args: { _approve: boolean; _notes?: string; _request_id: string }
@@ -1469,15 +1509,26 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
-      log_system_event: {
-        Args: {
-          _context?: Json
-          _message: string
-          _severity: string
-          _source: string
-        }
-        Returns: string
-      }
+      log_system_event:
+        | {
+            Args: {
+              _context?: Json
+              _message: string
+              _severity: string
+              _source: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _category?: string
+              _context?: Json
+              _message: string
+              _severity: string
+              _source: string
+            }
+            Returns: string
+          }
       my_member_role: {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]

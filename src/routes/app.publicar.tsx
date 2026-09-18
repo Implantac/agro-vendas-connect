@@ -20,6 +20,7 @@ import { createListing, fetchMyMachines, uploadListingPhotos } from "@/lib/listi
 import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { AiDescriptionPanel } from "@/components/app/AiDescriptionPanel";
 import { SpecFieldsEditor } from "@/components/app/SpecFieldsEditor";
+import { orderedSpecs } from "@/features/listings/completeness";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";

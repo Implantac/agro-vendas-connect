@@ -8,6 +8,7 @@ import {
   AdminEditMemberDialog,
 } from "@/components/app/AdminMemberDialogs";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
 
 import { formatBRL } from "@/lib/format";
@@ -44,11 +45,13 @@ const ROLES = [
 ] as const;
 
 function AdminMembers() {
+  const { isAdmin } = useAuth();
   const [status, setStatus] = useState<string>("pending");
   const qc = useQueryClient();
 
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["admin", "members", status],
+    enabled: isAdmin,
     queryFn: () => fetchAdminMembers(status || undefined),
   });
 
@@ -80,6 +83,20 @@ function AdminMembers() {
     onError: (e: Error) =>
       toast.error("Não foi possível alterar o perfil.", { description: e.message }),
   });
+
+  if (!isAdmin) {
+    return (
+      <AppPage>
+        <div className="mx-auto max-w-lg rounded-lg border border-border bg-card p-8 text-center">
+          <h1 className="font-display text-xl font-bold text-forest">Área restrita</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Apenas a administração pode ver os dados de outros membros. No seu perfil você acessa e
+            edita somente as suas próprias informações.
+          </p>
+        </div>
+      </AppPage>
+    );
+  }
 
   return (
     <AppPage>

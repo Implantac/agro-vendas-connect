@@ -248,10 +248,20 @@ function SellerDashboard() {
 
   const cards: KpiCard[] = [
     {
+      icon: Tractor,
+      title: "Máquinas cadastradas",
+      value: summary?.machines ?? 0,
+      hint:
+        (summary?.machinesWithPendingDocs ?? 0) > 0
+          ? `${summary?.machinesWithPendingDocs} com documentação pendente`
+          : "dossiê e documentação em dia",
+      to: "/app/maquinas",
+    },
+    {
       icon: ListChecks,
       title: "Anúncios ativos",
       value: activeListings,
-      hint: "publicados no catálogo",
+      hint: `${summary?.inReviewListings ?? 0} em análise • ${summary?.draftListings ?? 0} incompleto(s)`,
       to: "/app/meus-anuncios",
     },
     {

@@ -9,6 +9,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { LEGAL_DOC_ROUTE, acceptLegalDocs, fetchPendingLegalDocs } from "@/lib/legal";
 
 export const Route = createFileRoute("/aceite-atualizado")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search["redirect"] === "string" ? (search["redirect"] as string) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Atualização dos termos | DDP AGRO" },

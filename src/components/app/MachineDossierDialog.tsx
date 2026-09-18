@@ -68,7 +68,13 @@ function dateBR(value?: string | null) {
 
 const TODAY = () => new Date().toISOString().slice(0, 10);
 
-export function MachineDossierDialog({ machineId, machineName, ownerId, onOpenChange }: Props) {
+export function MachineDossierDialog({
+  machineId,
+  machineName,
+  ownerId,
+  identification,
+  onOpenChange,
+}: Props) {
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [docType, setDocType] = useState<MachineDocType>("crlv");

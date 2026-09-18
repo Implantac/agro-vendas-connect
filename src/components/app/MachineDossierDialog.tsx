@@ -32,6 +32,7 @@ import {
   uploadMachineDocument,
   type MachineDocType,
 } from "@/lib/machine-docs";
+import { AVAILABILITY_LABEL } from "@/lib/machines";
 
 export interface MachineIdentification {
   category?: string | null;
@@ -296,8 +297,11 @@ export function MachineDossierDialog({
                       </span>
                     </button>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {DOC_TYPE_LABEL[doc.doc_type as MachineDocType]} ·{" "}
-                      {DOC_STATUS_LABEL[doc.status] ?? doc.status}
+                      {DOC_TYPE_LABEL[doc.doc_type as MachineDocType]} · enviado em{" "}
+                      {dateBR(doc.created_at)} · {DOC_STATUS_LABEL[doc.status] ?? doc.status}
+                      {doc.status !== "pending" && doc.reviewed_at
+                        ? ` pela equipe DDP AGRO em ${dateBR(doc.reviewed_at)}`
+                        : ""}
                       {doc.review_notes ? ` · ${doc.review_notes}` : ""}
                     </p>
                   </div>

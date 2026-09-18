@@ -157,14 +157,18 @@ function EditarAnuncio() {
   }
 
   async function save(sendToReview: boolean) {
+    if (!canEdit) {
+      toast.error("Você não tem permissão para editar este anúncio.");
+      return;
+    }
     if (!values.title.trim()) {
       toast.error("Informe o título do anúncio.");
       return;
     }
     setSaving(true);
     try {
-      if (!user) return;
-      await updateListing(id, user.id, values);
+      if (!user || !listing) return;
+      await updateListing(id, listing.seller_id, values);
       if (sendToReview) await setListingStatus(id, "in_review", null);
       toast.success(sendToReview ? "Anúncio enviado para análise." : "Alterações salvas.");
       refresh();

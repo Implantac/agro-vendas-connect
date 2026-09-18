@@ -32,17 +32,50 @@ import {
   uploadMachineDocument,
   type MachineDocType,
 } from "@/lib/machine-docs";
+import { AVAILABILITY_LABEL } from "@/lib/machines";
+
+export interface MachineIdentification {
+  category?: string | null;
+  brand?: string | null;
+  model?: string | null;
+  year?: number | null;
+  serialNumber?: string | null;
+  hours?: number | null;
+  condition?: string | null;
+  city?: string | null;
+  state?: string | null;
+  availability?: string | null;
+  verificationStatus?: string | null;
+  verifiedAt?: string | null;
+}
 
 interface Props {
   machineId: string | null;
   machineName: string;
   ownerId: string;
+  identification?: MachineIdentification | undefined;
   onOpenChange: (open: boolean) => void;
+}
+
+const CONDITION_LABEL: Record<string, string> = {
+  new: "Nova",
+  semi_new: "Seminova",
+  used: "Usada",
+};
+
+function dateBR(value?: string | null) {
+  return value ? new Date(value).toLocaleDateString("pt-BR") : null;
 }
 
 const TODAY = () => new Date().toISOString().slice(0, 10);
 
-export function MachineDossierDialog({ machineId, machineName, ownerId, onOpenChange }: Props) {
+export function MachineDossierDialog({
+  machineId,
+  machineName,
+  ownerId,
+  identification,
+  onOpenChange,
+}: Props) {
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [docType, setDocType] = useState<MachineDocType>("crlv");
@@ -149,6 +182,53 @@ export function MachineDossierDialog({ machineId, machineName, ownerId, onOpenCh
           </DialogDescription>
         </DialogHeader>
 
+        {identification && (
+          <section className="space-y-3">
+            <h3 className="font-display text-base font-semibold text-forest">Identificação</h3>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-md border border-border p-4 text-sm sm:grid-cols-3">
+              {[
+                ["Categoria", identification.category],
+                ["Fabricante", identification.brand],
+                ["Modelo", identification.model],
+                ["Ano", identification.year ? String(identification.year) : null],
+                ["Número de série", identification.serialNumber],
+                ["Horas de uso", identification.hours ? `${identification.hours} h` : null],
+                [
+                  "Condição",
+                  identification.condition
+                    ? (CONDITION_LABEL[identification.condition] ?? identification.condition)
+                    : null,
+                ],
+                [
+                  "Localização",
+                  [identification.city, identification.state].filter(Boolean).join(" / ") || null,
+                ],
+                [
+                  "Disponibilidade",
+                  identification.availability
+                    ? (AVAILABILITY_LABEL[identification.availability] ??
+                      identification.availability)
+                    : null,
+                ],
+              ].map(([label, value]) => (
+                <div key={label as string}>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
+                  <dd className="mt-0.5 font-medium text-forest">
+                    {value || <span className="font-normal text-muted-foreground">Não informado</span>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="text-xs text-muted-foreground">
+              Dados informados pelo vendedor. O selo “Documentação verificada” só aparece depois que
+              a equipe DDP AGRO confere os arquivos.
+              {identification.verificationStatus === "verified" && identification.verifiedAt
+                ? ` Verificada pela DDP AGRO em ${dateBR(identification.verifiedAt)}.`
+                : ""}
+            </p>
+          </section>
+        )}
+
         <section className="space-y-3">
           <h3 className="font-display text-base font-semibold text-forest">Documentos e laudos</h3>
           <div className="grid gap-3 sm:grid-cols-[200px_1fr]">
@@ -217,8 +297,11 @@ export function MachineDossierDialog({ machineId, machineName, ownerId, onOpenCh
                       </span>
                     </button>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {DOC_TYPE_LABEL[doc.doc_type as MachineDocType]} ·{" "}
-                      {DOC_STATUS_LABEL[doc.status] ?? doc.status}
+                      {DOC_TYPE_LABEL[doc.doc_type as MachineDocType]} · enviado em{" "}
+                      {dateBR(doc.created_at)} · {DOC_STATUS_LABEL[doc.status] ?? doc.status}
+                      {doc.status !== "pending" && doc.reviewed_at
+                        ? ` pela equipe DDP AGRO em ${dateBR(doc.reviewed_at)}`
+                        : ""}
                       {doc.review_notes ? ` · ${doc.review_notes}` : ""}
                     </p>
                   </div>

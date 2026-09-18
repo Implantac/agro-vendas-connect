@@ -18,7 +18,9 @@ import { MachineDossierDialog } from "@/components/app/MachineDossierDialog";
 import { VERIFICATION_LABEL } from "@/lib/machine-docs";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCategories } from "@/lib/queries";
+import { UF_LIST } from "@/lib/geo";
 import {
+  AVAILABILITY_LABEL,
   EMPTY_MACHINE,
   createMachine,
   deleteMachine,
@@ -62,7 +64,7 @@ function Maquinas() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<MachineFormValues>(EMPTY_MACHINE);
   const [saving, setSaving] = useState(false);
-  const [dossier, setDossier] = useState<{ id: string; name: string } | null>(null);
+  const [dossierId, setDossierId] = useState<string | null>(null);
 
   const { data: machines = [], isLoading } = useQuery({
     queryKey: ["my-machines-full", user?.id],
@@ -74,6 +76,8 @@ function Maquinas() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+
+  const dossierMachine = machines.find((m) => m.id === dossierId);
 
   const set = <K extends keyof MachineFormValues>(key: K, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -87,6 +91,10 @@ function Maquinas() {
       year: machine.manufacture_year ? String(machine.manufacture_year) : "",
       condition: machine.condition,
       hours: machine.hours_used ? String(machine.hours_used) : "",
+      serialNumber: machine.serial_number ?? "",
+      city: machine.city ?? "",
+      state: machine.state ?? "",
+      availability: machine.availability ?? "available",
     });
   }
 
@@ -197,20 +205,69 @@ function Maquinas() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Condição</Label>
-              <Select value={form.condition} onValueChange={(v) => set("condition", v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CONDITIONS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Condição</Label>
+                <Select value={form.condition} onValueChange={(v) => set("condition", v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CONDITIONS.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="serial">Número de série</Label>
+                <Input
+                  id="serial"
+                  value={form.serialNumber}
+                  onChange={(e) => set("serialNumber", e.target.value)}
+                  placeholder="Fica visível só para você e a equipe"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">Cidade</Label>
+                <Input
+                  id="city"
+                  value={form.city}
+                  onChange={(e) => set("city", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Estado</Label>
+                <Select value={form.state} onValueChange={(v) => set("state", v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="UF" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {UF_LIST.map((uf) => (
+                      <SelectItem key={uf} value={uf}>
+                        {uf}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Disponibilidade</Label>
+                <Select value={form.availability} onValueChange={(v) => set("availability", v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(AVAILABILITY_LABEL).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -290,14 +347,7 @@ function Maquinas() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        setDossier({
-                          id: machine.id,
-                          name:
-                            [machine.brand, machine.model].filter(Boolean).join(" ") ||
-                            "Máquina sem identificação",
-                        })
-                      }
+                      onClick={() => setDossierId(machine.id)}
                     >
                       <FileText className="mr-1.5 h-4 w-4" /> Documentos e histórico
                     </Button>
@@ -326,10 +376,31 @@ function Maquinas() {
 
       {user && (
         <MachineDossierDialog
-          machineId={dossier?.id ?? null}
-          machineName={dossier?.name ?? ""}
+          machineId={dossierId}
+          machineName={
+            [dossierMachine?.brand, dossierMachine?.model].filter(Boolean).join(" ") ||
+            "Máquina sem identificação"
+          }
           ownerId={user.id}
-          onOpenChange={(open) => !open && setDossier(null)}
+          identification={
+            dossierMachine
+              ? {
+                  category: (dossierMachine.categories as { name: string } | null)?.name ?? null,
+                  brand: dossierMachine.brand,
+                  model: dossierMachine.model,
+                  year: dossierMachine.manufacture_year,
+                  serialNumber: dossierMachine.serial_number,
+                  hours: dossierMachine.hours_used,
+                  condition: dossierMachine.condition,
+                  city: dossierMachine.city,
+                  state: dossierMachine.state,
+                  availability: dossierMachine.availability,
+                  verificationStatus: dossierMachine.verification_status,
+                  verifiedAt: dossierMachine.verified_at,
+                }
+              : undefined
+          }
+          onOpenChange={(open) => !open && setDossierId(null)}
         />
       )}
     </AppPage>

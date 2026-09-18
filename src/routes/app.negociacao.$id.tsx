@@ -124,7 +124,8 @@ function NegotiationDetail() {
       toast.success("Condições registradas");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Salvar condições comerciais", category: "negotiation" }),
   });
 
   useEffect(() => {
@@ -160,7 +161,8 @@ function NegotiationDetail() {
       void queryClient.invalidateQueries({ queryKey: ["proposals"] });
       void queryClient.invalidateQueries({ queryKey: ["negotiation-order", id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Responder proposta", category: "proposal" }),
   });
 
   const send = useMutation({
@@ -181,7 +183,7 @@ function NegotiationDetail() {
       setText("");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
     },
-    onError: () => toast.error("Não foi possível enviar a mensagem."),
+    onError: (e: Error) => reportError(e, { operation: "Enviar mensagem", category: "negotiation" }),
   });
 
   if (isLoading) {
@@ -582,6 +584,11 @@ function NegotiationDetail() {
               );
             })}
           </ol>
+          {expired && (
+            <p className="mt-4 border-l border-border pl-4 text-xs text-warning">
+              Proposta expirada em {formatDateTimeBR(p.expires_at)} sem resposta.
+            </p>
+          )}
         </aside>
       </div>
     </AppPage>

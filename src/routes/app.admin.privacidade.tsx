@@ -141,9 +141,15 @@ function AdminPrivacy() {
   }
 
   function deadlineInfo(row: RequestRow) {
-    const due = new Date(new Date(row.created_at).getTime() + DEADLINE_DAYS * 86400000);
+    const due = row.due_at
+      ? new Date(row.due_at)
+      : new Date(new Date(row.created_at).getTime() + DEADLINE_DAYS * 86400000);
     const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
-    if (row.status !== "open") return { text: `Concluída em ${formatDateTimeBR(row.handled_at ?? row.created_at)}`, late: false };
+    if (row.status === "done" || row.status === "rejected")
+      return {
+        text: `Concluída em ${formatDateTimeBR(row.handled_at ?? row.created_at)}`,
+        late: false,
+      };
     if (days < 0) return { text: `Atrasada há ${Math.abs(days)} dia(s)`, late: true };
     return { text: `Prazo em ${days} dia(s)`, late: days <= 3 };
   }

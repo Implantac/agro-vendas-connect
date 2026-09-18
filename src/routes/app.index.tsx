@@ -23,7 +23,8 @@ import {
   PlusCircle,
 } from "lucide-react";
 import { AppPage } from "@/components/app/AppLayout";
-import { ListingCard } from "@/components/catalog/ListingCard";
+import { NearbyMachines } from "@/components/app/NearbyMachines";
+import { ListingCard, type ListingCardData } from "@/components/catalog/ListingCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";

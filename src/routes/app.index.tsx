@@ -17,6 +17,7 @@ import {
   Heart,
   HeartHandshake,
   ListChecks,
+  Package,
   ShieldAlert,
   ShieldCheck,
   PlusCircle,

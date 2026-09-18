@@ -64,12 +64,14 @@ export interface CatalogFilters {
   category?: string;
   condition?: string;
   state?: string;
+  city?: string;
   minPrice?: number;
   maxPrice?: number;
   brands?: string[];
   year?: number;
   yearMin?: number;
   yearMax?: number;
+  hoursMax?: number;
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
@@ -91,6 +93,8 @@ export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   if (filters.condition)
     query = query.eq("condition", filters.condition as "new" | "semi_new" | "used");
   if (filters.state) query = query.eq("state", filters.state);
+  if (filters.city) query = query.eq("city", filters.city);
+  if (filters.hoursMax !== undefined) query = query.lte("hours_used", filters.hoursMax);
   if (filters.minPrice) query = query.gte("price", filters.minPrice);
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
   if (filters.brands?.length) query = query.in("brand", filters.brands);

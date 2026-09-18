@@ -230,6 +230,8 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
       ).length,
       ordersAwaitingPayment: o.filter((x) => ["created", "awaiting_payment"].includes(x.status))
         .length,
+      machinesAwaitingVerification: machinesPending.count ?? 0,
+      openPrivacyRequests: privacyOpen.count ?? 0,
     },
     trust: {
       approvedMembers: p.filter((x) => x.status === "approved").length,

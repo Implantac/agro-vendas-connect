@@ -558,12 +558,53 @@ function BuyerDashboard() {
             <Link to="/app/comprar">Ver todas</Link>
           </Button>
         </div>
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {opportunities.slice(0, 3).map((l, i) => (
-            <ListingCard key={l.id} listing={l as never} index={i} />
-          ))}
-        </div>
+        {opportunities.length === 0 ? (
+          <div className="mt-6 rounded-lg border border-dashed border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground">
+            Não há máquinas disponíveis nesta região.
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {opportunities.slice(0, 3).map((l, i) => (
+              <ListingCard key={l.id} listing={l as never} index={i} />
+            ))}
+          </div>
+        )}
       </section>
+
+      <section className="mt-12 rounded-lg border border-border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg font-bold text-forest">Buscas salvas</h2>
+          <Link to="/app/favoritos" className="text-xs font-medium text-accent hover:underline">
+            Gerenciar
+          </Link>
+        </div>
+        {savedSearches.length === 0 ? (
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            Você ainda não salvou nenhuma busca. Salve os filtros de uma procura para ser avisado
+            quando chegar uma máquina no perfil desejado.
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {savedSearches.slice(0, 4).map((s) => (
+              <li key={s.id}>
+                <Link
+                  to="/app/comprar"
+                  search={jsonToSearchParams(s.filters_json as Record<string, unknown>)}
+                  className="block rounded-md border border-border p-3 transition-colors hover:border-accent"
+                >
+                  <p className="text-sm font-semibold text-forest">{s.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {describeFilters(s.filters_json as Record<string, unknown>) ||
+                      "Todos os anúncios"}
+                    {s.alerts_enabled ? " • avisos ligados" : " • avisos desligados"}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
 
       <section className="mt-12">
         <h2 className="font-display text-xl font-bold text-forest">Encontre sua próxima máquina</h2>

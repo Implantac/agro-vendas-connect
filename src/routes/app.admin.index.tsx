@@ -75,6 +75,18 @@ function AdminHome() {
       to: "/app/admin/pedidos",
       icon: CreditCard,
     },
+    {
+      label: "Máquinas aguardando verificação",
+      value: a?.machinesAwaitingVerification ?? 0,
+      to: "/app/admin/verificacoes",
+      icon: BadgeCheck,
+    },
+    {
+      label: "Pedidos de privacidade em aberto",
+      value: a?.openPrivacyRequests ?? 0,
+      to: "/app/admin/privacidade",
+      icon: ShieldCheck,
+    },
   ];
 
   const totalAlerts = alerts.reduce((s, x) => s + x.value, 0);

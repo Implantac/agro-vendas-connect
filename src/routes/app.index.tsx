@@ -17,6 +17,7 @@ import {
   Heart,
   HeartHandshake,
   ListChecks,
+  Package,
   ShieldAlert,
   ShieldCheck,
   PlusCircle,
@@ -27,12 +28,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useAppRole } from "@/features/auth/useAppRole";
 import {
-  fetchDashboardCounts,
+  fetchBuyerSummary,
   fetchMyListings,
   fetchMyProposals,
   fetchNotifications,
   fetchSellerLeads,
+  fetchSellerSummary,
 } from "@/lib/app-queries";
+import { describeFilters, fetchSavedSearches, jsonToSearchParams } from "@/lib/saved-searches";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
 import { formatBRL, LISTING_STATUS_LABELS, PROPOSAL_STATUS_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -224,6 +227,11 @@ function SellerDashboard() {
     queryFn: () => fetchMyProposals(user!.id),
     enabled: Boolean(user),
   });
+  const { data: summary } = useQuery({
+    queryKey: ["dashboard", "seller-summary", user?.id],
+    queryFn: () => fetchSellerSummary(user!.id),
+    enabled: Boolean(user),
+  });
 
   const salesProposals = proposals.filter((p) => p.seller_id === user?.id);
   const openSales = salesProposals.filter((p) => OPEN_STATUSES.includes(p.status));
@@ -241,10 +249,20 @@ function SellerDashboard() {
 
   const cards: KpiCard[] = [
     {
+      icon: Tractor,
+      title: "Máquinas cadastradas",
+      value: summary?.machines ?? 0,
+      hint:
+        (summary?.machinesWithPendingDocs ?? 0) > 0
+          ? `${summary?.machinesWithPendingDocs} com documentação pendente`
+          : "dossiê e documentação em dia",
+      to: "/app/maquinas",
+    },
+    {
       icon: ListChecks,
       title: "Anúncios ativos",
       value: activeListings,
-      hint: "publicados no catálogo",
+      hint: `${summary?.inReviewListings ?? 0} em análise • ${summary?.draftListings ?? 0} incompleto(s)`,
       to: "/app/meus-anuncios",
     },
     {
@@ -273,6 +291,13 @@ function SellerDashboard() {
       title: "Vendas concluídas",
       value: closedSales.length,
       hint: formatBRL(sum(closedSales)),
+      to: "/app/pedidos",
+    },
+    {
+      icon: Package,
+      title: "Pedidos",
+      value: summary?.orders ?? 0,
+      hint: "negócios fechados na plataforma",
       to: "/app/pedidos",
     },
   ];
@@ -315,6 +340,21 @@ function SellerDashboard() {
       </div>
 
       <KpiGrid cards={cards} />
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/maquinas">Cadastrar máquina</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/publicar">Criar anúncio</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/negociacoes">Ver propostas</Link>
+        </Button>
+        <Button asChild variant="outline" size="sm">
+          <Link to="/app/empresa">Completar documentação</Link>
+        </Button>
+      </div>
 
       {/* Pipeline de vendas */}
       <section className="mt-12">
@@ -451,9 +491,14 @@ function BuyerDashboard() {
   const { user, profile } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "membro";
 
-  const { data: counts } = useQuery({
-    queryKey: ["dashboard", "counts", user?.id],
-    queryFn: () => fetchDashboardCounts(user!.id),
+  const { data: summary } = useQuery({
+    queryKey: ["dashboard", "buyer-summary", user?.id],
+    queryFn: () => fetchBuyerSummary(user!.id),
+    enabled: Boolean(user),
+  });
+  const { data: savedSearches = [] } = useQuery({
+    queryKey: ["saved-searches", user?.id],
+    queryFn: () => fetchSavedSearches(user!.id),
     enabled: Boolean(user),
   });
   const { data: opportunities = [] } = useQuery({
@@ -474,25 +519,46 @@ function BuyerDashboard() {
 
   const cards: KpiCard[] = [
     {
+      icon: HeartHandshake,
+      title: "Propostas aguardando você",
+      value: summary?.awaitingMyAnswer ?? 0,
+      hint: "contrapropostas para responder",
+      to: "/app/negociacoes",
+    },
+    {
       icon: Handshake,
-      title: "Minhas compras em negociação",
-      value: purchases.filter((p) => OPEN_STATUSES.includes(p.status)).length,
+      title: "Negociações em andamento",
+      value: summary?.negotiating ?? 0,
       hint: "propostas enviadas em aberto",
       to: "/app/negociacoes",
     },
     {
+      icon: ListChecks,
+      title: "Pedidos",
+      value: summary?.orders ?? 0,
+      hint: "compras fechadas",
+      to: "/app/pedidos",
+    },
+    {
       icon: Heart,
       title: "Favoritos",
-      value: counts?.favorites ?? 0,
+      value: summary?.favorites ?? 0,
       hint: "máquinas salvas",
       to: "/app/favoritos",
     },
     {
-      icon: ListChecks,
-      title: "Pedidos",
-      value: purchases.filter((p) => p.status === "accepted").length,
-      hint: "compras aceitas",
-      to: "/app/pedidos",
+      icon: Eye,
+      title: "Buscas salvas",
+      value: summary?.savedSearches ?? 0,
+      hint: "perfis de máquina acompanhados",
+      to: "/app/favoritos",
+    },
+    {
+      icon: ShieldAlert,
+      title: "Alertas",
+      value: summary?.alerts ?? 0,
+      hint: "avisos não lidos",
+      to: "/app/notificacoes",
     },
   ];
 
@@ -530,12 +596,53 @@ function BuyerDashboard() {
             <Link to="/app/comprar">Ver todas</Link>
           </Button>
         </div>
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {opportunities.slice(0, 3).map((l, i) => (
-            <ListingCard key={l.id} listing={l as never} index={i} />
-          ))}
-        </div>
+        {opportunities.length === 0 ? (
+          <div className="mt-6 rounded-lg border border-dashed border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground">
+            Não há máquinas disponíveis nesta região.
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {opportunities.slice(0, 3).map((l, i) => (
+              <ListingCard key={l.id} listing={l as never} index={i} />
+            ))}
+          </div>
+        )}
       </section>
+
+      <section className="mt-12 rounded-lg border border-border bg-card p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg font-bold text-forest">Buscas salvas</h2>
+          <Link to="/app/favoritos" className="text-xs font-medium text-accent hover:underline">
+            Gerenciar
+          </Link>
+        </div>
+        {savedSearches.length === 0 ? (
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            Você ainda não salvou nenhuma busca. Salve os filtros de uma procura para ser avisado
+            quando chegar uma máquina no perfil desejado.
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {savedSearches.slice(0, 4).map((s) => (
+              <li key={s.id}>
+                <Link
+                  to="/app/comprar"
+                  search={jsonToSearchParams(s.filters_json as Record<string, unknown>)}
+                  className="block rounded-md border border-border p-3 transition-colors hover:border-accent"
+                >
+                  <p className="text-sm font-semibold text-forest">{s.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {describeFilters(s.filters_json as Record<string, unknown>) ||
+                      "Todos os anúncios"}
+                    {s.alerts_enabled ? " • avisos ligados" : " • avisos desligados"}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
 
       <section className="mt-12">
         <h2 className="font-display text-xl font-bold text-forest">Encontre sua próxima máquina</h2>

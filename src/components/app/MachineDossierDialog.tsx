@@ -181,6 +181,53 @@ export function MachineDossierDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {identification && (
+          <section className="space-y-3">
+            <h3 className="font-display text-base font-semibold text-forest">Identificação</h3>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-md border border-border p-4 text-sm sm:grid-cols-3">
+              {[
+                ["Categoria", identification.category],
+                ["Fabricante", identification.brand],
+                ["Modelo", identification.model],
+                ["Ano", identification.year ? String(identification.year) : null],
+                ["Número de série", identification.serialNumber],
+                ["Horas de uso", identification.hours ? `${identification.hours} h` : null],
+                [
+                  "Condição",
+                  identification.condition
+                    ? (CONDITION_LABEL[identification.condition] ?? identification.condition)
+                    : null,
+                ],
+                [
+                  "Localização",
+                  [identification.city, identification.state].filter(Boolean).join(" / ") || null,
+                ],
+                [
+                  "Disponibilidade",
+                  identification.availability
+                    ? (AVAILABILITY_LABEL[identification.availability] ??
+                      identification.availability)
+                    : null,
+                ],
+              ].map(([label, value]) => (
+                <div key={label as string}>
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
+                  <dd className="mt-0.5 font-medium text-forest">
+                    {value || <span className="font-normal text-muted-foreground">Não informado</span>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="text-xs text-muted-foreground">
+              Dados informados pelo vendedor. O selo “Documentação verificada” só aparece depois que
+              a equipe DDP AGRO confere os arquivos.
+              {identification.verificationStatus === "verified" && identification.verifiedAt
+                ? ` Verificada pela DDP AGRO em ${dateBR(identification.verifiedAt)}.`
+                : ""}
+            </p>
+          </section>
+        )}
+
         <section className="space-y-3">
           <h3 className="font-display text-base font-semibold text-forest">Documentos e laudos</h3>
           <div className="grid gap-3 sm:grid-cols-[200px_1fr]">

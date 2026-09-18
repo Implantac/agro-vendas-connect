@@ -243,11 +243,14 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
               </span>
             </p>
           </div>
-          <TrustBadges badges={badges} className="max-w-md justify-end" />
+          <TrustBadges
+            badges={badges}
+            className="w-full justify-start lg:w-auto lg:max-w-md lg:justify-end"
+          />
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-          <div>
+          <div className="order-2 lg:order-1">
             <ListingGallery media={media} title={l.title} />
 
             {/* Resumo comercial */}
@@ -304,7 +307,7 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
             <MachineHistory machineId={l.machine_id ?? l.machines?.id ?? null} />
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="order-1 lg:order-2 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-md border border-border bg-card p-6">
               <p className="text-xs uppercase tracking-wide text-muted-foreground">Preço</p>
               <p className="mt-1 font-display text-3xl font-bold text-forest">

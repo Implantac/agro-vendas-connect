@@ -268,7 +268,7 @@ function NegotiationDetail() {
                 <p className="text-sm text-muted-foreground">
                   {myTurn
                     ? "Sua vez: aceite, recuse ou envie uma contraproposta."
-                    : `Aguardando resposta de ${turn === "buyer" ? "do comprador" : "do vendedor"}. Você ainda pode enviar uma contraproposta.`}
+                    : `Aguardando resposta ${turn === "buyer" ? "do comprador" : "do vendedor"}. Você ainda pode enviar uma contraproposta.`}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button

@@ -90,8 +90,13 @@ export function AppLayout() {
   });
   const needsLegalAcceptance = pendingLegal.length > 0;
   useEffect(() => {
-    if (needsLegalAcceptance) void navigate({ to: "/aceite-atualizado", replace: true });
-  }, [needsLegalAcceptance, navigate]);
+    if (needsLegalAcceptance)
+      void navigate({
+        to: "/aceite-atualizado",
+        search: { redirect: pathname },
+        replace: true,
+      });
+  }, [needsLegalAcceptance, navigate, pathname]);
 
   const isSellerOnlyRoute = SELLER_ONLY_ROUTES.some((route) => pathname.startsWith(route));
   const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some((route) => pathname.startsWith(route));

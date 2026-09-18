@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { InstallAppPrompt } from "@/components/pwa/InstallAppPrompt";
 
 function NotFoundComponent() {
@@ -136,12 +137,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <InstallAppPrompt />
-        <Toaster />
-      </AuthProvider>
+      <TooltipProvider delayDuration={200}>
+        <AuthProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <InstallAppPrompt />
+          <Toaster />
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

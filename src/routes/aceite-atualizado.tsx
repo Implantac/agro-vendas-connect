@@ -9,6 +9,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { LEGAL_DOC_ROUTE, acceptLegalDocs, fetchPendingLegalDocs } from "@/lib/legal";
 
 export const Route = createFileRoute("/aceite-atualizado")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search["redirect"] === "string" ? (search["redirect"] as string) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Atualização dos termos | DDP AGRO" },
@@ -33,8 +36,12 @@ function AcceptUpdatedTerms() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { redirect } = Route.useSearch();
   const [checked, setChecked] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Volta exatamente para onde o membro estava (ex.: a negociação recém-criada).
+  const back = redirect && redirect.startsWith("/app") ? redirect : "/app";
 
   useEffect(() => {
     if (!loading && !user) void navigate({ to: "/entrar", search: { redirect: "/app" } });
@@ -47,8 +54,9 @@ function AcceptUpdatedTerms() {
   });
 
   useEffect(() => {
-    if (!isLoading && user && pending.length === 0) void navigate({ to: "/app", replace: true });
-  }, [isLoading, user, pending.length, navigate]);
+    if (!isLoading && user && pending.length === 0)
+      void navigate({ to: back, replace: true });
+  }, [isLoading, user, pending.length, navigate, back]);
 
   async function handleAccept() {
     if (!user) return;
@@ -60,7 +68,7 @@ function AcceptUpdatedTerms() {
       );
       await queryClient.invalidateQueries({ queryKey: ["legal", "pending", user.id] });
       toast.success("Aceite registrado. Bom negócio!");
-      void navigate({ to: "/app", replace: true });
+      void navigate({ to: back, replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível registrar o aceite.");
     } finally {

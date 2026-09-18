@@ -30,13 +30,14 @@ const SEVERITY_LABEL: Record<string, string> = {
 };
 
 function AdminAudit() {
+  const [category, setCategory] = useState<EventCategory | "">("");
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ["admin", "audit"],
     queryFn: fetchAuditLogs,
   });
   const { data: events = [], isLoading: loadingEvents } = useQuery({
-    queryKey: ["admin", "system-events"],
-    queryFn: () => fetchSystemEvents(),
+    queryKey: ["admin", "system-events", category],
+    queryFn: () => fetchSystemEvents(undefined, category || undefined),
     refetchInterval: 60_000,
   });
   const { data: alerts } = useQuery({

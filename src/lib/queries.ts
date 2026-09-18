@@ -175,7 +175,7 @@ export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
   const { data, error } = await supabase
     .from("listings")
     .select(
-      "id,title,model,brand,manufacture_year,price,condition,state,technical_data_json,categories(name,slug)",
+      "id,title,model,brand,manufacture_year,price,condition,state,city,hours_used,technical_data_json,categories(name,slug)",
     )
     .eq("status", "approved");
   if (error) throw error;
@@ -190,6 +190,8 @@ export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
       price: row.price,
       condition: row.condition,
       state: row.state,
+      city: row.city,
+      hours_used: row.hours_used,
       categorySlug: row.categories?.slug ?? null,
       categoryName: row.categories?.name ?? null,
       specs: Object.fromEntries(

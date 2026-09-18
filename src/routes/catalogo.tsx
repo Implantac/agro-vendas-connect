@@ -127,11 +127,13 @@ function Catalogo() {
         ...(search.categoria ? { category: search.categoria } : {}),
         ...(search.condicao ? { condition: search.condicao } : {}),
         ...(search.uf ? { state: search.uf } : {}),
+        ...(search.cidade ? { city: search.cidade } : {}),
         ...(search.marca ? { brands: [search.marca] } : {}),
         ...(search.preco_min !== undefined ? { minPrice: search.preco_min } : {}),
         ...(search.preco_max !== undefined ? { maxPrice: search.preco_max } : {}),
         ...(search.ano_min !== undefined ? { yearMin: search.ano_min } : {}),
         ...(search.ano_max !== undefined ? { yearMax: search.ano_max } : {}),
+        ...(search.horas_max !== undefined ? { hoursMax: search.horas_max } : {}),
         sort: search.ordem ?? "recent",
       }),
   });
@@ -143,12 +145,22 @@ function Catalogo() {
     const years = [
       ...new Set(facetRows.map((r) => r.manufacture_year).filter(Boolean)),
     ] as number[];
+    // Cidades acompanham o estado escolhido; assim a lista não mistura regiões.
+    const cities = [
+      ...new Set(
+        facetRows
+          .filter((r) => (search.uf ? r.state === search.uf : true))
+          .map((r) => r.city)
+          .filter(Boolean),
+      ),
+    ] as string[];
     return {
       brands: brands.sort((a, b) => a.localeCompare(b)),
       ufs: ufs.sort((a, b) => a.localeCompare(b)),
       years: years.sort((a, b) => b - a),
+      cities: cities.sort((a, b) => a.localeCompare(b)),
     };
-  }, [facetRows]);
+  }, [facetRows, search.uf]);
 
   function update(patch: Partial<CatalogSearch>) {
     void navigate({ search: (prev) => ({ ...prev, ...patch }) });

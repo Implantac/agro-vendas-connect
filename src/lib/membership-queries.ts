@@ -54,9 +54,23 @@ export async function fetchMyMembershipRequests(userId: string) {
   return (data ?? []) as MembershipRequestWithPlan[];
 }
 
-/** Gera um código Pix simulado (a integração com o gateway entra aqui). */
-function pixReference() {
-  return `DDPAGRO${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+/**
+ * Referência interna da cobrança. É o identificador enviado ao provedor de
+ * pagamento (external reference) e usado pelo webhook para localizar a
+ * solicitação. Não confirma pagamento nenhum por si só.
+ */
+function chargeReference() {
+  return `DDP-${crypto.randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+}
+
+/** Situação da cobrança online (flag operacional lida do banco). */
+export async function fetchPaymentsEnabled(): Promise<boolean> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "payments_enabled")
+    .maybeSingle();
+  return Boolean((data?.value as { enabled?: boolean } | null)?.enabled);
 }
 
 export async function createMembershipRequest(params: {

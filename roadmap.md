@@ -30,6 +30,7 @@
 - [x] Dossiê da máquina: documentos/laudos privados + histórico próprio reaproveitado em todos os anúncios
 - [x] Verificação real de documentos pela equipe (/app/admin/verificacoes) — selo "Documentação verificada" x "informado pelo vendedor"
 - [x] Localização por distância: "~X km de você", raio de busca e ordenação por proximidade (aprox. por UF)
+- [x] "Máquinas próximas de você" no painel do comprador: raios 50/100/250/500 km e todo o Brasil
 - [ ] Coordenadas exatas por anúncio + mapa interativo
 - [ ] Inteligência de preço, busca em linguagem natural e recomendações
 - [ ] Documentação de operação e relatório final consolidado

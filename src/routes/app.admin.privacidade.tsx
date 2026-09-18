@@ -197,7 +197,8 @@ function AdminPrivacy() {
                     <p className="mt-1 text-sm text-muted-foreground">{r.details}</p>
                   )}
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Recebida em {formatDateTimeBR(r.created_at)} • status: {r.status}
+                    Recebida em {formatDateTimeBR(r.created_at)} • situação:{" "}
+                    {STATUS_LABEL[r.status] ?? r.status}
                   </p>
                   <p
                     className={`mt-1 text-xs font-medium ${
@@ -206,20 +207,40 @@ function AdminPrivacy() {
                   >
                     {deadline.text}
                   </p>
-                </div>
-                {r.status === "open" && (
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setStatus.mutate({ id: r.id, status: "rejected" })}
+                  {r.handler_notes && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Atendimento: {r.handler_notes}
+                    </p>
+                  )}
+                  {r.evidence_url && (
+                    <a
+                      href={r.evidence_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-block text-xs font-medium text-forest underline"
                     >
+                      Ver evidência
+                    </a>
+                  )}
+                </div>
+                {(r.status === "open" || r.status === "in_progress") && (
+                  <div className="flex flex-wrap gap-2">
+                    {r.status === "open" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setStatus.mutate({ id: r.id, status: "in_progress" })}
+                      >
+                        Assumir
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" onClick={() => resolve(r.id, "rejected")}>
                       Recusar
                     </Button>
                     <Button
                       size="sm"
                       className="bg-accent text-accent-foreground hover:bg-accent/90"
-                      onClick={() => setStatus.mutate({ id: r.id, status: "done" })}
+                      onClick={() => resolve(r.id, "done")}
                     >
                       Marcar atendida
                     </Button>

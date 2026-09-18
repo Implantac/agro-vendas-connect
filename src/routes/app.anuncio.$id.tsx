@@ -94,7 +94,7 @@ const EMPTY: ListingFormValues = {
 
 function EditarAnuncio() {
   const { id } = Route.useParams();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -143,6 +143,9 @@ function EditarAnuncio() {
       state: listing.state ?? "",
     });
   }, [listing]);
+
+  const isOwner = !!listing && !!user && listing.seller_id === user.id;
+  const canEdit = isOwner || isAdmin;
 
   const set = <K extends keyof ListingFormValues>(key: K, value: ListingFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }));

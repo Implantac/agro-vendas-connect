@@ -8,6 +8,7 @@ import {
   AdminEditMemberDialog,
 } from "@/components/app/AdminMemberDialogs";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { fetchAdminMembers, setMemberRole, setMemberStatus } from "@/lib/admin-queries";
 
 import { formatBRL } from "@/lib/format";

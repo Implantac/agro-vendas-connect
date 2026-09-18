@@ -51,3 +51,26 @@ export async function normalizeListingPhoto(file: File): Promise<File> {
     return file;
   }
 }
+
+/**
+ * Gera uma versão leve (data URL JPEG, lado maior de 768px) usada apenas para
+ * enviar a foto ao gerador de descrição por IA.
+ */
+export async function toCompactDataUrl(file: File, maxSide = 768): Promise<string | null> {
+  if (typeof document === "undefined" || !file.type.startsWith("image/")) return null;
+  try {
+    const img = await loadImage(file);
+    const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", 0.7);
+  } catch {
+    return null;
+  }
+}

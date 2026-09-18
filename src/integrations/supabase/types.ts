@@ -707,10 +707,14 @@ export type Database = {
           active: boolean
           benefits_json: Json
           code: string
+          commission_percent: number | null
           created_at: string
           description: string | null
           highlight: boolean
+          highlight_label: string | null
           id: string
+          listing_limit: number | null
+          machine_limit: number | null
           name: string
           period: string
           price: number
@@ -722,10 +726,14 @@ export type Database = {
           active?: boolean
           benefits_json?: Json
           code: string
+          commission_percent?: number | null
           created_at?: string
           description?: string | null
           highlight?: boolean
+          highlight_label?: string | null
           id?: string
+          listing_limit?: number | null
+          machine_limit?: number | null
           name: string
           period?: string
           price?: number
@@ -737,10 +745,14 @@ export type Database = {
           active?: boolean
           benefits_json?: Json
           code?: string
+          commission_percent?: number | null
           created_at?: string
           description?: string | null
           highlight?: boolean
+          highlight_label?: string | null
           id?: string
+          listing_limit?: number | null
+          machine_limit?: number | null
           name?: string
           period?: string
           price?: number

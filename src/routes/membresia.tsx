@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatBRL, formatDateTimeBR } from "@/lib/format";
 import {
   cancelMembershipRequest,
-  confirmMembershipPayment,
+  fetchPaymentsEnabled,
   createMembershipRequest,
   fetchMembershipPlans,
   fetchMyMembershipRequests,
@@ -102,14 +102,9 @@ function Membresia() {
       toast.error("Não foi possível criar a solicitação", { description: e.message }),
   });
 
-  const payMutation = useMutation({
-    mutationFn: () => confirmMembershipPayment(active!.id, active!.payment_method ?? method),
-    onSuccess: () => {
-      toast.success("Pagamento confirmado", { description: "Sua solicitação entrou em análise." });
-      void qc.invalidateQueries({ queryKey: ["membership"] });
-    },
-    onError: (e: Error) =>
-      toast.error("Falha ao confirmar o pagamento", { description: e.message }),
+  const { data: paymentsEnabled = false } = useQuery({
+    queryKey: ["membership", "payments-enabled"],
+    queryFn: fetchPaymentsEnabled,
   });
 
   const cancelMutation = useMutation({
@@ -263,13 +258,15 @@ function Membresia() {
               </div>
             </div>
 
+            <p className="mt-4 text-sm text-muted-foreground">
+              {paymentsEnabled
+                ? "Assim que o provedor confirmar o pagamento, esta página muda sozinha para “em análise”. Não é preciso avisar."
+                : "Pagamento online indisponível no momento. Fale com a equipe pelo canal de contato informando o código acima; a confirmação é registrada pela administração após a conferência."}
+            </p>
+
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button
-                className="bg-forest hover:bg-forest/90"
-                disabled={payMutation.isPending}
-                onClick={() => payMutation.mutate()}
-              >
-                {payMutation.isPending ? "Confirmando..." : "Já efetuei o pagamento"}
+              <Button asChild variant="outline">
+                <Link to="/contato">Falar com a equipe</Link>
               </Button>
               <Button
                 variant="ghost"

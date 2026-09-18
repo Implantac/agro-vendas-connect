@@ -62,6 +62,7 @@ import { Route as AppAdminTermosRouteImport } from './routes/app.admin.termos'
 import { Route as AppAdminVerificacoesRouteImport } from './routes/app.admin.verificacoes'
 import { Route as AppAnuncioIdRouteImport } from './routes/app.anuncio.$id'
 import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
+import { Route as ApiPublicWebhooksPaymentsRouteImport } from './routes/api/public/webhooks/payments'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -328,6 +329,12 @@ const AppNegociacaoIdRoute = AppNegociacaoIdRouteImport.update({
   path: '/negociacao/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiPublicWebhooksPaymentsRoute =
+  ApiPublicWebhooksPaymentsRouteImport.update({
+    id: '/api/public/webhooks/payments',
+    path: '/api/public/webhooks/payments',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -383,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
+  '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -437,6 +445,7 @@ export interface FileRoutesByTo {
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin': typeof AppAdminIndexRoute
+  '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -493,6 +502,7 @@ export interface FileRoutesById {
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
+  '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -550,6 +560,7 @@ export interface FileRouteTypes {
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
+    | '/api/public/webhooks/payments'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -604,6 +615,7 @@ export interface FileRouteTypes {
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin'
+    | '/api/public/webhooks/payments'
   id:
     | '__root__'
     | '/'
@@ -659,6 +671,7 @@ export interface FileRouteTypes {
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
     | '/app/admin/'
+    | '/api/public/webhooks/payments'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -684,6 +697,7 @@ export interface RootRouteChildren {
   TermoDeAceiteRoute: typeof TermoDeAceiteRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
+  ApiPublicWebhooksPaymentsRoute: typeof ApiPublicWebhooksPaymentsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1059,6 +1073,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNegociacaoIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/public/webhooks/payments': {
+      id: '/api/public/webhooks/payments'
+      path: '/api/public/webhooks/payments'
+      fullPath: '/api/public/webhooks/payments'
+      preLoaderRoute: typeof ApiPublicWebhooksPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1155,6 +1176,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermoDeAceiteRoute: TermoDeAceiteRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
+  ApiPublicWebhooksPaymentsRoute: ApiPublicWebhooksPaymentsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

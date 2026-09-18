@@ -54,9 +54,23 @@ export async function fetchMyMembershipRequests(userId: string) {
   return (data ?? []) as MembershipRequestWithPlan[];
 }
 
-/** Gera um código Pix simulado (a integração com o gateway entra aqui). */
-function pixReference() {
-  return `DDPAGRO${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+/**
+ * Referência interna da cobrança. É o identificador enviado ao provedor de
+ * pagamento (external reference) e usado pelo webhook para localizar a
+ * solicitação. Não confirma pagamento nenhum por si só.
+ */
+function chargeReference() {
+  return `DDP-${crypto.randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+}
+
+/** Situação da cobrança online (flag operacional lida do banco). */
+export async function fetchPaymentsEnabled(): Promise<boolean> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "payments_enabled")
+    .maybeSingle();
+  return Boolean((data?.value as { enabled?: boolean } | null)?.enabled);
 }
 
 export async function createMembershipRequest(params: {
@@ -73,7 +87,7 @@ export async function createMembershipRequest(params: {
       requested_role: params.plan.target_role,
       amount: params.plan.price,
       payment_method: params.method,
-      payment_reference: pixReference(),
+      payment_reference: chargeReference(),
       applicant_notes: params.notes ?? null,
     })
     .select("id")
@@ -82,10 +96,20 @@ export async function createMembershipRequest(params: {
   return data.id;
 }
 
-export async function confirmMembershipPayment(requestId: string, method: string) {
-  const { error } = await supabase.rpc("confirm_membership_payment", {
+/**
+ * Registro de pagamento conferido manualmente pela administração.
+ * O caminho normal é o webhook do provedor; isto cobre comprovante conferido
+ * fora do gateway e fica registrado na auditoria.
+ */
+export async function adminConfirmMembershipPayment(
+  requestId: string,
+  method: string,
+  reference: string,
+) {
+  const { error } = await supabase.rpc("admin_confirm_membership_payment", {
     _request_id: requestId,
     _method: method,
+    _reference: reference,
   });
   if (error) throw error;
 }

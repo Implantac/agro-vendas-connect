@@ -263,13 +263,15 @@ function Membresia() {
               </div>
             </div>
 
+            <p className="mt-4 text-sm text-muted-foreground">
+              {paymentsEnabled
+                ? "Assim que o provedor confirmar o pagamento, esta página muda sozinha para “em análise”. Não é preciso avisar."
+                : "Pagamento online indisponível no momento. Fale com a equipe pelo canal de contato informando o código acima; a confirmação é registrada pela administração após a conferência."}
+            </p>
+
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button
-                className="bg-forest hover:bg-forest/90"
-                disabled={payMutation.isPending}
-                onClick={() => payMutation.mutate()}
-              >
-                {payMutation.isPending ? "Confirmando..." : "Já efetuei o pagamento"}
+              <Button asChild variant="outline">
+                <Link to="/contato">Falar com a equipe</Link>
               </Button>
               <Button
                 variant="ghost"

@@ -52,6 +52,11 @@
 - [x] Webhook assinado `/api/public/webhooks/payments` com idempotência, valor divergente, cancelamento e estorno
 - [x] Registro manual de pagamento conferido (admin, auditado)
 - [ ] Credenciais do gateway (Asaas): aguardando configuração (PAYMENT_WEBHOOK_SECRET + chave de API)
+- [ ] E-mails transacionais: aguardando domínio de envio do cliente (nada é enviado nem simulado até lá)
+- [x] Etapa C — dossiê da máquina com identificação, disponibilidade e evidência de verificação
+- [x] Etapa D — pedido só aceita transições válidas na tela; expiração na linha do tempo; erros padronizados
+- [x] Etapa E — características técnicas por categoria (cadastro e filtros) e distâncias 50/100/250/500 km
+- [x] Etapa G — listagem do catálogo com campos selecionados; testes SQL de proposta/pedido (13/13 ok)
 - [x] Busca salva com alertas (in-app)
 - [x] Pipeline de leads por etapa (derivado de eventos reais; sem etapas manuais por decisão de produto)
 - [ ] Documentação final de operação

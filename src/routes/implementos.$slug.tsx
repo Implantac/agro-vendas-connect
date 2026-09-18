@@ -243,7 +243,11 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
               </span>
             </p>
           </div>
-          <TrustBadges badges={badges} className="max-w-md justify-end" />
+          <TrustBadges
+            badges={badges}
+            className="w-full justify-start lg:w-auto lg:max-w-md lg:justify-end"
+          />
+
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">

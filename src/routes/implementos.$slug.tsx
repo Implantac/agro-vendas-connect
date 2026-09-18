@@ -25,6 +25,7 @@ import { TrustBadges } from "@/components/catalog/TrustBadges";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import { fetchSellerTrust, registerListingView } from "@/features/listings/queries";
 import { listingCode, orderedSpecs } from "@/features/listings/completeness";
+import { specFieldsFor } from "@/features/listings/category-specs";
 import { trustBadges } from "@/features/listings/trust";
 import { fetchMachineEvents } from "@/lib/machine-docs";
 

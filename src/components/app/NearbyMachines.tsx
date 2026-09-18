@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ListingCard, type ListingCardData } from "@/components/catalog/ListingCard";
-import { distanceToState, formatKm, UF_LIST } from "@/lib/geo";
+import { distanceToState, UF_LIST } from "@/lib/geo";
 import { useBuyerLocation } from "@/features/catalog/useBuyerLocation";
 
 const RADII = [50, 100, 250, 500] as const;

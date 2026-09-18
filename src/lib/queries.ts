@@ -73,10 +73,14 @@ export interface CatalogFilters {
   sort?: "recent" | "price_asc" | "price_desc";
 }
 
+/** Campos realmente usados pelos cards do catálogo — evita trazer a linha inteira. */
+export const CATALOG_LIST_SELECT =
+  "id,title,slug,brand,model,manufacture_year,condition,hours_used,price,price_on_request,city,state,status,views_count,published_at,seller_id,technical_data_json,categories(name,slug),listing_media(url,is_cover,sort_order)";
+
 export async function fetchApprovedListings(filters: CatalogFilters = {}) {
   let query = supabase
     .from("listings")
-    .select("*, categories(name,slug), listing_media(url,is_cover,sort_order)")
+    .select(CATALOG_LIST_SELECT)
     .eq("status", "approved");
 
   if (filters.search) {

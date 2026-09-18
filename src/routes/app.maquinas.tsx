@@ -64,7 +64,7 @@ function Maquinas() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<MachineFormValues>(EMPTY_MACHINE);
   const [saving, setSaving] = useState(false);
-  const [dossier, setDossier] = useState<{ id: string; name: string } | null>(null);
+  const [dossierId, setDossierId] = useState<string | null>(null);
 
   const { data: machines = [], isLoading } = useQuery({
     queryKey: ["my-machines-full", user?.id],
@@ -76,6 +76,8 @@ function Maquinas() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+
+  const dossierMachine = machines.find((m) => m.id === dossierId);
 
   const set = <K extends keyof MachineFormValues>(key: K, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -345,14 +347,7 @@ function Maquinas() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        setDossier({
-                          id: machine.id,
-                          name:
-                            [machine.brand, machine.model].filter(Boolean).join(" ") ||
-                            "Máquina sem identificação",
-                        })
-                      }
+                      onClick={() => setDossierId(machine.id)}
                     >
                       <FileText className="mr-1.5 h-4 w-4" /> Documentos e histórico
                     </Button>
@@ -381,10 +376,31 @@ function Maquinas() {
 
       {user && (
         <MachineDossierDialog
-          machineId={dossier?.id ?? null}
-          machineName={dossier?.name ?? ""}
+          machineId={dossierId}
+          machineName={
+            [dossierMachine?.brand, dossierMachine?.model].filter(Boolean).join(" ") ||
+            "Máquina sem identificação"
+          }
           ownerId={user.id}
-          onOpenChange={(open) => !open && setDossier(null)}
+          identification={
+            dossierMachine
+              ? {
+                  category: (dossierMachine.categories as { name: string } | null)?.name ?? null,
+                  brand: dossierMachine.brand,
+                  model: dossierMachine.model,
+                  year: dossierMachine.manufacture_year,
+                  serialNumber: dossierMachine.serial_number,
+                  hours: dossierMachine.hours_used,
+                  condition: dossierMachine.condition,
+                  city: dossierMachine.city,
+                  state: dossierMachine.state,
+                  availability: dossierMachine.availability,
+                  verificationStatus: dossierMachine.verification_status,
+                  verifiedAt: dossierMachine.verified_at,
+                }
+              : undefined
+          }
+          onOpenChange={(open) => !open && setDossierId(null)}
         />
       )}
     </AppPage>

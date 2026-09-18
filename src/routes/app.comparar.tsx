@@ -122,7 +122,7 @@ function Comparar() {
                           <img
                             src={cover}
                             alt={l.title}
-                            className="aspect-4/3 w-full rounded-sm object-cover"
+                            className="aspect-4/3 w-full rounded-sm bg-card object-contain"
                           />
                         ) : (
                           <div className="aspect-4/3 w-full rounded-sm bg-secondary" />

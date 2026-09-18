@@ -271,7 +271,7 @@ function EditarAnuncio() {
                 key={m.id}
                 className="group relative overflow-hidden rounded-md border border-border"
               >
-                <img src={m.url} alt="" className="h-28 w-full object-cover" />
+                <img src={m.url} alt="" className="h-28 w-full bg-card object-contain" />
                 <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-background/80 p-1">
                   <button
                     type="button"

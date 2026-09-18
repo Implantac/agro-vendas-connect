@@ -190,7 +190,10 @@ function Catalogo() {
       label: CONDICAO_LABEL[search.condicao] ?? search.condicao,
       clear: { condicao: undefined },
     });
-  if (search.uf) chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined } });
+  if (search.uf)
+    chips.push({ label: `Estado: ${search.uf}`, clear: { uf: undefined, cidade: undefined } });
+  if (search.cidade)
+    chips.push({ label: `Cidade: ${search.cidade}`, clear: { cidade: undefined } });
   if (search.preco_min !== undefined || search.preco_max !== undefined)
     chips.push({
       label: `Preço ${search.preco_min ? formatBRL(search.preco_min) : "0"} – ${
@@ -202,6 +205,11 @@ function Catalogo() {
     chips.push({
       label: `Ano ${search.ano_min ?? "—"} a ${search.ano_max ?? "—"}`,
       clear: { ano_min: undefined, ano_max: undefined },
+    });
+  if (search.horas_max !== undefined)
+    chips.push({
+      label: `Até ${search.horas_max.toLocaleString("pt-BR")} h`,
+      clear: { horas_max: undefined },
     });
 
   const selectClass = "h-10 w-full rounded-sm border border-input bg-background px-3 text-sm";

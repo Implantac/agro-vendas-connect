@@ -127,6 +127,8 @@ export interface AdminConsole {
     openReports: number;
     membershipRequests: number;
     ordersAwaitingPayment: number;
+    machinesAwaitingVerification: number;
+    openPrivacyRequests: number;
   };
   trust: {
     approvedMembers: number;

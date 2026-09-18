@@ -45,6 +45,7 @@ export type AppRoute =
   | "/app/admin"
   | "/app/admin/membros"
   | "/app/admin/membresias"
+  | "/app/admin/planos"
   | "/app/admin/anuncios"
   | "/app/admin/negociacoes"
   | "/app/admin/pedidos"
@@ -174,6 +175,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
     {
       label: "Conteúdo",
       items: [
+        { to: "/app/admin/planos", label: "Planos de membresia", icon: Wallet },
         { to: "/app/admin/categorias", label: "Categorias", icon: ClipboardList },
         { to: "/app/admin/termos", label: "Termos e versões", icon: ClipboardList },
         { to: "/app/configuracoes", label: "Configurações", icon: Settings },

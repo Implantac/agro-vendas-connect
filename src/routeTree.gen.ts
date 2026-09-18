@@ -57,6 +57,7 @@ import { Route as AppAdminMembresiasRouteImport } from './routes/app.admin.membr
 import { Route as AppAdminMembrosRouteImport } from './routes/app.admin.membros'
 import { Route as AppAdminNegociacoesRouteImport } from './routes/app.admin.negociacoes'
 import { Route as AppAdminPedidosRouteImport } from './routes/app.admin.pedidos'
+import { Route as AppAdminPlanosRouteImport } from './routes/app.admin.planos'
 import { Route as AppAdminPrivacidadeRouteImport } from './routes/app.admin.privacidade'
 import { Route as AppAdminTermosRouteImport } from './routes/app.admin.termos'
 import { Route as AppAdminVerificacoesRouteImport } from './routes/app.admin.verificacoes'
@@ -304,6 +305,11 @@ const AppAdminPedidosRoute = AppAdminPedidosRouteImport.update({
   path: '/admin/pedidos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminPlanosRoute = AppAdminPlanosRouteImport.update({
+  id: '/admin/planos',
+  path: '/admin/planos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminPrivacidadeRoute = AppAdminPrivacidadeRouteImport.update({
   id: '/admin/privacidade',
   path: '/admin/privacidade',
@@ -384,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/admin/pedidos': typeof AppAdminPedidosRoute
+  '/app/admin/planos': typeof AppAdminPlanosRoute
   '/app/admin/privacidade': typeof AppAdminPrivacidadeRoute
   '/app/admin/termos': typeof AppAdminTermosRoute
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
@@ -439,6 +446,7 @@ export interface FileRoutesByTo {
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/admin/pedidos': typeof AppAdminPedidosRoute
+  '/app/admin/planos': typeof AppAdminPlanosRoute
   '/app/admin/privacidade': typeof AppAdminPrivacidadeRoute
   '/app/admin/termos': typeof AppAdminTermosRoute
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
@@ -496,6 +504,7 @@ export interface FileRoutesById {
   '/app/admin/membros': typeof AppAdminMembrosRoute
   '/app/admin/negociacoes': typeof AppAdminNegociacoesRoute
   '/app/admin/pedidos': typeof AppAdminPedidosRoute
+  '/app/admin/planos': typeof AppAdminPlanosRoute
   '/app/admin/privacidade': typeof AppAdminPrivacidadeRoute
   '/app/admin/termos': typeof AppAdminTermosRoute
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
@@ -554,6 +563,7 @@ export interface FileRouteTypes {
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
     | '/app/admin/pedidos'
+    | '/app/admin/planos'
     | '/app/admin/privacidade'
     | '/app/admin/termos'
     | '/app/admin/verificacoes'
@@ -609,6 +619,7 @@ export interface FileRouteTypes {
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
     | '/app/admin/pedidos'
+    | '/app/admin/planos'
     | '/app/admin/privacidade'
     | '/app/admin/termos'
     | '/app/admin/verificacoes'
@@ -665,6 +676,7 @@ export interface FileRouteTypes {
     | '/app/admin/membros'
     | '/app/admin/negociacoes'
     | '/app/admin/pedidos'
+    | '/app/admin/planos'
     | '/app/admin/privacidade'
     | '/app/admin/termos'
     | '/app/admin/verificacoes'
@@ -1038,6 +1050,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminPedidosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/planos': {
+      id: '/app/admin/planos'
+      path: '/admin/planos'
+      fullPath: '/app/admin/planos'
+      preLoaderRoute: typeof AppAdminPlanosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/privacidade': {
       id: '/app/admin/privacidade'
       path: '/admin/privacidade'
@@ -1109,6 +1128,7 @@ interface AppRouteChildren {
   AppAdminMembrosRoute: typeof AppAdminMembrosRoute
   AppAdminNegociacoesRoute: typeof AppAdminNegociacoesRoute
   AppAdminPedidosRoute: typeof AppAdminPedidosRoute
+  AppAdminPlanosRoute: typeof AppAdminPlanosRoute
   AppAdminPrivacidadeRoute: typeof AppAdminPrivacidadeRoute
   AppAdminTermosRoute: typeof AppAdminTermosRoute
   AppAdminVerificacoesRoute: typeof AppAdminVerificacoesRoute
@@ -1143,6 +1163,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminMembrosRoute: AppAdminMembrosRoute,
   AppAdminNegociacoesRoute: AppAdminNegociacoesRoute,
   AppAdminPedidosRoute: AppAdminPedidosRoute,
+  AppAdminPlanosRoute: AppAdminPlanosRoute,
   AppAdminPrivacidadeRoute: AppAdminPrivacidadeRoute,
   AppAdminTermosRoute: AppAdminTermosRoute,
   AppAdminVerificacoesRoute: AppAdminVerificacoesRoute,

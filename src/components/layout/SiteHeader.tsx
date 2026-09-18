@@ -8,8 +8,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/catalogo", label: "Catálogo" },
+  { to: "/", label: "Início" },
   { to: "/como-funciona", label: "Como funciona" },
+  { to: "/catalogo", label: "Catálogo" },
   { to: "/planos", label: "Planos" },
   { to: "/seguranca", label: "Segurança" },
   { to: "/central-de-ajuda", label: "Ajuda" },
@@ -96,11 +97,21 @@ export function SiteHeader() {
                 <Link to="/entrar">Entrar</Link>
               </Button>
               <Button asChild size="sm" className="bg-forest hover:bg-forest/90">
-                <Link to="/cadastro">Solicitar acesso</Link>
+                <Link to="/cadastro">Seja membro</Link>
               </Button>
             </>
           )}
         </div>
+
+        {!user && (
+          <Button
+            asChild
+            size="sm"
+            className="bg-forest hover:bg-forest/90 lg:hidden"
+          >
+            <Link to="/cadastro">Seja membro</Link>
+          </Button>
+        )}
 
         <button
           type="button"
@@ -159,7 +170,7 @@ export function SiteHeader() {
                 </Button>
                 <Button asChild className="flex-1 bg-forest hover:bg-forest/90">
                   <Link to="/cadastro" onClick={() => setOpen(false)}>
-                    Solicitar acesso
+                    Seja membro
                   </Link>
                 </Button>
               </>

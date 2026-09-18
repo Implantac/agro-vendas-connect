@@ -196,6 +196,17 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
     supabase.from("listing_media").select("listing_id"),
   ]);
 
+  const [machinesPending, privacyOpen] = await Promise.all([
+    supabase
+      .from("machines")
+      .select("id", { count: "exact", head: true })
+      .eq("verification_status", "pending"),
+    supabase
+      .from("privacy_requests")
+      .select("id", { count: "exact", head: true })
+      .in("status", ["open", "in_progress"]),
+  ]);
+
   const p = profiles.data ?? [];
   const l = listings.data ?? [];
   const o = orders.data ?? [];

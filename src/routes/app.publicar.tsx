@@ -19,7 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { createListing, fetchMyMachines, uploadListingPhotos } from "@/lib/listing-manage";
 import { PhotoUploader } from "@/components/app/PhotoUploader";
 import { AiDescriptionPanel } from "@/components/app/AiDescriptionPanel";
-import { specFieldsFor } from "@/features/listings/category-specs";
+import { SpecFieldsEditor } from "@/components/app/SpecFieldsEditor";
 import { fetchCategories } from "@/lib/queries";
 import { BRAZILIAN_STATES, CONDITION_LABELS, SALE_CONDITION_LABELS, formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";

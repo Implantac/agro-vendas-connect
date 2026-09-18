@@ -262,5 +262,6 @@ export function countActiveFilters(f: CatalogFilters) {
   if (f.condicao) n++;
   if (f.uf) n++;
   if (f.raio !== undefined) n++;
+  n += Object.values(f.specs).filter(Boolean).length;
   return n;
 }

@@ -207,6 +207,22 @@ function EditarAnuncio() {
     );
   }
 
+  if (listing && !canEdit) {
+    return (
+      <AppPage>
+        <div className="rounded-lg border border-dashed border-border p-10 text-center">
+          <p className="text-sm text-muted-foreground">
+            Este anúncio pertence a outro vendedor. Apenas quem criou o anúncio (ou a
+            administração) pode editá-lo.
+          </p>
+          <Button asChild className="mt-4">
+            <Link to="/app/meus-anuncios">Voltar para meus anúncios</Link>
+          </Button>
+        </div>
+      </AppPage>
+    );
+  }
+
   if (!listing) {
     return (
       <AppPage>

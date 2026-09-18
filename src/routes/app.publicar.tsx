@@ -336,53 +336,11 @@ function Publicar() {
                   ))}
                 </div>
               </div>
-              <div className="space-y-3">
-                <Label>Características técnicas</Label>
-                <p className="text-xs text-muted-foreground">
-                  Só aparecem os itens que fazem sentido para a categoria escolhida. Deixe em branco
-                  o que não souber — nada é preenchido automaticamente.
-                </p>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {specFields.map((field) => (
-                    <div key={field.key} className="space-y-2">
-                      <Label htmlFor={`spec-${field.key}`}>
-                        {field.label}
-                        {field.unit ? ` (${field.unit})` : ""}
-                      </Label>
-                      {field.options ? (
-                        <Select
-                          value={draft.specs[field.key] ?? ""}
-                          onValueChange={(v) => setSpec(field.key, v)}
-                        >
-                          <SelectTrigger id={`spec-${field.key}`}>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {field.options.map((opt) => (
-                              <SelectItem key={opt} value={opt}>
-                                {opt}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <Input
-                          id={`spec-${field.key}`}
-                          value={draft.specs[field.key] ?? ""}
-                          inputMode={field.numeric ? "numeric" : "text"}
-                          placeholder={field.placeholder ?? ""}
-                          onChange={(e) =>
-                            setSpec(
-                              field.key,
-                              field.numeric ? e.target.value.replace(/\D/g, "") : e.target.value,
-                            )
-                          }
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <SpecFieldsEditor
+                categorySlug={categorySlug}
+                values={draft.specs}
+                onChange={setSpec}
+              />
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição</Label>
                 <Textarea

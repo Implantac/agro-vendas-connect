@@ -18,7 +18,9 @@ import { MachineDossierDialog } from "@/components/app/MachineDossierDialog";
 import { VERIFICATION_LABEL } from "@/lib/machine-docs";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchCategories } from "@/lib/queries";
+import { UF_LIST } from "@/lib/geo";
 import {
+  AVAILABILITY_LABEL,
   EMPTY_MACHINE,
   createMachine,
   deleteMachine,

@@ -226,6 +226,11 @@ function SellerDashboard() {
     queryFn: () => fetchMyProposals(user!.id),
     enabled: Boolean(user),
   });
+  const { data: summary } = useQuery({
+    queryKey: ["dashboard", "seller-summary", user?.id],
+    queryFn: () => fetchSellerSummary(user!.id),
+    enabled: Boolean(user),
+  });
 
   const salesProposals = proposals.filter((p) => p.seller_id === user?.id);
   const openSales = salesProposals.filter((p) => OPEN_STATUSES.includes(p.status));

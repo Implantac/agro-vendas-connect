@@ -59,24 +59,13 @@ export function listingCompleteness(l: CompletenessInput) {
     },
     { key: "location", label: "Cidade e UF", done: Boolean(l.city && l.state), weight: 6 },
     { key: "category", label: "Categoria", done: Boolean(l.category_id), weight: 4 },
-    {
-      key: "power",
-      label: "Potência (cv)",
-      done: has("potencia") || has("potencia_cv") || has("Potência"),
-      weight: 4,
-    },
-    {
-      key: "owners",
-      label: "Número de proprietários",
-      done: has("proprietarios") || has("Proprietários"),
-      weight: 4,
-    },
-    {
-      key: "docs",
-      label: "Documentação informada",
-      done: has("documentacao") || has("Documentação"),
-      weight: 4,
-    },
+    // Só cobramos as características que existem no formulário desta categoria.
+    ...specFieldsFor(l.categorySlug).map((field) => ({
+      key: `spec-${field.key}`,
+      label: field.unit ? `${field.label} (${field.unit})` : field.label,
+      done: has(field.key),
+      weight: 3,
+    })),
   ];
   const total = items.reduce((s, i) => s + i.weight, 0);
   const got = items.filter((i) => i.done).reduce((s, i) => s + i.weight, 0);

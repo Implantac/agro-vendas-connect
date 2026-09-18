@@ -588,8 +588,10 @@ export type Database = {
       }
       machines: {
         Row: {
+          availability: string
           brand: string | null
           category_id: string | null
+          city: string | null
           condition: Database["public"]["Enums"]["listing_condition"]
           created_at: string
           hours_used: number | null
@@ -597,14 +599,18 @@ export type Database = {
           manufacture_year: number | null
           model: string | null
           owner_id: string
+          serial_number: string | null
+          state: string | null
           technical_data_json: Json
           updated_at: string
           verification_status: Database["public"]["Enums"]["machine_verification"]
           verified_at: string | null
         }
         Insert: {
+          availability?: string
           brand?: string | null
           category_id?: string | null
+          city?: string | null
           condition?: Database["public"]["Enums"]["listing_condition"]
           created_at?: string
           hours_used?: number | null
@@ -612,14 +618,18 @@ export type Database = {
           manufacture_year?: number | null
           model?: string | null
           owner_id: string
+          serial_number?: string | null
+          state?: string | null
           technical_data_json?: Json
           updated_at?: string
           verification_status?: Database["public"]["Enums"]["machine_verification"]
           verified_at?: string | null
         }
         Update: {
+          availability?: string
           brand?: string | null
           category_id?: string | null
+          city?: string | null
           condition?: Database["public"]["Enums"]["listing_condition"]
           created_at?: string
           hours_used?: number | null
@@ -627,6 +637,8 @@ export type Database = {
           manufacture_year?: number | null
           model?: string | null
           owner_id?: string
+          serial_number?: string | null
+          state?: string | null
           technical_data_json?: Json
           updated_at?: string
           verification_status?: Database["public"]["Enums"]["machine_verification"]

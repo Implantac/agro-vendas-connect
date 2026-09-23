@@ -276,3 +276,101 @@ export async function fetchAdminConsole(): Promise<AdminConsole> {
     },
   };
 }
+
+export interface ApprovedMemberListing {
+  id: string;
+  title: string;
+  status: string;
+  price: number | null;
+  created_at: string;
+}
+
+export interface ApprovedMember {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string;
+  person_type: string | null;
+  city: string | null;
+  state: string | null;
+  created_at: string;
+  plan: { name: string; price: number; period: string } | null;
+  planStatus: string | null;
+  planApprovedAt: string | null;
+  listings: ApprovedMemberListing[];
+}
+
+/** Membros já aprovados, com plano vigente e histórico de anúncios. */
+export async function fetchApprovedMembers(): Promise<ApprovedMember[]> {
+  const { data: profiles, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, email, role, status, person_type, city, state, created_at")
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  const rows = profiles ?? [];
+  if (rows.length === 0) return [];
+
+  const ids = rows.map((p) => p.id);
+
+  const [requestsRes, listingsRes] = await Promise.all([
+    supabase
+      .from("membership_requests")
+      .select("user_id, status, reviewed_at, created_at, membership_plans(name, price, period)")
+      .in("user_id", ids)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("listings")
+      .select("id, seller_id, title, status, price, created_at")
+      .in("seller_id", ids)
+      .order("created_at", { ascending: false })
+      .limit(500),
+  ]);
+  if (requestsRes.error) throw requestsRes.error;
+  if (listingsRes.error) throw listingsRes.error;
+
+  const planByUser = new Map<string, (typeof requestsRes.data)[number]>();
+  for (const r of requestsRes.data ?? []) {
+    const current = planByUser.get(r.user_id);
+    if (!current || (current.status !== "approved" && r.status === "approved")) {
+      planByUser.set(r.user_id, r);
+    }
+  }
+
+  const listingsByUser = new Map<string, ApprovedMemberListing[]>();
+  for (const l of listingsRes.data ?? []) {
+    const list = listingsByUser.get(l.seller_id) ?? [];
+    list.push({
+      id: l.id,
+      title: l.title,
+      status: l.status,
+      price: l.price === null ? null : Number(l.price),
+      created_at: l.created_at,
+    });
+    listingsByUser.set(l.seller_id, list);
+  }
+
+  return rows.map((p) => {
+    const req = planByUser.get(p.id);
+    const plan = (req?.membership_plans ?? null) as {
+      name: string;
+      price: number;
+      period: string;
+    } | null;
+    return {
+      id: p.id,
+      full_name: p.full_name,
+      email: p.email,
+      role: p.role,
+      person_type: p.person_type,
+      city: p.city,
+      state: p.state,
+      created_at: p.created_at,
+      plan,
+      planStatus: req?.status ?? null,
+      planApprovedAt: req?.reviewed_at ?? null,
+      listings: listingsByUser.get(p.id) ?? [],
+    };
+  });
+}

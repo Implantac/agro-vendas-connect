@@ -44,6 +44,7 @@ export type AppRoute =
   | "/app/empresa"
   | "/app/admin"
   | "/app/admin/membros"
+  | "/app/admin/aprovados"
   | "/app/admin/membresias"
   | "/app/admin/planos"
   | "/app/admin/anuncios"
@@ -152,6 +153,7 @@ export const NAV_BY_ROLE: Record<AppMode, NavGroup[]> = {
         { to: "/app/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
         { to: "/app/admin/membros", label: "Usuários", icon: Users },
         { to: "/app/admin/membresias", label: "Aprovações", icon: BadgeCheck },
+        { to: "/app/admin/aprovados", label: "Membros aprovados", icon: Users },
         { to: "/app/admin/anuncios", label: "Anúncios", icon: ClipboardList },
       ],
     },

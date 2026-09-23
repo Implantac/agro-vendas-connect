@@ -145,7 +145,9 @@ function ApprovedMembersPage() {
             className="mt-3"
             variant="outline"
             onClick={() => {
-              reportError(new Error("fetchApprovedMembers"), { scope: "admin/aprovados" });
+              reportError(new Error("fetchApprovedMembers"), {
+                operation: "carregar membros aprovados",
+              });
               void refetch();
             }}
           >

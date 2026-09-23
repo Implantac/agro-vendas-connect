@@ -44,6 +44,7 @@ export type AppRoute =
   | "/app/empresa"
   | "/app/admin"
   | "/app/admin/membros"
+  | "/app/admin/aprovados"
   | "/app/admin/membresias"
   | "/app/admin/planos"
   | "/app/admin/anuncios"

@@ -20,6 +20,10 @@ import {
   REQUEST_STATUS_LABELS,
 } from "@/lib/membership-queries";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { useServerFn } from "@tanstack/react-start";
+import { createAsaasCharge } from "@/lib/asaas.functions";
+import { reportError } from "@/lib/report-error";
 
 export const Route = createFileRoute("/membresia")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -81,6 +85,8 @@ function Membresia() {
     queryKey: ["membership", "my-requests", user?.id],
     queryFn: () => fetchMyMembershipRequests(user!.id),
     enabled: Boolean(user),
+    refetchInterval: (q) =>
+      q.state.data?.some((r) => r.status === "payment_pending") ? 10000 : false,
   });
 
   const active = requests.find((r) => r.status !== "cancelled" && r.status !== "rejected");
@@ -105,6 +111,18 @@ function Membresia() {
   const { data: paymentsEnabled = false } = useQuery({
     queryKey: ["membership", "payments-enabled"],
     queryFn: fetchPaymentsEnabled,
+  });
+
+  const [doc, setDoc] = useState("");
+  const chargeFn = useServerFn(createAsaasCharge);
+  const payMutation = useMutation({
+    mutationFn: () => chargeFn({ data: { requestId: active!.id, cpfCnpj: doc } }),
+    onSuccess: ({ checkoutUrl }) => {
+      void qc.invalidateQueries({ queryKey: ["membership"] });
+      window.open(checkoutUrl, "_blank", "noopener");
+    },
+    onError: (e) =>
+      reportError(e, { operation: "gerar cobrança da membresia", retry: () => payMutation.mutate() }),
   });
 
   const cancelMutation = useMutation({
@@ -257,6 +275,41 @@ function Membresia() {
                 </Button>
               </div>
             </div>
+
+            {paymentsEnabled && active.checkout_url && (
+              <Button asChild className="mt-5 bg-forest hover:bg-forest/90">
+                <a href={active.checkout_url} target="_blank" rel="noopener noreferrer">
+                  Abrir cobrança e pagar
+                </a>
+              </Button>
+            )}
+            {paymentsEnabled && !active.checkout_url && (
+              <div className="mt-5 space-y-2">
+                <label className="text-sm font-medium text-forest" htmlFor="doc">
+                  CPF ou CNPJ do pagador
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <Input
+                    id="doc"
+                    inputMode="numeric"
+                    value={doc}
+                    onChange={(e) => setDoc(e.target.value)}
+                    placeholder="000.000.000-00"
+                    className="max-w-xs"
+                  />
+                  <Button
+                    className="bg-forest hover:bg-forest/90"
+                    disabled={![11, 14].includes(doc.replace(/\D/g, "").length) || payMutation.isPending}
+                    onClick={() => payMutation.mutate()}
+                  >
+                    {payMutation.isPending ? "Gerando..." : "Pagar agora"}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Usado só para emitir a cobrança na Asaas; não fica salvo aqui.
+                </p>
+              </div>
+            )}
 
             <p className="mt-4 text-sm text-muted-foreground">
               {paymentsEnabled

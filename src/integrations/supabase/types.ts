@@ -766,7 +766,9 @@ export type Database = {
         Row: {
           amount: number
           applicant_notes: string | null
+          checkout_url: string | null
           created_at: string
+          gateway_payment_id: string | null
           id: string
           paid_at: string | null
           payment_confirmed_by: string | null
@@ -786,7 +788,9 @@ export type Database = {
         Insert: {
           amount?: number
           applicant_notes?: string | null
+          checkout_url?: string | null
           created_at?: string
+          gateway_payment_id?: string | null
           id?: string
           paid_at?: string | null
           payment_confirmed_by?: string | null
@@ -806,7 +810,9 @@ export type Database = {
         Update: {
           amount?: number
           applicant_notes?: string | null
+          checkout_url?: string | null
           created_at?: string
+          gateway_payment_id?: string | null
           id?: string
           paid_at?: string | null
           payment_confirmed_by?: string | null

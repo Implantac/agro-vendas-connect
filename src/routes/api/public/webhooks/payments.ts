@@ -1,36 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createHmac, timingSafeEqual } from "crypto";
+import { timingSafeEqual } from "crypto";
 import { z } from "zod";
 
 /**
- * Webhook do provedor de pagamento (membresia).
- *
- * Regras:
- * - assinatura HMAC-SHA256 obrigatória (segredo PAYMENT_WEBHOOK_SECRET);
- * - idempotência garantida no banco pela chave (provider, event_id);
+ * Webhook da Asaas (membresia).
+ * - Autenticação pelo cabeçalho "asaas-access-token" (= PAYMENT_WEBHOOK_SECRET);
+ * - idempotência no banco pela chave (provider, event_id);
  * - valor menor que o cobrado nunca confirma a membresia;
- * - cancelamento/estorno revertem a situação do pagamento.
- *
- * Enquanto o segredo e as credenciais do provedor não existirem, o endpoint
- * responde 503 "aguardando configuração" — nada é simulado.
+ * - exclusão/estorno revertem a situação do pagamento.
  */
 
 const payloadSchema = z.object({
   id: z.string().min(1),
   event: z.string().min(1),
-  provider: z.string().min(1).optional(),
-  charge: z.object({
-    reference: z.string().min(1),
-    status: z.enum(["pending", "paid", "failed", "cancelled", "refunded"]),
-    amount: z.number().nonnegative().optional(),
-  }),
+  payment: z
+    .object({
+      id: z.string(),
+      externalReference: z.string().nullable().optional(),
+      value: z.number().optional(),
+    })
+    .optional(),
 });
 
-function validSignature(raw: string, header: string | null, secret: string) {
+const STATUS: Record<string, string> = {
+  PAYMENT_RECEIVED: "paid",
+  PAYMENT_CONFIRMED: "paid",
+  PAYMENT_DELETED: "cancelled",
+  PAYMENT_REPROVED_BY_RISK_ANALYSIS: "failed",
+  PAYMENT_CREDIT_CARD_CAPTURE_REFUSED: "failed",
+  PAYMENT_REFUNDED: "refunded",
+  PAYMENT_CHARGEBACK_REQUESTED: "refunded",
+};
+
+function validToken(header: string | null, secret: string) {
   if (!header) return false;
-  const expected = createHmac("sha256", secret).update(raw).digest("hex");
-  const a = Buffer.from(header.replace(/^sha256=/, ""));
-  const b = Buffer.from(expected);
+  const a = Buffer.from(header);
+  const b = Buffer.from(secret);
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
@@ -40,17 +45,13 @@ export const Route = createFileRoute("/api/public/webhooks/payments")({
       POST: async ({ request }) => {
         const secret = process.env["PAYMENT_WEBHOOK_SECRET"];
         if (!secret) {
-          return Response.json(
-            { error: "payment_gateway_not_configured" },
-            { status: 503 },
-          );
+          return Response.json({ error: "payment_gateway_not_configured" }, { status: 503 });
+        }
+        if (!validToken(request.headers.get("asaas-access-token"), secret)) {
+          return new Response("Invalid token", { status: 401 });
         }
 
         const raw = await request.text();
-        if (!validSignature(raw, request.headers.get("x-webhook-signature"), secret)) {
-          return new Response("Invalid signature", { status: 401 });
-        }
-
         let parsed: z.infer<typeof payloadSchema>;
         try {
           parsed = payloadSchema.parse(JSON.parse(raw));
@@ -58,14 +59,19 @@ export const Route = createFileRoute("/api/public/webhooks/payments")({
           return Response.json({ error: "invalid_payload" }, { status: 400 });
         }
 
+        const status = STATUS[parsed.event];
+        const reference = parsed.payment?.externalReference;
+        // Eventos sem efeito na membresia: responde 200 para a Asaas não reenviar.
+        if (!status || !reference) return Response.json({ ok: true, ignored: true });
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin.rpc("gateway_apply_payment", {
-          _provider: parsed.provider ?? "asaas",
+          _provider: "asaas",
           _event_id: parsed.id,
           _event_type: parsed.event,
-          _charge_reference: parsed.charge.reference,
-          _payment_status: parsed.charge.status,
-          _amount: parsed.charge.amount ?? 0,
+          _charge_reference: reference,
+          _payment_status: status,
+          _amount: parsed.payment?.value ?? 0,
           _payload: JSON.parse(raw),
         });
 
@@ -73,7 +79,6 @@ export const Route = createFileRoute("/api/public/webhooks/payments")({
           console.error("[payments-webhook]", error.message);
           return Response.json({ error: "processing_failed" }, { status: 500 });
         }
-
         return Response.json({ ok: true, result: data });
       },
     },

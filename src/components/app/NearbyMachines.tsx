@@ -43,9 +43,7 @@ export function NearbyMachines({ listings }: { listings: ListingCardData[] }) {
     <section className="mt-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl font-bold text-forest">
-            Máquinas próximas de você
-          </h2>
+          <h2 className="font-display text-xl font-bold text-forest">Máquinas próximas de você</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Distância aproximada, calculada pelo centro do estado do anúncio.
           </p>
@@ -80,12 +78,7 @@ export function NearbyMachines({ listings }: { listings: ListingCardData[] }) {
               ))}
             </SelectContent>
           </Select>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={useDevice}
-            disabled={status === "locating"}
-          >
+          <Button variant="outline" size="sm" onClick={useDevice} disabled={status === "locating"}>
             <Navigation className="mr-2 h-4 w-4" />
             {status === "locating" ? "Localizando..." : "Usar minha localização"}
           </Button>
@@ -124,12 +117,7 @@ export function NearbyMachines({ listings }: { listings: ListingCardData[] }) {
       ) : (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((row, i) => (
-            <ListingCard
-              key={row.listing.id}
-              listing={row.listing}
-              index={i}
-              distanceKm={row.km}
-            />
+            <ListingCard key={row.listing.id} listing={row.listing} index={i} distanceKm={row.km} />
           ))}
         </div>
       )}
@@ -137,10 +125,7 @@ export function NearbyMachines({ listings }: { listings: ListingCardData[] }) {
       {rows.length > visible.length && (
         <div className="mt-6 text-center">
           <Button asChild variant="outline" size="sm">
-            <Link
-              to="/app/comprar"
-              search={radius === null ? {} : { raio: radius }}
-            >
+            <Link to="/app/comprar" search={radius === null ? {} : { raio: radius }}>
               Ver todas as máquinas
             </Link>
           </Button>

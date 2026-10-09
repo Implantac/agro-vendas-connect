@@ -104,11 +104,7 @@ export function SiteHeader() {
         </div>
 
         {!user && (
-          <Button
-            asChild
-            size="sm"
-            className="bg-forest hover:bg-forest/90 lg:hidden"
-          >
+          <Button asChild size="sm" className="bg-forest hover:bg-forest/90 lg:hidden">
             <Link to="/cadastro">Seja membro</Link>
           </Button>
         )}

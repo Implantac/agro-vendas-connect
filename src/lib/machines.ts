@@ -66,11 +66,7 @@ export async function createMachine(ownerId: string, values: MachineFormValues) 
   if (error) throw error;
 }
 
-export async function updateMachine(
-  machineId: string,
-  ownerId: string,
-  values: MachineFormValues,
-) {
+export async function updateMachine(machineId: string, ownerId: string, values: MachineFormValues) {
   const { error } = await supabase
     .from("machines")
     .update(toRow(ownerId, values))

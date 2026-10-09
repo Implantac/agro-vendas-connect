@@ -646,7 +646,6 @@ function BuyerDashboard() {
         )}
       </section>
 
-
       <section className="mt-12">
         <h2 className="font-display text-xl font-bold text-forest">Encontre sua próxima máquina</h2>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

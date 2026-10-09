@@ -4,11 +4,7 @@ import { Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatBRL } from "@/lib/format";
-import {
-  fetchMembershipPlans,
-  fetchPaymentsEnabled,
-  planBenefits,
-} from "@/lib/membership-queries";
+import { fetchMembershipPlans, fetchPaymentsEnabled, planBenefits } from "@/lib/membership-queries";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -89,7 +85,10 @@ export function PlansSection() {
           ) : plans.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
               Os planos estão sendo preparados.{" "}
-              <Link to="/contato" className="font-medium text-forest underline-offset-2 hover:underline">
+              <Link
+                to="/contato"
+                className="font-medium text-forest underline-offset-2 hover:underline"
+              >
                 Fale com a equipe
               </Link>{" "}
               para saber como participar.

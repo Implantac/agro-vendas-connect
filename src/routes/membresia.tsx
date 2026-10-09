@@ -122,7 +122,10 @@ function Membresia() {
       window.open(checkoutUrl, "_blank", "noopener");
     },
     onError: (e) =>
-      reportError(e, { operation: "gerar cobrança da membresia", retry: () => payMutation.mutate() }),
+      reportError(e, {
+        operation: "gerar cobrança da membresia",
+        retry: () => payMutation.mutate(),
+      }),
   });
 
   const cancelMutation = useMutation({
@@ -299,7 +302,9 @@ function Membresia() {
                   />
                   <Button
                     className="bg-forest hover:bg-forest/90"
-                    disabled={![11, 14].includes(doc.replace(/\D/g, "").length) || payMutation.isPending}
+                    disabled={
+                      ![11, 14].includes(doc.replace(/\D/g, "").length) || payMutation.isPending
+                    }
                     onClick={() => payMutation.mutate()}
                   >
                     {payMutation.isPending ? "Gerando..." : "Pagar agora"}

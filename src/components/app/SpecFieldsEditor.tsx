@@ -37,10 +37,7 @@ export function SpecFieldsEditor({ categorySlug, values, onChange }: Props) {
               {field.unit ? ` (${field.unit})` : ""}
             </Label>
             {field.options ? (
-              <Select
-                value={values[field.key] ?? ""}
-                onValueChange={(v) => onChange(field.key, v)}
-              >
+              <Select value={values[field.key] ?? ""} onValueChange={(v) => onChange(field.key, v)}>
                 <SelectTrigger id={`spec-${field.key}`}>
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>

@@ -106,11 +106,13 @@ function Publicar() {
       condition: machine.condition,
       hours: machine.hours_used ? String(machine.hours_used) : "",
       specs: Object.fromEntries(
-        Object.entries(
-          (machine.technical_data_json ?? {}) as Record<string, unknown>,
-        ).map(([k, v]) => [k, String(v ?? "")]),
+        Object.entries((machine.technical_data_json ?? {}) as Record<string, unknown>).map(
+          ([k, v]) => [k, String(v ?? "")],
+        ),
       ),
-      title: current.title || [machine.brand, machine.model, machine.manufacture_year].filter(Boolean).join(" "),
+      title:
+        current.title ||
+        [machine.brand, machine.model, machine.manufacture_year].filter(Boolean).join(" "),
     }));
   }
 

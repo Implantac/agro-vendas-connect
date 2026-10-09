@@ -232,11 +232,7 @@ function Maquinas() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="city">Cidade</Label>
-                <Input
-                  id="city"
-                  value={form.city}
-                  onChange={(e) => set("city", e.target.value)}
-                />
+                <Input id="city" value={form.city} onChange={(e) => set("city", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>Estado</Label>
@@ -344,11 +340,7 @@ function Maquinas() {
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDossierId(machine.id)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setDossierId(machine.id)}>
                       <FileText className="mr-1.5 h-4 w-4" /> Documentos e histórico
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => startEdit(machine)}>

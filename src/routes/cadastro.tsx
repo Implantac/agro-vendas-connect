@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
-import { recordLegalAcceptances } from "@/lib/legal";
 
 export const Route = createFileRoute("/cadastro")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -41,7 +40,6 @@ function Cadastro() {
     phone: "",
     city: "",
     state: "",
-    document: "",
   });
   const [role, setRole] = useState<"buyer" | "seller">("buyer");
   const [personType, setPersonType] = useState<"pf" | "pj">("pf");
@@ -69,9 +67,11 @@ function Cadastro() {
           phone: form.phone,
           city: form.city,
           state: form.state.toUpperCase(),
-          document_number: form.document,
           person_type: personType,
           requested_role: role,
+          // Aceite gravado pelo trigger do banco no momento do cadastro (não depende de sessão).
+          legal_accept: "true",
+          legal_user_agent: navigator.userAgent.slice(0, 400),
         },
       },
     });
@@ -79,13 +79,6 @@ function Cadastro() {
       setLoading(false);
       toast.error("Não foi possível concluir o cadastro", { description: error.message });
       return;
-    }
-    if (data.user && data.session) {
-      try {
-        await recordLegalAcceptances(data.user.id);
-      } catch {
-        // o aceite será solicitado novamente no primeiro acesso
-      }
     }
     setLoading(false);
     toast.success("Cadastro criado", {
@@ -185,14 +178,6 @@ function Cadastro() {
                 value={form.full_name}
                 onChange={(e) => set("full_name", e.target.value)}
                 required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="doc">{personType === "pj" ? "CNPJ" : "CPF"}</Label>
-              <Input
-                id="doc"
-                value={form.document}
-                onChange={(e) => set("document", e.target.value)}
               />
             </div>
             <div className="space-y-2">

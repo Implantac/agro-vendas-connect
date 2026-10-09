@@ -54,8 +54,7 @@ function AcceptUpdatedTerms() {
   });
 
   useEffect(() => {
-    if (!isLoading && user && pending.length === 0)
-      void navigate({ to: back, replace: true });
+    if (!isLoading && user && pending.length === 0) void navigate({ to: back, replace: true });
   }, [isLoading, user, pending.length, navigate, back]);
 
   async function handleAccept() {
@@ -103,11 +102,7 @@ function AcceptUpdatedTerms() {
               </div>
               {LEGAL_DOC_ROUTE[doc.doc_type] && (
                 <Button asChild variant="outline" size="sm">
-                  <a
-                    href={LEGAL_DOC_ROUTE[doc.doc_type]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={LEGAL_DOC_ROUTE[doc.doc_type]} target="_blank" rel="noopener noreferrer">
                     Ler documento
                   </a>
                 </Button>

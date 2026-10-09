@@ -1,5 +1,5 @@
--- Testes da máquina de estados (proposta e pedido) com duas contas reais — DDP AGRO
--- Vendedor: etcsuporte@hotmail.com | Comprador: silvaclaudinei005@gmail.com
+-- Testes da máquina de estados (proposta e pedido).
+-- Usa as contas fictícias criadas por tests/sql/fixtures/02_contas_teste.sql.
 -- Cria dados temporários, exercita as RPCs como cada usuário e termina com ROLLBACK.
 
 BEGIN;
@@ -18,8 +18,8 @@ DECLARE
   st text;
   msg text;
 BEGIN
-  SELECT id INTO vendedor FROM public.profiles WHERE email = 'etcsuporte@hotmail.com';
-  SELECT id INTO comprador FROM public.profiles WHERE email = 'silvaclaudinei005@gmail.com';
+  SELECT id INTO vendedor FROM public.profiles WHERE email = 'vendedor.teste@example.invalid';
+  SELECT id INTO comprador FROM public.profiles WHERE email = 'comprador.teste@example.invalid';
   IF vendedor IS NULL OR comprador IS NULL THEN
     RAISE EXCEPTION 'Contas de teste não encontradas';
   END IF;

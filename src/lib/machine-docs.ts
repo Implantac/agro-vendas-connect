@@ -29,7 +29,9 @@ export const VERIFICATION_LABEL: Record<string, string> = {
 export async function fetchMachineDocuments(machineId: string) {
   const { data, error } = await supabase
     .from("machine_documents")
-    .select("id,machine_id,doc_type,title,file_path,file_name,status,review_notes,reviewed_at,created_at")
+    .select(
+      "id,machine_id,doc_type,title,file_path,file_name,status,review_notes,reviewed_at,created_at",
+    )
     .eq("machine_id", machineId)
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -44,7 +46,7 @@ export async function uploadMachineDocument(params: {
   title?: string;
 }) {
   const { ownerId, machineId, file, docType, title } = params;
-  const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(-80);
+  const safeName = file.name.replace(/[^\w.-]+/g, "_").slice(-80);
   const path = `${ownerId}/${machineId}/${Date.now()}-${safeName}`;
   const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, {
     contentType: file.type || "application/octet-stream",

@@ -133,7 +133,11 @@ function Verificacoes() {
                       >
                         <BadgeCheck className="mr-1.5 h-4 w-4" /> Verificar
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => void review(doc.id, false)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => void review(doc.id, false)}
+                      >
                         <X className="mr-1.5 h-4 w-4" /> Recusar
                       </Button>
                     </div>

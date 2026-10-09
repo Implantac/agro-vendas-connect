@@ -105,7 +105,11 @@ function MeusAnuncios() {
               >
                 <div className="h-20 w-28 shrink-0 overflow-hidden rounded-md bg-secondary">
                   {cover && (
-                    <img src={cover.url} alt={l.title} className="h-full w-full bg-card object-contain" />
+                    <img
+                      src={cover.url}
+                      alt={l.title}
+                      className="h-full w-full bg-card object-contain"
+                    />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">

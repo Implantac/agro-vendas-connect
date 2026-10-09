@@ -199,9 +199,7 @@ function PlanCard({
     price: String(plan.price ?? ""),
     period: plan.period,
     target_role: plan.target_role as string,
-    benefits: Array.isArray(plan.benefits_json)
-      ? (plan.benefits_json as string[]).join("\n")
-      : "",
+    benefits: Array.isArray(plan.benefits_json) ? (plan.benefits_json as string[]).join("\n") : "",
     listing_limit: plan.listing_limit == null ? "" : String(plan.listing_limit),
     machine_limit: plan.machine_limit == null ? "" : String(plan.machine_limit),
     commission_percent: plan.commission_percent == null ? "" : String(plan.commission_percent),

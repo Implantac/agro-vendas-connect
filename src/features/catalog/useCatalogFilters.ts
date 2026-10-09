@@ -122,15 +122,7 @@ export function useCatalogFilters() {
 }
 
 type FacetKey =
-  | "categoria"
-  | "marcas"
-  | "preco"
-  | "ano"
-  | "condicao"
-  | "uf"
-  | "q"
-  | "specs"
-  | "none";
+  "categoria" | "marcas" | "preco" | "ano" | "condicao" | "uf" | "q" | "specs" | "none";
 
 function matches(row: CatalogFacetRow, f: CatalogFilters, ignore: FacetKey) {
   if (ignore !== "q" && f.q) {

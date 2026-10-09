@@ -72,10 +72,7 @@ export function ProblemSection() {
           </p>
           <ul className="mt-5 space-y-3">
             {SOLUTIONS.map((s) => (
-              <li
-                key={s}
-                className="flex items-start gap-2.5 text-sm text-primary-foreground/85"
-              >
+              <li key={s} className="flex items-start gap-2.5 text-sm text-primary-foreground/85">
                 <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                 {s}
               </li>
@@ -90,15 +87,31 @@ export function ProblemSection() {
 /* ----------------------------------- Dossiê ----------------------------------- */
 
 const SELLER_INFO = [
-  { icon: ClipboardList, label: "Identificação", value: "Fabricante, modelo, ano e número de série" },
+  {
+    icon: ClipboardList,
+    label: "Identificação",
+    value: "Fabricante, modelo, ano e número de série",
+  },
   { icon: Gauge, label: "Uso", value: "Horas trabalhadas e estado de conservação" },
   { icon: MapPin, label: "Localização", value: "Cidade e estado onde a máquina está" },
-  { icon: History, label: "Histórico", value: "Manutenções e registros informados pelo proprietário" },
+  {
+    icon: History,
+    label: "Histórico",
+    value: "Manutenções e registros informados pelo proprietário",
+  },
 ];
 
 const VERIFIED_INFO = [
-  { icon: FileText, label: "Documentos enviados", value: "CRLV, nota fiscal, laudos e manutenções" },
-  { icon: BadgeCheck, label: "Conferência da equipe", value: "Cada arquivo analisado, com data e responsável" },
+  {
+    icon: FileText,
+    label: "Documentos enviados",
+    value: "CRLV, nota fiscal, laudos e manutenções",
+  },
+  {
+    icon: BadgeCheck,
+    label: "Conferência da equipe",
+    value: "Cada arquivo analisado, com data e responsável",
+  },
 ];
 
 export function DossierSection() {
@@ -285,7 +298,11 @@ const STEPS = [
   { n: "03", title: "Faça seu cadastro", text: "Crie ou complete a sua conta." },
   { n: "04", title: "Realize o pagamento", text: "A cobrança é feita pelo provedor de pagamento." },
   { n: "05", title: "Análise da membresia", text: "O DDP AGRO valida a solicitação." },
-  { n: "06", title: "Acesso liberado", text: "Você entra na plataforma conforme seu perfil e plano." },
+  {
+    n: "06",
+    title: "Acesso liberado",
+    text: "Você entra na plataforma conforme seu perfil e plano.",
+  },
 ];
 
 export function HowItWorksSection() {
@@ -317,12 +334,36 @@ export function HowItWorksSection() {
 /* --------------------------------- Segurança ---------------------------------- */
 
 const SECURITY = [
-  { icon: UserCheck, title: "Membros aprovados", text: "Cada cadastro passa por análise antes de liberar o acesso." },
-  { icon: Search, title: "Anúncios moderados", text: "Os anúncios são revisados antes de ficarem visíveis." },
-  { icon: FileText, title: "Documentação organizada", text: "Documentos ficam no dossiê da máquina, com status e data." },
-  { icon: History, title: "Negociação registrada", text: "Proposta, contraproposta, prazos e mensagens ficam gravados." },
-  { icon: ClipboardList, title: "Auditoria interna", text: "Operações sensíveis geram registro para a administração." },
-  { icon: ShieldCheck, title: "Proteção de dados", text: "Você pode solicitar acesso, correção ou exclusão dos seus dados." },
+  {
+    icon: UserCheck,
+    title: "Membros aprovados",
+    text: "Cada cadastro passa por análise antes de liberar o acesso.",
+  },
+  {
+    icon: Search,
+    title: "Anúncios moderados",
+    text: "Os anúncios são revisados antes de ficarem visíveis.",
+  },
+  {
+    icon: FileText,
+    title: "Documentação organizada",
+    text: "Documentos ficam no dossiê da máquina, com status e data.",
+  },
+  {
+    icon: History,
+    title: "Negociação registrada",
+    text: "Proposta, contraproposta, prazos e mensagens ficam gravados.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Auditoria interna",
+    text: "Operações sensíveis geram registro para a administração.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Proteção de dados",
+    text: "Você pode solicitar acesso, correção ou exclusão dos seus dados.",
+  },
 ];
 
 export function SecuritySection() {

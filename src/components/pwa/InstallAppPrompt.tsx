@@ -11,14 +11,17 @@ const DISMISSED_KEY = "ddp-agro-install-prompt-dismissed";
 
 function isAppleMobile() {
   const platform = navigator.platform ?? "";
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
 }
 
 function isInstalled() {
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
-    ("standalone" in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
+    ("standalone" in navigator &&
+      Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
   );
 }
 
@@ -94,8 +97,10 @@ export function InstallAppPrompt() {
           <p className="font-display text-base font-semibold text-forest">Instale a DDP AGRO</p>
           {showAppleGuide ? (
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Toque em <Share className="mx-1 inline h-4 w-4 text-forest" aria-label="Compartilhar" />
-              e depois em <strong className="font-semibold text-foreground">Adicionar à Tela de Início</strong>.
+              Toque em{" "}
+              <Share className="mx-1 inline h-4 w-4 text-forest" aria-label="Compartilhar" />e
+              depois em{" "}
+              <strong className="font-semibold text-foreground">Adicionar à Tela de Início</strong>.
             </p>
           ) : installEvent ? (
             <p className="mt-1 text-sm text-muted-foreground">
@@ -103,7 +108,8 @@ export function InstallAppPrompt() {
             </p>
           ) : (
             <p className="mt-1 text-sm text-muted-foreground">
-              Abra o menu do navegador e escolha <strong className="font-semibold text-foreground">Instalar aplicativo</strong>.
+              Abra o menu do navegador e escolha{" "}
+              <strong className="font-semibold text-foreground">Instalar aplicativo</strong>.
             </p>
           )}
         </div>

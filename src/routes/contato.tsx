@@ -38,11 +38,12 @@ function Contato() {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("privacy_requests").insert({
-      email,
-      request_type: type,
-      details,
-    });
+    // Dúvida comercial vai para a caixa de contato. Pedidos de titular (LGPD) têm prazo legal
+    // e ficam na fila de privacidade.
+    const { error } =
+      type === "contact"
+        ? await supabase.from("contact_messages").insert({ email, details })
+        : await supabase.from("privacy_requests").insert({ email, request_type: type, details });
     setSaving(false);
     if (error) {
       toast.error("Não foi possível registrar a solicitação.", { description: error.message });

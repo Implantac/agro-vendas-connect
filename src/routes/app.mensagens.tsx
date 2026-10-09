@@ -139,7 +139,11 @@ function Mensagens() {
                   >
                     <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-secondary">
                       {cover && (
-                        <img src={cover.url} alt="" className="h-full w-full bg-card object-contain" />
+                        <img
+                          src={cover.url}
+                          alt=""
+                          className="h-full w-full bg-card object-contain"
+                        />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">

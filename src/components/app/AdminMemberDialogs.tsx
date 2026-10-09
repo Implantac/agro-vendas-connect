@@ -15,7 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  adminAnonymizeUser,
   adminCreateUser,
+  adminExportUserData,
   adminSendPasswordReset,
   adminSetPassword,
   adminUpdateProfile,
@@ -193,6 +195,33 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
   const updateProfile = useServerFn(adminUpdateProfile);
   const setUserPassword = useServerFn(adminSetPassword);
   const sendReset = useServerFn(adminSendPasswordReset);
+  const exportData = useServerFn(adminExportUserData);
+  const anonymize = useServerFn(adminAnonymizeUser);
+
+  const exportMutation = useMutation({
+    mutationFn: () => exportData({ data: { userId: member.id } }),
+    onSuccess: (result) => {
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `dados-${member.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Exportação gerada.");
+    },
+    onError: (e: Error) => toast.error("Não foi possível exportar.", { description: e.message }),
+  });
+
+  const anonymizeMutation = useMutation({
+    mutationFn: () => anonymize({ data: { userId: member.id, confirm: "ANONIMIZAR" } }),
+    onSuccess: () => {
+      toast.success("Conta anonimizada.");
+      setOpen(false);
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) => toast.error("Não foi possível anonimizar.", { description: e.message }),
+  });
 
   const [form, setForm] = useState({
     full_name: member.full_name,
@@ -354,6 +383,36 @@ export function AdminEditMemberDialog({ member }: { member: AdminMemberRow }) {
               onClick={() => resetMutation.mutate()}
             >
               Enviar redefinição
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-2 rounded-md border border-border p-3">
+          <p className="text-xs font-semibold text-forest">Dados pessoais (LGPD)</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={exportMutation.isPending}
+              onClick={() => exportMutation.mutate()}
+            >
+              {exportMutation.isPending ? "Gerando..." : "Exportar dados (JSON)"}
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              disabled={anonymizeMutation.isPending}
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "Anonimizar esta conta? Os dados pessoais serão substituídos e o acesso será bloqueado. Pedidos e aceites legais são mantidos por obrigação legal. Esta ação não pode ser desfeita.",
+                  )
+                ) {
+                  anonymizeMutation.mutate();
+                }
+              }}
+            >
+              Anonimizar conta
             </Button>
           </div>
         </div>

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sql:
+    name: Migrations e suítes SQL (Postgres 17)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ddp_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ddp_test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cliente psql 17
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y postgresql-client-17 || sudo apt-get install -y postgresql-client
+          psql --version
+      - name: Suítes SQL
+        run: bash tests/sql/run.sh
+
+  app:
+    name: Tipos, lint e build
+    runs-on: ubuntu-latest
+    env:
+      # Chaves públicas do projeto Supabase (publishable). Configure em Settings > Variables.
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_SUPABASE_PROJECT_ID: ${{ vars.VITE_SUPABASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.2"
+      - name: Instalar dependências
+        run: bun install --frozen-lockfile
+      - name: Tipos (tsc)
+        run: bunx tsc --noEmit
+      - name: Testes unitários
+        run: bun run test:unit
+      - name: Lint
+        run: bun run lint
+      - name: Build
+        run: bun run build

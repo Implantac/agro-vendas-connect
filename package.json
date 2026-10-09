@@ -9,6 +9,8 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test:unit": "bun test tests/unit",
+    "test:sql": "bash tests/sql/run.sh",
     "format": "prettier --write ."
   },
   "overrides": {

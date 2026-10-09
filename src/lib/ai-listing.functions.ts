@@ -13,7 +13,12 @@ const InputSchema = z.object({
   state: z.string().max(60).optional().default(""),
   price: z.string().max(30).optional().default(""),
   notes: z.string().max(2000).optional().default(""),
-  images: z.array(z.string().startsWith("data:image/")).max(3).optional().default([]),
+  // Limite por imagem (~750 KB em base64). As fotos chegam já reduzidas para 768px pelo cliente.
+  images: z
+    .array(z.string().startsWith("data:image/").max(1_000_000, "Imagem grande demais."))
+    .max(3)
+    .optional()
+    .default([]),
 });
 
 export type ListingCopy = {
@@ -76,12 +81,55 @@ const RESPONSE_FORMAT = {
   },
 };
 
+/** Cota por membro: gerações nas últimas 24 horas. */
+export const AI_DAILY_LIMIT = 30;
+const AI_WINDOW_MS = 24 * 60 * 60 * 1000;
+/** Tempo máximo esperando o gateway antes de desistir. */
+const AI_TIMEOUT_MS = 60_000;
+
 export const generateListingCopy = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
-  .handler(async ({ data }): Promise<ListingCopy> => {
+  .handler(async ({ data, context }): Promise<ListingCopy> => {
+    // 1) Só membro aprovado (vendedor) ou admin usa o gerador. O anúncio ainda não existe
+    //    na tela de publicação, então a permissão é verificada no membro.
+    const [{ data: profile, error: profileError }, { data: isAdmin, error: adminError }] =
+      await Promise.all([
+        context.supabase
+          .from("profiles")
+          .select("status, role")
+          .eq("id", context.userId)
+          .maybeSingle(),
+        context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+      ]);
+    if (profileError || adminError) throw new Error("Não foi possível verificar sua permissão.");
+    const canUse =
+      Boolean(isAdmin) || (profile?.status === "approved" && profile.role === "seller");
+    if (!canUse)
+      throw new Error("A geração por IA está disponível apenas para vendedores aprovados.");
+
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("A geração por IA não está configurada.");
+
+    // 2) Cota diária. O registro é feito com service role, antes da chamada, para que
+    //    falhas do gateway também contem (evita abuso por tentativas repetidas).
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - AI_WINDOW_MS).toISOString();
+    const { count, error: countError } = await supabaseAdmin
+      .from("ai_usage_events")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", context.userId)
+      .gte("created_at", since);
+    if (countError) throw new Error("Não foi possível verificar a cota de uso.");
+    if ((count ?? 0) >= AI_DAILY_LIMIT) {
+      throw new Error(
+        `Limite de ${AI_DAILY_LIMIT} gerações em 24 horas atingido. Tente novamente mais tarde.`,
+      );
+    }
+    const { error: insertError } = await supabaseAdmin
+      .from("ai_usage_events")
+      .insert({ user_id: context.userId, kind: "listing_copy" });
+    if (insertError) throw new Error("Não foi possível registrar o uso da IA.");
 
     const content: Array<Record<string, unknown>> = [
       { type: "input_text", text: buildBriefing(data) },
@@ -105,6 +153,10 @@ export const generateListingCopy = createServerFn({ method: "POST" })
         store: false,
         text: { format: RESPONSE_FORMAT },
       }),
+      signal: AbortSignal.timeout(AI_TIMEOUT_MS),
+    }).catch((error: unknown) => {
+      console.error("AI gateway unreachable", error);
+      throw new Error("A geração demorou demais. Tente novamente.");
     });
 
     if (!response.ok || !response.body) {

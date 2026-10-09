@@ -106,11 +106,7 @@ export function AppLayout() {
   const isSuperAdmin = isAdmin;
 
   // Todo membro aprovado pode comprar e vender: a tela aberta define a visão.
-  const viewMode: AppMode = isSellerOnlyRoute
-    ? "vendedor"
-    : isBuyerOnlyRoute
-      ? "comprador"
-      : mode;
+  const viewMode: AppMode = isSellerOnlyRoute ? "vendedor" : isBuyerOnlyRoute ? "comprador" : mode;
 
   const blockedRoute = ready && !isSuperAdmin && isAdminOnlyRoute;
   // Admin entra direto no command center.
@@ -128,7 +124,10 @@ export function AppLayout() {
     if (!ready) return;
     if (blockedRoute) {
       toast.info("Esta área é exclusiva da administração.");
-      void navigate({ to: HOME_ROUTE_BY_MODE[mode === "admin" ? "comprador" : mode], replace: true });
+      void navigate({
+        to: HOME_ROUTE_BY_MODE[mode === "admin" ? "comprador" : mode],
+        replace: true,
+      });
       return;
     }
     if (needsAdminHome) {
@@ -403,13 +402,7 @@ export function AppLayout() {
 }
 
 /** Seletor "Quero comprar | Quero vender": todo membro aprovado usa as duas áreas. */
-function ModeSwitch({
-  mode,
-  onChange,
-}: {
-  mode: AppMode;
-  onChange: (next: AppMode) => void;
-}) {
+function ModeSwitch({ mode, onChange }: { mode: AppMode; onChange: (next: AppMode) => void }) {
   const options: { value: AppMode; label: string; icon: typeof Search }[] = [
     { value: "comprador", label: "Quero comprar", icon: Search },
     { value: "vendedor", label: "Quero vender", icon: Store },
@@ -430,9 +423,7 @@ function ModeSwitch({
             aria-pressed={active}
             className={cn(
               "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
-              active
-                ? "bg-card text-forest shadow-sm"
-                : "text-muted-foreground hover:text-forest",
+              active ? "bg-card text-forest shadow-sm" : "text-muted-foreground hover:text-forest",
             )}
           >
             <option.icon className="h-3.5 w-3.5" />
@@ -443,8 +434,6 @@ function ModeSwitch({
     </div>
   );
 }
-
-
 
 function SidebarNav({
   groups,

@@ -1,7 +1,7 @@
-# AUDITORIA.md — DDP AGRO (Fase A, somente leitura)
+# AUDITORIA.md — DDP AGRO
 
-Data: 10/09/2026 · Escopo: repositório atual (frontend TanStack Start + React Query, backend Supabase/Postgres com RLS, RPCs e triggers).
-Nenhum código, migration ou dado foi alterado nesta fase.
+Fase A (somente leitura, seção 1 a 4) e Fase B (correções, seção 5). Escopo: frontend TanStack Start + React Query, backend Supabase/Postgres com RLS, RPCs e triggers.
+A seção 1 é o registro original da Fase A. O status atual de cada item está na seção 5.
 
 ## Panorama
 
@@ -52,4 +52,55 @@ LOTE 2 (P1 banco/domínio): A-09, A-10, A-11, A-12, A-13.
 LOTE 3 (P1 produto): A-14, A-15, A-16.
 LOTE 4 (P2): A-17, A-18, A-19.
 
-**Fase A concluída. Aguardando aprovação antes de qualquer alteração de código.**
+
+## 5. Status após a Fase B (correções)
+
+Critério: "corrigido" significa verificado no banco (suítes SQL com ROLLBACK, rodadas do zero com `tests/sql/run.sh`) ou no código (leitura direta do arquivo). Itens que dependem de conta, domínio ou configuração externa aparecem como **pendente externo**.
+
+| ID | Status | Evidência |
+|----|--------|-----------|
+| A-01 `.env` versionado | Corrigido | `.env` saiu do índice (`git rm --cached`); o arquivo local permanece e continua no `.gitignore`. O conteúdo tinha só chaves publicáveis. O arquivo continua no histórico do git. |
+| A-02 pagamento de membresia confirmado pelo próprio usuário | Corrigido | Botão "Já efetuei o pagamento" removido de `membresia.tsx`. A confirmação é do admin (`admin_confirm_membership_payment`) ou do webhook. |
+| A-03 webhook financeiro e idempotência | Corrigido no código; pendente externo | O webhook existe em `src/routes/api/public/webhooks/payments.ts`: token comparado em tempo constante, 503 sem segredo, RPC `gateway_apply_payment` com `(provider, event_id)` único. Testes T16 a T18 e `ciclo_pagamento.sql`. Falta a conta Asaas e o `PAYMENT_WEBHOOK_SECRET`. A flag `payments_enabled` está `false`. |
+| A-04 `privacy_requests` com INSERT público | Corrigido | Policies `privacy_requests_insert_anon` (só `user_id IS NULL`) e `privacy_requests_insert_self`. Canal sem conta tem limite de 5 pedidos por e-mail em 24 h (T10). |
+| A-05 LGPD como registro | Parcial | Aceite gravado no cadastro (T08, T09), exportação e anonimização pelo admin (`adminExportUserData`, `adminAnonymizeUser`), contato separado (T11). Falta: responsável operacional e SLA formal, e revisão jurídica dos termos. |
+| A-06 `orders` com UPDATE direto pelas partes | Corrigido | Só `orders_admin_update` existe para UPDATE. Transições passam pelas RPCs. |
+| A-07 observabilidade | Pendente | Nada implementado. Falta o DSN de monitoramento. |
+| A-08 cobertura de testes | Corrigido (parcial) | 6 suítes SQL (`tests/sql`), testes unitários (`tests/unit`), CI com Postgres 17 (`.github/workflows/ci.yml`). O e2e (`tests/e2e/run_e2e.py`) exige ambiente publicado e não roda no CI. |
+| A-09 `app_settings` legível por autenticados | Corrigido | Autenticado lê só `commission_percent` e `payments_enabled`. Anônimo lê só `payments_enabled`. |
+| A-10 `listing_price_history` legível por todos | Corrigido | Só anúncio aprovado, dono ou admin (`listing_price_history_read`). |
+| A-11 máquina separada de anúncio | Não tratado | Mudança de modelo de produto, fora do escopo desta fase. |
+| A-12 documentos e inspeção da máquina | Não tratado | Produto. Depende de decisão sobre verificação. |
+| A-13 geodados e raio de busca | Não tratado | Produto. |
+| A-14 e-mail transacional | Pendente externo | Depende de domínio verificado e de provedor (Resend/SES). |
+| A-15 reaceite de termos | Já existia | `AppLayout` bloqueia ações até o reaceite; rota `/aceite-atualizado`. Não alterado nesta fase. |
+| A-16 categorias sem gestão admin | Já existia | `app.admin.categorias.tsx`. Não alterado nesta fase. |
+| A-17 `select("*")` em listas | Parcial | Catálogo usa colunas explícitas (`CATALOG_LIST_SELECT`). Demais consultas ainda pendentes. |
+| A-18 métricas por consulta ampla | Não tratado | P2, sem volume que justifique agora. |
+| A-19 inteligência de preço e busca em linguagem natural | Não tratado | P2. Depende de base de dados. |
+
+### Achados novos da Fase B
+
+- **Crítico, corrigido:** `anon` e `authenticated` tinham TRUNCATE, REFERENCES e TRIGGER em tabelas de `public`. Confirmado em réplica (TRUNCATE apagou `app_settings`). Migration `20261009100000`.
+- **Alto, corrigido:** o service role não conseguia alterar `status` nem `role` de perfil, porque os guards dependiam de `auth.uid()`. Migration `20261009100000`.
+- **Crítico, corrigido:** dados fictícios em produção, incluindo 3 vendedores `.exemplo`, 8 anúncios `-demo` com máquinas "verificadas" sem verificação real, e anúncios "DDP AGRO Store" com descrição genérica. Migration `20261009100300`. Anúncios com pedido ou proposta nunca são apagados.
+- **Alto, corrigido:** cobrança online estava ligada (`payments_enabled = true`) sem credenciais. Desligada na migration `20261009100300`.
+- **Alto, corrigido:** a política de fotos listava o bucket inteiro para anônimos. Agora anônimos veem só anúncios aprovados. Migration `20261009100200`.
+- **Médio, corrigido:** o "Fale conosco" gravava dúvidas comerciais na fila LGPD, que tem prazo legal. Agora essas mensagens vão para `contact_messages`.
+- **Alto, corrigido:** o cadastro enviava CPF/CNPJ nos metadados de autenticação. Agora não envia.
+- **Médio, corrigido:** a geração por IA não tinha cota nem limite de tamanho. Agora tem 30 gerações por 24 h (`ai_usage_events`), limite de 1 MB por imagem, timeout de 60 s e exige membro aprovado vendedor ou admin.
+- **Médio, corrigido:** o catálogo filtrava categoria no navegador, depois de `limit(60)`. Agora a busca e a categoria são feitas no servidor, com paginação e teto de 500 anúncios.
+- **Médio, corrigido:** `adminCreateUser` e `adminUpdateProfile` ignoravam erros. Agora revertem ou falham explicitamente.
+- **Médio, corrigido:** a exclusão de usuário deixava órfãos. Substituída por anonimização (mantém pedidos e aceites por retenção obrigatória).
+- **Médio, corrigido:** o `createAsaasCharge` podia gerar cobrança duplicada. Trava com `checkout_started_at` (janela de 120 s), timeout de 15 s e liberação só quando a cobrança não foi criada.
+- **Baixo, corrigido:** `q.mjs` e `cron-auth.ts` sem referências foram removidos. A suíte `state_machine_tests.sql` tinha e-mails pessoais reais em comentário e dependia deles. Agora usa contas fictícias `*@example.invalid`.
+
+### Pendências externas (não concluídas)
+
+1. Credenciais Asaas, `PAYMENT_WEBHOOK_SECRET` e ativação de `payments_enabled` somente depois de testar o webhook em ambiente real.
+2. Configuração do Supabase: redirecionamento de autenticação e configuração de storage. O bucket `seller-logos` continua com leitura pública (decisão pendente).
+3. Domínio, e-mail transacional e monitoramento.
+4. Confirmar em produção se os dados demo foram removidos e se a conta `vendedor-demo-prod@example.invalid` e o `seller_profiles` do admin "DDP AGRO Comercio de Maquinas LTDA" são reais ou devem sair.
+5. Fotos: `uploadListingPhotos` grava URLs assinadas com validade de 5 anos. Não quebra o uso, mas é prazo longo para dado pessoal eventual.
+6. Admin pode alterar `payment_status` diretamente. Risco residual: a confirmação manual precisa de comprovante fora do sistema.
+7. Revisão jurídica dos termos antes do lançamento.

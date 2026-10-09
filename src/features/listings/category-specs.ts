@@ -96,7 +96,13 @@ const SPECS: Record<string, SpecField[]> = {
       numeric: true,
       unit: "L",
     },
-    { key: "barras", label: "Largura das barras", placeholder: "Ex.: 30", numeric: true, unit: "m" },
+    {
+      key: "barras",
+      label: "Largura das barras",
+      placeholder: "Ex.: 30",
+      numeric: true,
+      unit: "m",
+    },
     ...COMMON,
   ],
   "preparo-de-solo": [

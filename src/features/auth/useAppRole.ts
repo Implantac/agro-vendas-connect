@@ -37,11 +37,7 @@ export function setAppMode(mode: AppMode) {
 export function useAppRole() {
   const { profile, isAdmin } = useAuth();
   const role = profile?.role;
-  const stored = useSyncExternalStore(
-    subscribe,
-    read,
-    () => null as AppMode | null,
-  );
+  const stored = useSyncExternalStore(subscribe, read, () => null as AppMode | null);
 
   const defaultMode: AppMode =
     role === "admin" && isAdmin ? "admin" : role === "seller" ? "vendedor" : "comprador";

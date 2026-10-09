@@ -270,8 +270,8 @@ export function BuyerFilterPanel({
           <h2 className="mb-3 font-display text-sm font-bold text-forest">
             Características técnicas
           </h2>
-          {specFieldsFor(filters.categoria).filter((f) => facets.specValues[f.key]?.length).length ===
-          0 ? (
+          {specFieldsFor(filters.categoria).filter((f) => facets.specValues[f.key]?.length)
+            .length === 0 ? (
             <p className="text-xs text-muted-foreground">
               Os anúncios desta categoria ainda não têm características técnicas preenchidas.
             </p>
@@ -317,10 +317,7 @@ export function BuyerFilterPanel({
 
       {/* Distância / raio de busca */}
       <section className="border-t border-border px-5 py-4">
-        <DistanceFilter
-          radius={filters.raio}
-          onRadiusChange={(km) => setFilters({ raio: km })}
-        />
+        <DistanceFilter radius={filters.raio} onRadiusChange={(km) => setFilters({ raio: km })} />
       </section>
 
       {/* Ações */}

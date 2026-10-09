@@ -4,6 +4,7 @@ import { ShieldQuestion } from "lucide-react";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
+import { csvCell } from "@/lib/csv";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTimeBR } from "@/lib/format";
 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/app/admin/privacidade")({
 });
 
 const REQUEST_LABEL: Record<string, string> = {
+  contact: "Contato (dúvida comercial)",
   access: "Acesso aos dados",
   correction: "Correção",
   deletion: "Exclusão",
@@ -116,8 +118,17 @@ function AdminPrivacy() {
   }
 
   function exportCsv() {
-    const header =
-      "email;tipo;status;criada_em;prazo;atendida_em;detalhes;atendimento;evidencia";
+    const header = [
+      "email",
+      "tipo",
+      "status",
+      "criada_em",
+      "prazo",
+      "atendida_em",
+      "detalhes",
+      "atendimento",
+      "evidencia",
+    ];
     const rows = requests.map((r) =>
       [
         r.email,
@@ -126,12 +137,17 @@ function AdminPrivacy() {
         r.created_at,
         r.due_at ?? "",
         r.handled_at ?? "",
-        (r.details ?? "").replace(/[;\n]/g, " "),
-        (r.handler_notes ?? "").replace(/[;\n]/g, " "),
+        r.details ?? "",
+        r.handler_notes ?? "",
         r.evidence_url ?? "",
-      ].join(";"),
+      ]
+        .map(csvCell)
+        .join(";"),
     );
-    const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
+    // BOM para o Excel reconhecer UTF-8 e ";" como separador.
+    const blob = new Blob(["\uFEFF" + [header.join(";"), ...rows].join("\r\n")], {
+      type: "text/csv;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -193,9 +209,7 @@ function AdminPrivacy() {
                     {REQUEST_LABEL[r.request_type] ?? r.request_type}
                   </p>
                   <p className="text-sm text-forest">{r.email}</p>
-                  {r.details && (
-                    <p className="mt-1 text-sm text-muted-foreground">{r.details}</p>
-                  )}
+                  {r.details && <p className="mt-1 text-sm text-muted-foreground">{r.details}</p>}
                   <p className="mt-1 text-xs text-muted-foreground">
                     Recebida em {formatDateTimeBR(r.created_at)} • situação:{" "}
                     {STATUS_LABEL[r.status] ?? r.status}

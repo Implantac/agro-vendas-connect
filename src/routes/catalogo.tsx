@@ -14,7 +14,12 @@ import { ListingCard } from "@/components/catalog/ListingCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { fetchApprovedListings, fetchCategories, fetchCatalogFacetRows } from "@/lib/queries";
+import {
+  fetchAllApprovedListings,
+  fetchCategories,
+  fetchCatalogFacetRows,
+  MAX_CATALOG_ROWS,
+} from "@/lib/queries";
 import { formatBRL } from "@/lib/format";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -122,10 +127,10 @@ function Catalogo() {
     staleTime: 60_000,
   });
 
-  const { data: listings = [], isLoading } = useQuery({
+  const { data: catalog, isLoading } = useQuery({
     queryKey: ["listings", search],
     queryFn: () =>
-      fetchApprovedListings({
+      fetchAllApprovedListings({
         ...(search.q ? { search: search.q } : {}),
         ...(search.categoria ? { category: search.categoria } : {}),
         ...(search.condicao ? { condition: search.condicao } : {}),
@@ -140,6 +145,7 @@ function Catalogo() {
         sort: search.ordem ?? "recent",
       }),
   });
+  const listings = catalog?.rows ?? [];
 
   /** Opções reais derivadas do acervo aprovado. */
   const options = useMemo(() => {
@@ -431,7 +437,6 @@ function Catalogo() {
             </select>
           </div>
 
-
           <Button
             variant="ghost"
             className="w-full"
@@ -444,7 +449,9 @@ function Catalogo() {
         <section>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">
-              {isLoading ? "Carregando anúncios..." : `${listings.length} anúncio(s) encontrado(s)`}
+              {isLoading
+                ? "Carregando anúncios..."
+                : `${listings.length} anúncio(s) encontrado(s)${catalog?.truncated ? ` (mostrando os primeiros ${MAX_CATALOG_ROWS}; refine a busca)` : ""}`}
             </p>
             <select
               aria-label="Ordenar"

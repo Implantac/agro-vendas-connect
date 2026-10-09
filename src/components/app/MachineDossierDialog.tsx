@@ -214,7 +214,9 @@ export function MachineDossierDialog({
                 <div key={label as string}>
                   <dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt>
                   <dd className="mt-0.5 font-medium text-forest">
-                    {value || <span className="font-normal text-muted-foreground">Não informado</span>}
+                    {value || (
+                      <span className="font-normal text-muted-foreground">Não informado</span>
+                    )}
                   </dd>
                 </div>
               ))}

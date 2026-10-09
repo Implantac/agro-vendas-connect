@@ -115,8 +115,9 @@ function AdminAudit() {
         </ul>
       </div>
 
-      <h2 className="mt-10 font-display text-lg font-semibold text-forest">Ações administrativas</h2>
-
+      <h2 className="mt-10 font-display text-lg font-semibold text-forest">
+        Ações administrativas
+      </h2>
 
       <div className="mt-6 overflow-hidden rounded-md border border-border bg-card">
         <ul className="divide-y divide-border">

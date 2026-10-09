@@ -183,7 +183,8 @@ function NegotiationDetail() {
       setText("");
       void queryClient.invalidateQueries({ queryKey: ["negotiation", id] });
     },
-    onError: (e: Error) => reportError(e, { operation: "Enviar mensagem", category: "negotiation" }),
+    onError: (e: Error) =>
+      reportError(e, { operation: "Enviar mensagem", category: "negotiation" }),
   });
 
   if (isLoading) {
@@ -462,8 +463,8 @@ function NegotiationDetail() {
               </dl>
               <p className="mt-3 text-xs text-muted-foreground">
                 A confirmação de pagamento é registrada pela DDP AGRO quando o provedor confirma;
-                nenhuma das partes muda esse status sozinha. A DDP AGRO registra o histórico, mas não garante a
-                conclusão do negócio.
+                nenhuma das partes muda esse status sozinha. A DDP AGRO registra o histórico, mas
+                não garante a conclusão do negócio.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {ORDER_NEXT_STEPS[order.status]?.length ? (
@@ -485,8 +486,9 @@ function NegotiationDetail() {
                   ))
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    Este pedido está {(ORDER_STATUS_LABELS[order.status] ?? order.status).toLowerCase()} e
-                    não muda mais de situação.
+                    Este pedido está{" "}
+                    {(ORDER_STATUS_LABELS[order.status] ?? order.status).toLowerCase()} e não muda
+                    mais de situação.
                   </p>
                 )}
               </div>

@@ -73,7 +73,9 @@ function toMachineRow(sellerId: string, values: ListingFormValues) {
 export async function fetchMyMachines(sellerId: string) {
   const { data, error } = await supabase
     .from("machines")
-    .select("id,category_id,brand,model,manufacture_year,condition,hours_used,technical_data_json,updated_at")
+    .select(
+      "id,category_id,brand,model,manufacture_year,condition,hours_used,technical_data_json,updated_at",
+    )
     .eq("owner_id", sellerId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
@@ -117,7 +119,11 @@ export async function createListing(
   return data;
 }
 
-export async function updateListing(listingId: string, sellerId: string, values: ListingFormValues) {
+export async function updateListing(
+  listingId: string,
+  sellerId: string,
+  values: ListingFormValues,
+) {
   let machineId = values.machineId;
   if (machineId) {
     const { error: machineError } = await supabase

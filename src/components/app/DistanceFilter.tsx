@@ -97,8 +97,8 @@ export function DistanceFilter({
       </Select>
 
       <p className="text-[11px] leading-relaxed text-muted-foreground">
-        Distância aproximada: calculada pelo centro do estado do anúncio, não pelo endereço exato
-        da máquina.
+        Distância aproximada: calculada pelo centro do estado do anúncio, não pelo endereço exato da
+        máquina.
       </p>
     </div>
   );

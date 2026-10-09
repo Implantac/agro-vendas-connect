@@ -217,8 +217,10 @@ function EditarAnuncio() {
       toast.success("Anúncio excluído.");
       void queryClient.invalidateQueries({ queryKey: ["my-listings"] });
       void navigate({ to: "/app/meus-anuncios" });
-    } catch {
-      toast.error("Não foi possível excluir o anúncio.");
+    } catch (e) {
+      toast.error("Não foi possível excluir o anúncio.", {
+        description: e instanceof Error ? e.message : (e as { message?: string })?.message,
+      });
     }
   }
 

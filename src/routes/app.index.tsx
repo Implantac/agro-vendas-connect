@@ -38,7 +38,8 @@ import {
 } from "@/lib/app-queries";
 import { describeFilters, fetchSavedSearches, jsonToSearchParams } from "@/lib/saved-searches";
 import { fetchApprovedListings, fetchCategories } from "@/lib/queries";
-import { formatBRL, LISTING_STATUS_LABELS, PROPOSAL_STATUS_LABELS } from "@/lib/format";
+import { formatBRL } from "@/lib/format";
+import { StatusBadge } from "@/components/app/StatusBadge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/")({
@@ -421,7 +422,7 @@ function SellerDashboard() {
                     <tr key={l.id} className="border-b border-border/60 last:border-0">
                       <td className="py-2.5 pr-3 font-medium text-forest">{l.title}</td>
                       <td className="py-2.5 pr-3 text-muted-foreground">
-                        {LISTING_STATUS_LABELS[l.status] ?? l.status}
+                        <StatusBadge kind="listing" status={l.status} />
                       </td>
                       <td className="py-2.5 pr-3 text-muted-foreground">
                         {(lead?.favorites ?? 0) + (lead?.conversations ?? 0)}
@@ -700,18 +701,7 @@ function BuyerDashboard() {
                       Compra • Proposta de {formatBRL(p.amount)}
                     </p>
                   </div>
-                  <span
-                    className={cn(
-                      "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold",
-                      p.status === "accepted"
-                        ? "bg-green-100 text-green-700"
-                        : p.status === "rejected"
-                          ? "bg-destructive/10 text-destructive"
-                          : "bg-secondary text-forest",
-                    )}
-                  >
-                    {PROPOSAL_STATUS_LABELS[p.status] ?? p.status}
-                  </span>
+                  <StatusBadge kind="proposal" status={p.status} className="shrink-0" />
                 </Link>
               );
             })}

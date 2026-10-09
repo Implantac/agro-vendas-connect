@@ -132,6 +132,9 @@ function Favoritos() {
             preço e disponibilidade.
           </p>
           <Button asChild className="mt-5 bg-accent text-accent-foreground hover:bg-accent/90">
+            <Link to="/catalogo">Explorar o catálogo</Link>
+          </Button>
+          <Button asChild className="mt-5 bg-accent text-accent-foreground hover:bg-accent/90">
             <Link to="/app/comprar">Buscar máquinas</Link>
           </Button>
         </div>

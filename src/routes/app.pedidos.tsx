@@ -5,7 +5,8 @@ import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyOrders } from "@/lib/app-queries";
-import { formatBRL, formatDateBR, ORDER_STATUS_LABELS } from "@/lib/format";
+import { formatBRL, formatDateBR } from "@/lib/format";
+import { StatusBadge } from "@/components/app/StatusBadge";
 
 export const Route = createFileRoute("/app/pedidos")({
   head: () => ({
@@ -78,9 +79,7 @@ function Pedidos() {
                     <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-forest">
                       {isBuyer ? "Compra" : "Venda"}
                     </span>
-                    <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold text-forest">
-                      {ORDER_STATUS_LABELS[order.status] ?? order.status}
-                    </span>
+                    <StatusBadge kind="order" status={order.status} />
                   </div>
                   <p className="mt-2 truncate font-display text-base font-semibold text-forest">
                     {listing?.title ?? "Implemento"}

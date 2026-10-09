@@ -20,12 +20,10 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function ProposalDialog({
   listingId,
-  sellerId,
   listingTitle,
   suggestedAmount,
 }: {
   listingId: string;
-  sellerId: string;
   listingTitle: string;
   suggestedAmount: number | null;
 }) {
@@ -44,50 +42,25 @@ export function ProposalDialog({
       return;
     }
     setSaving(true);
-    const { data: proposal, error } = await supabase
-      .from("proposals")
-      .insert({
-        listing_id: listingId,
-        buyer_id: user.id,
-        seller_id: sellerId,
-        amount: value,
-        message: message || null,
-        status: "open",
-      })
-      .select("id")
-      .single();
-
-    if (error || !proposal) {
-      setSaving(false);
-      toast.error("Não foi possível enviar a proposta.", { description: error?.message });
-      return;
-    }
-
-    await supabase.from("proposal_events").insert({
-      proposal_id: proposal.id,
-      actor_id: user.id,
-      event_type: "created",
-      new_status: "open",
-      message: message || null,
+    // Proposta, evento, conversa e mensagem são gravados numa única transação
+    // no banco (RPC create_proposal). Falha em qualquer etapa desfaz tudo.
+    const { data, error } = await supabase.rpc("create_proposal", {
+      _listing_id: listingId,
+      _amount: value,
+      _message: message.trim() || null,
     });
 
-    const { data: conversation } = await supabase
-      .from("conversations")
-      .insert({
-        listing_id: listingId,
-        proposal_id: proposal.id,
-        buyer_id: user.id,
-        seller_id: sellerId,
-      })
-      .select("id")
-      .single();
+    const proposalId =
+      data && typeof data === "object" && "proposal_id" in data
+        ? String((data as { proposal_id: unknown }).proposal_id)
+        : null;
 
-    if (conversation && message) {
-      await supabase.from("messages").insert({
-        conversation_id: conversation.id,
-        sender_id: user.id,
-        content: message,
+    if (error || !proposalId) {
+      setSaving(false);
+      toast.error("Não foi possível enviar a proposta.", {
+        description: error?.message ?? "Tente novamente em instantes.",
       });
+      return;
     }
 
     // A notificação ao vendedor é gerada automaticamente pelo banco de dados.
@@ -98,7 +71,7 @@ export function ProposalDialog({
     toast.success("Proposta enviada", {
       description: "Acompanhe a negociação no seu painel.",
     });
-    void navigate({ to: "/app/negociacao/$id", params: { id: proposal.id } });
+    void navigate({ to: "/app/negociacao/$id", params: { id: proposalId } });
   }
 
   return (

@@ -91,9 +91,10 @@ function Empresa() {
       logo_url: logoUrl,
       website: form.website.trim() || null,
     };
-    const { error } = seller
-      ? await supabase.from("seller_profiles").update(payload).eq("id", seller.id)
-      : await supabase.from("seller_profiles").insert(payload);
+    // Upsert pelo user_id (único): evita a corrida entre ler, depois inserir ou atualizar.
+    const { error } = await supabase
+      .from("seller_profiles")
+      .upsert(payload, { onConflict: "user_id" });
     setSaving(false);
     if (error) {
       toast.error("Não foi possível salvar os dados da empresa.");

@@ -16,7 +16,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyListings, updateListingStatus } from "@/lib/app-queries";
 import { deleteListing } from "@/lib/listing-manage";
-import { CONDITION_LABELS, formatBRL, LISTING_STATUS_LABELS } from "@/lib/format";
+import { CONDITION_LABELS, formatBRL } from "@/lib/format";
+import { StatusBadge } from "@/components/app/StatusBadge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/meus-anuncios")({
@@ -55,7 +56,10 @@ function MeusAnuncios() {
       toast.success("Anúncio excluído.");
       void queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
-    onError: () => toast.error("Não foi possível excluir o anúncio."),
+    onError: (e: unknown) =>
+      toast.error("Não foi possível excluir o anúncio.", {
+        description: e instanceof Error ? e.message : (e as { message?: string })?.message,
+      }),
   });
 
   return (
@@ -114,20 +118,7 @@ function MeusAnuncios() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className={cn(
-                        "rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                        l.status === "approved"
-                          ? "bg-green-100 text-green-700"
-                          : l.status === "in_review"
-                            ? "bg-secondary text-forest"
-                            : l.status === "rejected"
-                              ? "bg-destructive/10 text-destructive"
-                              : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {LISTING_STATUS_LABELS[l.status] ?? l.status}
-                    </span>
+                    <StatusBadge kind="listing" status={l.status} />
                     <span className="text-xs text-muted-foreground">
                       {CONDITION_LABELS[l.condition] ?? l.condition}
                     </span>

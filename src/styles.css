@@ -168,6 +168,12 @@
     border-color: var(--color-border);
   }
 
+  /* Foco visível para teclado. Componentes com ring próprio (classes) continuam como estão. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);

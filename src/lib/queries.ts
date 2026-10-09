@@ -33,33 +33,6 @@ export async function fetchCategories() {
   return data ?? [];
 }
 
-export interface PlatformStats {
-  listings: number;
-  categories: number;
-  states: number;
-  verifiedSellers: number;
-}
-
-/** Números reais da plataforma, usados na vitrine pública. */
-export async function fetchPlatformStats(): Promise<PlatformStats> {
-  const [listings, categories, sellers, regions] = await Promise.all([
-    supabase.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
-    supabase.from("categories").select("id", { count: "exact", head: true }).eq("active", true),
-    supabase
-      .from("seller_profiles")
-      .select("id", { count: "exact", head: true })
-      .eq("verification_status", "approved"),
-    supabase.from("listings").select("state").eq("status", "approved").not("state", "is", null),
-  ]);
-
-  return {
-    listings: listings.count ?? 0,
-    categories: categories.count ?? 0,
-    states: new Set((regions.data ?? []).map((r) => r.state)).size,
-    verifiedSellers: sellers.count ?? 0,
-  };
-}
-
 export interface CatalogFilters {
   search?: string;
   category?: string;
@@ -229,16 +202,45 @@ export interface CatalogFacetRow {
 }
 
 /** Base de dados usada para calcular contagens cruzadas de facetas. */
+/** Teto de linhas usado para montar os filtros (facetas) do catálogo. */
+export const FACET_MAX_ROWS = 5000;
+const FACET_PAGE_SIZE = 1000;
+
+/**
+ * Busca anúncios aprovados para montar as facetas do catálogo.
+ * O PostgREST devolve no máximo 1000 linhas por requisição; por isso pagina
+ * com ordenação estável por id. Acima de FACET_MAX_ROWS, avisa no console:
+ * facetas incompletas precisam de RPC no banco (pendência registrada em AUDITORIA.md).
+ */
 export async function fetchCatalogFacetRows(): Promise<CatalogFacetRow[]> {
-  const { data, error } = await supabase
-    .from("listings")
-    .select(
-      "id,title,model,brand,manufacture_year,price,condition,state,city,hours_used,technical_data_json,categories(name,slug)",
-    )
-    .eq("status", "approved");
-  if (error) throw error;
-  return (data ?? []).map((r) => {
-    const row = r as typeof r & { categories: { name: string; slug: string } | null };
+  type FacetDbRow = Omit<CatalogFacetRow, "categorySlug" | "categoryName" | "specs"> & {
+    technical_data_json: unknown;
+    categories: { name: string; slug: string } | null;
+  };
+  const collected: FacetDbRow[] = [];
+  let truncated = true;
+  for (let from = 0; from < FACET_MAX_ROWS; from += FACET_PAGE_SIZE) {
+    const to = Math.min(from + FACET_PAGE_SIZE, FACET_MAX_ROWS) - 1;
+    const { data, error } = await supabase
+      .from("listings")
+      .select(
+        "id,title,model,brand,manufacture_year,price,condition,state,city,hours_used,technical_data_json,categories(name,slug)",
+      )
+      .eq("status", "approved")
+      .order("id", { ascending: true })
+      .range(from, to);
+    if (error) throw error;
+    const page = (data ?? []) as unknown as FacetDbRow[];
+    collected.push(...page);
+    if (page.length < to - from + 1) {
+      truncated = false;
+      break;
+    }
+  }
+  if (truncated) {
+    console.warn(`Catálogo: facetas calculadas com os primeiros ${FACET_MAX_ROWS} anúncios.`);
+  }
+  return collected.map((row) => {
     return {
       id: row.id,
       title: row.title,

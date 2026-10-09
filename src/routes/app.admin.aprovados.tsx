@@ -5,7 +5,7 @@ import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchApprovedMembers } from "@/lib/admin-queries";
-import { formatBRL } from "@/lib/format";
+import { formatBRL, LISTING_STATUS_LABELS } from "@/lib/format";
 import { reportError } from "@/lib/report-error";
 import { cn } from "@/lib/utils";
 
@@ -27,16 +27,6 @@ const ROLE_LABELS: Record<string, string> = {
   buyer: "Comprador",
   seller: "Vendedor",
   admin: "Administrador",
-};
-
-const LISTING_STATUS_LABELS: Record<string, string> = {
-  draft: "Rascunho",
-  in_review: "Em análise",
-  approved: "Publicado",
-  rejected: "Recusado",
-  paused: "Pausado",
-  sold: "Vendido",
-  archived: "Arquivado",
 };
 
 const FILTERS = [

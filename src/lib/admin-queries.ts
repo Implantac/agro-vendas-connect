@@ -10,29 +10,43 @@ export interface AdminOverview {
   proposals: number;
 }
 
-async function count(table: "profiles" | "listings" | "proposals", apply?: (q: never) => never) {
-  void apply;
-  const { count: total } = await supabase.from(table).select("id", { count: "exact", head: true });
+type CountableTable = "profiles" | "listings" | "proposals";
+
+async function countRows(
+  table: CountableTable,
+  apply?: (q: ReturnType<ReturnType<typeof supabase.from>["select"]>) => unknown,
+): Promise<number> {
+  let q = supabase.from(table).select("id", { count: "exact", head: true });
+  if (apply) q = apply(q) as typeof q;
+  const { count: total, error } = await q;
+  if (error) throw error;
   return total ?? 0;
 }
 
+/**
+ * Indicadores do painel. Usa contagem exata no banco (head: true), sem baixar linhas:
+ * baixar as tabelas inteiras estourava o limite de 1000 linhas do PostgREST e
+ * mostrava números errados sem aviso.
+ */
 export async function fetchAdminOverview(): Promise<AdminOverview> {
-  const [profiles, listings, proposals] = await Promise.all([
-    supabase.from("profiles").select("id, role, status"),
-    supabase.from("listings").select("id, status"),
-    count("proposals"),
-  ]);
-
-  const p = profiles.data ?? [];
-  const l = listings.data ?? [];
+  const [members, sellers, buyers, pendingMembers, pendingListings, approvedListings, proposals] =
+    await Promise.all([
+      countRows("profiles"),
+      countRows("profiles", (q) => q.eq("role", "seller")),
+      countRows("profiles", (q) => q.eq("role", "buyer")),
+      countRows("profiles", (q) => q.eq("status", "pending")),
+      countRows("listings", (q) => q.eq("status", "in_review")),
+      countRows("listings", (q) => q.eq("status", "approved")),
+      countRows("proposals"),
+    ]);
 
   return {
-    members: p.length,
-    sellers: p.filter((x) => x.role === "seller").length,
-    buyers: p.filter((x) => x.role === "buyer").length,
-    pendingMembers: p.filter((x) => x.status === "pending").length,
-    pendingListings: l.filter((x) => x.status === "in_review").length,
-    approvedListings: l.filter((x) => x.status === "approved").length,
+    members,
+    sellers,
+    buyers,
+    pendingMembers,
+    pendingListings,
+    approvedListings,
     proposals,
   };
 }

@@ -54,12 +54,8 @@ export async function ensureOrderForProposal(input: OrderInput) {
     .single();
   if (error) throw error;
 
-  await supabase.from("order_events").insert({
-    order_id: data.id,
-    actor_id: input.actorId,
-    event_type: "order_created",
-    metadata_json: { amount: input.amount, commission_percent: percent },
-  });
+  // O evento "order_created" é gravado pelo banco (trigger trg_orders_log_created),
+  // na mesma transação do pedido. Não há insert adicional aqui.
   return data;
 }
 

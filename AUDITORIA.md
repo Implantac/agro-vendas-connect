@@ -104,3 +104,119 @@ Critério: "corrigido" significa verificado no banco (suítes SQL com ROLLBACK, 
 5. Fotos: `uploadListingPhotos` grava URLs assinadas com validade de 5 anos. Não quebra o uso, mas é prazo longo para dado pessoal eventual.
 6. Admin pode alterar `payment_status` diretamente. Risco residual: a confirmação manual precisa de comprovante fora do sistema.
 7. Revisão jurídica dos termos antes do lançamento.
+
+## 6. Fase 2 — integridade de negociação, atomicidade e operação
+
+Migrations `20261010100000_auditoria_integridade_negociacao.sql` e `20261010110000_auditoria_fase2b.sql`,
+código correspondente e suíte `tests/sql/integridade_negociacao.sql` (19 testes, com ROLLBACK). Cada item abaixo foi verificado
+no banco de teste ou no build, salvo quando marcado como "a confirmar".
+
+| ID | Achado | Status | Evidência |
+|----|--------|--------|-----------|
+| B2-01 | Exclusão de anúncio apagava as fotos antes de tentar excluir o anúncio; se o banco recusasse, o anúncio ficava sem fotos | Corrigido | `deleteListing` não apaga mais `listing_media` (cascata). Teste T07. |
+| B2-02 | Exclusão de anúncio com proposta ou pedido apagava propostas, eventos e soltava `orders.proposal_id` | Corrigido | Trigger `trg_listings_block_delete_with_deals`. Testes T06, T08. |
+| B2-03 | Proposta gravada em 4 escritas sem transação; falha em conversa ou mensagem deixava proposta sem conversa | Corrigido | RPC `create_proposal` (atômica). Testes T01, T02, T05. |
+| B2-04 | Dois envios seguidos criavam duas propostas abertas para o mesmo anúncio | Corrigido (regra a confirmar) | RPC recusa segunda proposta aberta ou em contraproposta do mesmo comprador. Teste T03. **Decisão de produto a confirmar.** |
+| B2-05 | Publicação de termos desativava a versão vigente e depois inseria; falha deixava nenhum termo vigente | Corrigido | RPC `admin_publish_legal_document`. Testes T09 a T11, T14. |
+| B2-06 | Evento `order_created` gravado pelo cliente depois do pedido, com erro ignorado | Corrigido | Trigger `trg_orders_log_created` na mesma transação. Teste T15. |
+| B2-07 | 21 FKs sem índice; colunas de filtro por usuário sem índice | Corrigido | Índices criados na migration. Teste T13 (zero FK sem índice). |
+| B2-08 | `orders`, `proposals` e `conversations` sem FK para `profiles` | Corrigido | FKs `ON DELETE RESTRICT`. Teste T12. A migration aborta se houver órfãos. |
+| B2-09 | Painel do admin baixava todas as linhas de `profiles` e `listings` para contar; o PostgREST corta em 1000, então os números ficavam errados sem aviso | Corrigido | `fetchAdminOverview` usa contagem exata no banco. Erro é lançado, não mostrado como zero. |
+| B2-10 | Facetas do catálogo lidas de uma só requisição (até 1000 anúncios) | Corrigido até 5000 anúncios | `fetchCatalogFacetRows` pagina com ordenação por id (`src/lib/paginate.ts`). Acima de 5000, aviso no console. Pendência: RPC de facetas. |
+| B2-11 | `fetchPlatformStats` sem chamadores, com consulta que baixava linhas | Removido | Sem uso no código. |
+| B2-12 | Cabeçalhos de segurança ausentes (HSTS, `nosniff`, `Referrer-Policy`, `Permissions-Policy`) | Corrigido | `src/server.ts` (respostas do servidor) e `public/_headers` (estáticos). Verificado no smoke HTTP do build. `X-Frame-Options` não foi usado, porque quebra o preview em iframe. |
+| B2-13 | Sem endpoint de health check | Corrigido | `GET/HEAD /api/public/health`, 200 e JSON. Não consulta o banco. |
+| B2-14 | Sem documentação operacional | Corrigido | `docs/OPERACAO.md`: variáveis, deploy, health, checagem de banco, backup, rollback, diagnóstico. |
+| B2-15 | Política de CSP | Pendente | Exige inventário de domínios (Supabase, Asaas, fontes, analytics). Não aplicada nesta fase. |
+| B2-16 | `setCoverPhoto` faz dois updates sem transação | Corrigido | RPC `set_listing_cover` (migration `20261010110000`): checa posse, confere a foto e troca a capa numa transação. Testes T16 a T18. |
+| B2-17 | `app.empresa` lê, depois insere ou atualiza `seller_profiles` | Corrigido | Upsert por `user_id` (único), sem a corrida. Policies de insert e update próprias já existem. Não há teste automatizado da tela. |
+| B2-18 | Objetos do storage não são apagados quando o anúncio é excluído | Corrigido no cliente | `deleteListing` lê os caminhos antes, exclui o anúncio e remove os arquivos (policy `listing_photos_owner_delete`). Falha no storage vira aviso, sem afetar o anúncio. Teste unitário de `storagePathFromUrl`. |
+| B2-19 | Consultas de listas sem limite (`fetchMyOrders`, `fetchConversations`, `fetchMessages` etc.) | Corrigido | `fetchAllRows` em pedidos, anúncios, favoritos, conversas, mensagens, leads e negociação, com ordenação estável e teto explícito (aviso no console). Testes unitários em `tests/unit/paginate.test.ts`. |
+| B2-20 | Lista de conversas trazia todo o histórico de mensagens só para a prévia; a prévia usava a ordem não garantida do embed | Corrigido | RPC `conversation_last_messages` (uma linha por conversa, só partes). Teste T19. |
+| B2-21 | Erros de leitura em `fetchSellerLeads`, `fetchFavoriteIds` e eventos/mensagens da negociação viravam lista vazia | Corrigido | Erros agora são lançados. |
+| B2-22 | Consulta de mensagens com `(created_at)` sem desempate | Corrigido | Ordenação `(created_at, id)`, índice `messages_conversation_created_idx`. |
+
+### Pendências após a fase 2b (decisão ou acesso externo)
+
+- **B2-23 Storage com URL assinada de 5 anos (M4):** trocar exige guardar o caminho e assinar na leitura. As fotos de anúncio aprovado são lidas por anônimos pelo catálogo, então a mudança precisa de decisão sobre o bucket.
+- **B2-24 Admin edita `payment_status` direto (M5):** correção é uma RPC de confirmação com comprovante. Depende da regra de negócio.
+- **B2-25 CSP (M1):** não aplicada. Sem navegador para testar, uma CSP pode quebrar a hidratação do SSR. Exige inventário de domínios e teste no navegador.
+
+### Verificação desta fase
+
+- `tsc --noEmit`: OK.
+- `eslint .`: 0 erros, 8 avisos (os mesmos do commit anterior).
+- `test:unit`: 12/12 (rodado com bun 1.2.20 localmente; o CI usa 1.4.2).
+- `test:sql`: todas as suítes PASS, incluindo `integridade_negociacao.sql` (19/19).
+- `vite build`: OK. Smoke HTTP no build: health 200 com JSON, cabeçalhos presentes em HTML e API,
+  webhook sem segredo 503.
+- **Não verificado:** cabeçalhos dos arquivos estáticos (`public/_headers`) no ambiente publicado;
+  comportamento das RPCs com o Supabase real (o teste usa o stub); migration aplicada sobre dados
+  reais de produção.
+
+### Pendências externas desta fase
+
+- Confirmar a regra de uma proposta aberta por comprador e anúncio (B2-04).
+- Confirmar backup, retenção e PITR no painel do Lovable Cloud (`docs/OPERACAO.md`, seção 5).
+- Decidir B2-23, B2-24 e B2-25 (acima).
+
+## 7. Melhorias aplicadas (rodada "aplique todas as melhorias")
+
+### Correções de produção encontradas nesta rodada
+
+- **B3-01 Visitante sem login não abria o detalhe do anúncio (crítico, impede venda).** Consulta
+  anônima `listings?select=*,machines(...)` retorna `42501 permission denied for function is_admin`
+  no projeto real. Causa: policy `machines_public_read` (PUBLIC) chamava `is_admin()`, e `anon` não tem
+  EXECUTE. Corrigido na migration `20261010130000_corrige_leitura_anonima_machines.sql` (policy pública
+  sem `is_admin()`; admin com policy própria em `authenticated`). Cobertura: T24 a T26 da suíte SQL.
+  **Pendência:** a migration está no repositório, mas não foi aplicada no Supabase de produção
+  (não há acesso de escrita a partir deste ambiente). Sem ela, o detalhe do anúncio continua quebrado
+  para visitantes anônimos.
+- **B3-02 Página do anúncio sem conteúdo para bots (SEO).** O anúncio era buscado só no navegador, então
+  o HTML inicial dizia "Anúncio não encontrado". Agora o loader da rota busca no servidor. Se o anúncio
+  não existir, a página sai com `noindex`. Se a busca falhar, a página segue o caminho antigo e não recebe
+  `noindex`. **NÃO COMPROVADO** no runtime de produção: o sandbox roda Node 20, onde o cliente Supabase
+  não cria WebSocket e o loader cai no fallback (verificado com log). Com polyfill de WebSocket, o
+  fallback não ocorre, mas o caminho de sucesso depende da migration B3-01 aplicada.
+
+### Melhorias funcionais e de interface
+
+- Mensagens: marcador de não lida (ponto, negrito e texto para leitor de tela), prévia com tempo relativo
+  (`formatRelativeBR`), badge do status da proposta, marcação como lida (tabela `conversation_reads`,
+  RPC `mark_conversation_read`, RLS). Evidência: T20 a T23 e T21/T22 cobrem o acesso; tela NÃO COMPROVADA.
+- Negociações: prazo visível para propostas abertas ("Válida por mais X h" ou "Expira em menos de 1 h").
+  Mesma lógica de `hoursLeft` já usada na tela de negociação.
+- `StatusBadge` único (listing, proposal, order) em negociações, pedidos, meus anúncios, painel e admin.
+  Os tons foram definidos pela leitura do código, não conferidos contra todos os valores do enum no banco.
+- Admin: rótulos de status de anúncio vêm de `format.ts`, sem cópia local. Mudança visível: "Publicado"
+  passa a "Aprovado" e "Recusado" passa a "Rejeitado" nessa tela.
+- Favoritos: botão "Explorar o catálogo" no estado vazio.
+- Catálogo: "Limpar filtros" no estado vazio quando há filtros ativos.
+- Anúncio no celular: barra fixa com preço, "Enviar proposta" e favoritar (`lg:hidden`). No desktop, nada muda.
+- Foco visível global (`:focus-visible` com o token `--ring`). Componentes com ring próprio mantêm o visual.
+
+### Decisões que ficam para o usuário (não implementadas)
+
+- "Tempo médio de resposta": exige definir qual evento conta como resposta (primeira mensagem do vendedor,
+  mudança de status de proposta, etc.).
+- Fusão de `app.comparar`, `app.comprar` e `app.maquinas`: revisar antes. `/app/comprar` (catálogo para logados)
+  e `/catalogo` (público) mostram listas parecidas. Não foi feita nenhuma troca de rota.
+
+### Verificação desta rodada
+
+- `tsc --noEmit`: OK.
+- `eslint .`: 0 erros e 8 avisos, todos já existentes em arquivos de `components/ui` e afins. Aplicado `--fix` só
+  nos arquivos alterados.
+- `bun test tests/unit`: 17 PASS (inclui 5 novos de `formatRelativeBR`).
+- `vite build`: OK.
+- `bash tests/sql/run.sh`: todas as suítes PASS; `integridade_negociacao` 26 PASS, 0 FAIL.
+  O teste T24 foi reproduzido antes da correção: `SET ROLE anon; SELECT ... FROM machines` dava o mesmo erro da produção.
+- Smoke HTTP: rotas públicas e internas respondem 200; cabeçalhos presentes.
+- **NÃO COMPROVADO no navegador:** todas as telas alteradas (layout, barra mobile, foco, badges, prazo).
+
+### Pendências desta rodada
+
+- Aplicar `20261010120000` (leitura de conversas) e `20261010130000` (acesso anônimo a máquinas) no Supabase de produção.
+  Sem a segunda, o detalhe do anúncio não abre para visitantes sem login.
+- Testar no navegador (desktop e celular): detalhe do anúncio, mensagens, negociações, barra fixa e foco.
+- Decidir "tempo médio de resposta" e a fusão de `comparar`, `comprar` e `maquinas`.

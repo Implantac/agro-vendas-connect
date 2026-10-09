@@ -6,10 +6,17 @@ import { z } from "zod";
 import { AppPage } from "@/components/app/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/app/StatusBadge";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchConversations, fetchMessages, sendMessage } from "@/lib/app-queries";
+import {
+  fetchConversationReads,
+  fetchConversations,
+  fetchMessages,
+  markConversationRead,
+  sendMessage,
+} from "@/lib/app-queries";
 import { supabase } from "@/integrations/supabase/client";
-import { formatBRL } from "@/lib/format";
+import { formatBRL, formatRelativeBR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const searchSchema = z.object({ conversa: z.string().optional() });
@@ -40,14 +47,36 @@ function Mensagens() {
     enabled: Boolean(user),
   });
 
+  const { data: readsMap } = useQuery({
+    queryKey: ["conversation-reads", user?.id],
+    queryFn: () => fetchConversationReads(user!.id),
+    enabled: Boolean(user),
+  });
+
   const activeId = search.conversa ?? conversations[0]?.id;
   const active = conversations.find((c) => c.id === activeId);
+
+  // Não lida: a última mensagem é de outra pessoa e é mais recente que a última leitura.
+  function isUnread(c: (typeof conversations)[number]) {
+    const last = c.lastMessage;
+    if (!last || last.sender_id === user?.id) return false;
+    const readAt = readsMap?.get(c.id);
+    return !readAt || new Date(last.created_at).getTime() > new Date(readAt).getTime();
+  }
 
   const { data: messages = [] } = useQuery({
     queryKey: ["messages", activeId],
     queryFn: () => fetchMessages(activeId!),
     enabled: Boolean(activeId),
   });
+
+  // Ao abrir a conversa (e ao chegar mensagem nela), registra a leitura.
+  useEffect(() => {
+    if (!activeId || !user) return;
+    markConversationRead(activeId)
+      .then(() => queryClient.invalidateQueries({ queryKey: ["conversation-reads", user.id] }))
+      .catch((e: unknown) => console.warn("Não foi possível marcar a conversa como lida:", e));
+  }, [activeId, messages.length, user, queryClient]);
 
   // Realtime: novas mensagens na conversa ativa
   useEffect(() => {
@@ -122,9 +151,9 @@ function Mensagens() {
                   price: number | null;
                   listing_media: { url: string; is_cover: boolean }[] | null;
                 } | null;
-                const lastMsg = (
-                  c.messages as { content: string; created_at: string }[] | null
-                )?.slice(-1)[0];
+                const lastMsg = c.lastMessage;
+                const unread = isUnread(c);
+                const proposal = c.proposals as { status: string } | null;
                 const cover =
                   listing?.listing_media?.find((m) => m.is_cover) ?? listing?.listing_media?.[0];
                 return (
@@ -147,12 +176,35 @@ function Mensagens() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-forest">
-                        {listing?.title ?? "Conversa"}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        {unread && (
+                          <span
+                            aria-hidden="true"
+                            className="h-2 w-2 shrink-0 rounded-full bg-accent"
+                          />
+                        )}
+                        <p
+                          className={cn(
+                            "truncate text-sm text-forest",
+                            unread ? "font-bold" : "font-semibold",
+                          )}
+                        >
+                          {listing?.title ?? "Conversa"}
+                        </p>
+                        {unread && <span className="sr-only">(não lida)</span>}
+                      </div>
+                      <p
+                        className={cn(
+                          "truncate text-xs",
+                          unread ? "font-medium text-forest" : "text-muted-foreground",
+                        )}
+                      >
                         {lastMsg?.content ?? "Conversa iniciada"}
                       </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                        {proposal && <StatusBadge kind="proposal" status={proposal.status} />}
+                        {lastMsg && <span>{formatRelativeBR(lastMsg.created_at)}</span>}
+                      </div>
                     </div>
                   </button>
                 );

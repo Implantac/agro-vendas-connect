@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeListingPhoto } from "@/lib/image-normalize";
+import { storagePathFromUrl } from "@/lib/paginate";
 
 const BUCKET = "listing-photos";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5; // 5 anos
@@ -164,10 +165,33 @@ export async function setListingStatus(
   if (error) throw error;
 }
 
+/**
+ * Exclui o anúncio. As fotos (listing_media) são removidas pela cascata do banco.
+ * O banco recusa a exclusão se houver proposta ou pedido (trigger
+ * trg_listings_block_delete_with_deals); nesse caso a mensagem do banco é lançada.
+ */
 export async function deleteListing(listingId: string) {
-  await supabase.from("listing_media").delete().eq("listing_id", listingId);
+  // Caminhos das fotos antes da exclusão (a cascata apaga as linhas de listing_media).
+  const { data: media, error: mediaError } = await supabase
+    .from("listing_media")
+    .select("url")
+    .eq("listing_id", listingId);
+  if (mediaError) throw mediaError;
+  const paths = (media ?? [])
+    .map((m) => storagePathFromUrl(m.url, BUCKET))
+    .filter((p): p is string => p !== null);
+
   const { error } = await supabase.from("listings").delete().eq("id", listingId);
   if (error) throw error;
+
+  // Só depois da exclusão confirmada pelo banco. Falha aqui deixa arquivo órfão,
+  // sem afetar o anúncio, que já foi excluído.
+  if (paths.length > 0) {
+    const { error: storageError } = await supabase.storage.from(BUCKET).remove(paths);
+    if (storageError) {
+      console.warn("Fotos não removidas do armazenamento:", storageError.message);
+    }
+  }
 }
 
 /** Envia as fotos para o armazenamento e registra em listing_media. */
@@ -208,12 +232,12 @@ export async function deleteListingPhoto(mediaId: string) {
   if (error) throw error;
 }
 
+/** Troca a foto de capa numa só transação no banco (RPC set_listing_cover). */
 export async function setCoverPhoto(listingId: string, mediaId: string) {
-  await supabase.from("listing_media").update({ is_cover: false }).eq("listing_id", listingId);
-  const { error } = await supabase
-    .from("listing_media")
-    .update({ is_cover: true })
-    .eq("id", mediaId);
+  const { error } = await supabase.rpc("set_listing_cover", {
+    _listing_id: listingId,
+    _media_id: mediaId,
+  });
   if (error) throw error;
 }
 

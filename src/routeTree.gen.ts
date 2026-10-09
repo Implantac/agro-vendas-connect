@@ -47,6 +47,7 @@ import { Route as AppPedidosRouteImport } from './routes/app.pedidos'
 import { Route as AppPerfilRouteImport } from './routes/app.perfil'
 import { Route as AppPublicarRouteImport } from './routes/app.publicar'
 import { Route as ImplementosSlugRouteImport } from './routes/implementos.$slug'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminAnunciosRouteImport } from './routes/app.admin.anuncios'
 import { Route as AppAdminAprovadosRouteImport } from './routes/app.admin.aprovados'
@@ -256,6 +257,11 @@ const ImplementosSlugRoute = ImplementosSlugRouteImport.update({
   path: '/implementos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -387,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/aprovados': typeof AppAdminAprovadosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
@@ -444,6 +451,7 @@ export interface FileRoutesByTo {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app': typeof AppIndexRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/aprovados': typeof AppAdminAprovadosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
@@ -503,6 +511,7 @@ export interface FileRoutesById {
   '/app/publicar': typeof AppPublicarRoute
   '/implementos/$slug': typeof ImplementosSlugRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/app/admin/anuncios': typeof AppAdminAnunciosRoute
   '/app/admin/aprovados': typeof AppAdminAprovadosRoute
   '/app/admin/auditoria': typeof AppAdminAuditoriaRoute
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
+    | '/api/public/health'
     | '/app/admin/anuncios'
     | '/app/admin/aprovados'
     | '/app/admin/auditoria'
@@ -620,6 +630,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app'
+    | '/api/public/health'
     | '/app/admin/anuncios'
     | '/app/admin/aprovados'
     | '/app/admin/auditoria'
@@ -678,6 +689,7 @@ export interface FileRouteTypes {
     | '/app/publicar'
     | '/implementos/$slug'
     | '/app/'
+    | '/api/public/health'
     | '/app/admin/anuncios'
     | '/app/admin/aprovados'
     | '/app/admin/auditoria'
@@ -721,6 +733,7 @@ export interface RootRouteChildren {
   TermoDeAceiteRoute: typeof TermoDeAceiteRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiPublicWebhooksPaymentsRoute: typeof ApiPublicWebhooksPaymentsRoute
 }
 
@@ -992,6 +1005,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImplementosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/admin/': {
       id: '/app/admin/'
       path: '/admin'
@@ -1218,6 +1238,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermoDeAceiteRoute: TermoDeAceiteRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiPublicWebhooksPaymentsRoute: ApiPublicWebhooksPaymentsRoute,
 }
 export const routeTree = rootRouteImport

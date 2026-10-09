@@ -23,6 +23,7 @@ import { ProposalDialog } from "@/components/catalog/ProposalDialog";
 import { ListingGallery } from "@/components/catalog/ListingGallery";
 import { TrustBadges } from "@/components/catalog/TrustBadges";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
+import { cn } from "@/lib/utils";
 import { fetchSellerTrust, registerListingView } from "@/features/listings/queries";
 import { listingCode, orderedSpecs } from "@/features/listings/completeness";
 import { specFieldsFor } from "@/features/listings/category-specs";
@@ -30,9 +31,26 @@ import { trustBadges } from "@/features/listings/trust";
 import { fetchMachineEvents } from "@/lib/machine-docs";
 
 export const Route = createFileRoute("/implementos/$slug")({
-  head: ({ params }) => ({
+  // Busca o anúncio no servidor (chave pública, só anúncios aprovados) para que a página
+  // chegue com o conteúdo, e não com "não encontrado" antes do JavaScript carregar.
+  // Se a busca falhar, a página segue o caminho anterior (busca no cliente) e não recebe
+  // noindex. noindex só vai para anúncio confirmado como inexistente: o dono pode abrir
+  // o próprio anúncio em revisão, que o servidor sem sessão não enxerga.
+  loader: async ({ params }) => {
+    try {
+      const listing = await fetchListingBySlug(params.slug);
+      return { listing, failed: false };
+    } catch (err) {
+      console.warn("[implementos] falha ao carregar anúncio no servidor", err);
+      return { listing: null, failed: true };
+    }
+  },
+  head: ({ params, loaderData }) => ({
     meta: [
       { title: `Implemento agrícola ${params.slug} | DDP AGRO` },
+      ...(loaderData && !loaderData.failed && !loaderData.listing
+        ? [{ name: "robots", content: "noindex" }]
+        : []),
       {
         name: "description",
         content:
@@ -50,10 +68,12 @@ export const Route = createFileRoute("/implementos/$slug")({
 
 function ListingDetail() {
   const { slug } = Route.useParams();
+  const loaderData = Route.useLoaderData();
   const { user, profile, loading: authLoading } = useAuth();
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", slug],
     queryFn: () => fetchListingBySlug(slug),
+    initialData: loaderData.listing ?? undefined,
   });
 
   if (authLoading) {
@@ -266,7 +286,7 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
           />
         </header>
 
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid gap-10 pb-28 lg:grid-cols-[1.4fr_1fr] lg:pb-0">
           <div className="order-2 lg:order-1">
             <ListingGallery media={media} title={l.title} />
 
@@ -331,7 +351,7 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                 {l.price_on_request ? "Sob consulta" : formatBRL(l.price)}
               </p>
 
-              <div className="mt-5 space-y-3">
+              <div className={cn("mt-5 space-y-3", available && !isOwner && "hidden lg:block")}>
                 {isOwner ? (
                   <Button asChild variant="outline" className="w-full">
                     <Link to="/app/anuncio/$id" params={{ id: l.id }}>
@@ -342,7 +362,6 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                   <>
                     <ProposalDialog
                       listingId={l.id}
-                      sellerId={l.seller_id}
                       listingTitle={l.title}
                       suggestedAmount={l.price}
                     />
@@ -397,6 +416,30 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
               fechar.
             </div>
           </aside>
+          {available && !isOwner && (
+            <div
+              role="region"
+              aria-label="Ação do anúncio"
+              className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] backdrop-blur lg:hidden"
+            >
+              <div className="mx-auto flex max-w-xl items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Preço</p>
+                  <p className="truncate font-display text-lg font-bold text-forest">
+                    {l.price_on_request ? "Sob consulta" : formatBRL(l.price)}
+                  </p>
+                </div>
+                <div className="flex-[1.4]">
+                  <ProposalDialog
+                    listingId={l.id}
+                    listingTitle={l.title}
+                    suggestedAmount={l.price}
+                  />
+                </div>
+                <FavoriteButton listingId={l.id} size="default" />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </PublicLayout>

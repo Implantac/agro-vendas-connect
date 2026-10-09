@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAllRows } from "@/lib/paginate";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type ProposalRow = Tables<"proposals">;
@@ -74,14 +75,21 @@ export async function respondProposal(
 
 /** Vendedor: interessados (favoritos + conversas) nos seus anúncios. */
 export async function fetchSellerLeads(userId: string) {
-  const { data: listings } = await supabase
-    .from("listings")
-    .select(
-      "id,title,slug,price,status,views_count,favorites(id,created_at,user_id),proposals(id,status,amount,created_at),conversations(id,created_at,buyer_id)",
-    )
-    .eq("seller_id", userId)
-    .order("created_at", { ascending: false });
-  return (listings ?? []).map((l) => ({
+  const listings = await fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("listings")
+        .select(
+          "id,title,slug,price,status,views_count,favorites(id,created_at,user_id),proposals(id,status,amount,created_at),conversations(id,created_at,buyer_id)",
+        )
+        .eq("seller_id", userId)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to),
+    1000,
+    "Leads do vendedor",
+  );
+  return listings.map((l) => ({
     id: l.id,
     title: l.title,
     price: l.price,
@@ -100,23 +108,33 @@ export async function fetchSellerLeads(userId: string) {
 
 /** Pedidos do usuário (como comprador ou vendedor). */
 export async function fetchMyOrders(userId: string) {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*, listings(title,slug)")
-    .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data ?? [];
+  return fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("orders")
+        .select("*, listings(title,slug)")
+        .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to),
+    2000,
+    "Pedidos",
+  );
 }
 
 export async function fetchMyListings(userId: string) {
-  const { data, error } = await supabase
-    .from("listings")
-    .select(LISTING_CARD_SELECT)
-    .eq("seller_id", userId)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data ?? [];
+  return fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("listings")
+        .select(LISTING_CARD_SELECT)
+        .eq("seller_id", userId)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to),
+    2000,
+    "Meus anúncios",
+  );
 }
 
 export async function updateListingStatus(
@@ -128,13 +146,19 @@ export async function updateListingStatus(
 }
 
 export async function fetchMyFavorites(userId: string) {
-  const { data, error } = await supabase
-    .from("favorites")
-    .select(`id, created_at, listings(${LISTING_CARD_SELECT})`)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []).filter((f) => f.listings);
+  const rows = await fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("favorites")
+        .select(`id, created_at, listings(${LISTING_CARD_SELECT})`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to),
+    2000,
+    "Favoritos",
+  );
+  return rows.filter((f) => f.listings);
 }
 
 export async function toggleFavorite(userId: string, listingId: string, isFavorite: boolean) {
@@ -155,30 +179,85 @@ export async function toggleFavorite(userId: string, listingId: string, isFavori
 }
 
 export async function fetchFavoriteIds(userId: string) {
-  const { data } = await supabase.from("favorites").select("listing_id").eq("user_id", userId);
-  return new Set((data ?? []).map((f) => f.listing_id));
+  const rows = await fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("favorites")
+        .select("id, listing_id")
+        .eq("user_id", userId)
+        .order("id", { ascending: true })
+        .range(from, to),
+    5000,
+    "Favoritos (ids)",
+  );
+  return new Set(rows.map((f) => f.listing_id));
 }
 
 export async function fetchConversations(userId: string) {
-  const { data, error } = await supabase
-    .from("conversations")
-    .select(
-      "*, listings(title,slug,price,listing_media(url,is_cover,sort_order)), messages(content,created_at,sender_id)",
-    )
-    .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
-    .order("updated_at", { ascending: false });
+  const conversations = await fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("conversations")
+        .select(
+          "*, listings(title,slug,price,listing_media(url,is_cover,sort_order)), proposals(status,amount)",
+        )
+        .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`)
+        .order("updated_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to),
+    1000,
+    "Conversas",
+  );
+  if (conversations.length === 0) return [];
+  // Última mensagem de cada conversa, em uma consulta (RPC conversation_last_messages).
+  const { data: last, error } = await supabase.rpc("conversation_last_messages", {
+    _conversation_ids: conversations.map((c) => c.id),
+  });
   if (error) throw error;
-  return data ?? [];
+  const byId = new Map((last ?? []).map((m) => [m.conversation_id, m]));
+  return conversations.map((c) => ({
+    ...c,
+    lastMessage: byId.get(c.id) ?? null,
+  }));
+}
+
+/** Quando cada conversa foi lida pelo usuário atual (conversation_id -> read_at). */
+export async function fetchConversationReads(userId: string) {
+  const rows = await fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("conversation_reads")
+        .select("conversation_id, read_at")
+        .eq("user_id", userId)
+        .order("conversation_id", { ascending: true })
+        .range(from, to),
+    5000,
+    "Leituras de conversas",
+  );
+  return new Map(rows.map((r) => [r.conversation_id, r.read_at]));
+}
+
+/** Marca a conversa como lida pelo usuário atual (RPC mark_conversation_read). */
+export async function markConversationRead(conversationId: string) {
+  const { error } = await supabase.rpc("mark_conversation_read", {
+    _conversation_id: conversationId,
+  });
+  if (error) throw error;
 }
 
 export async function fetchMessages(conversationId: string) {
-  const { data, error } = await supabase
-    .from("messages")
-    .select("*")
-    .eq("conversation_id", conversationId)
-    .order("created_at", { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  return fetchAllRows(
+    (from, to) =>
+      supabase
+        .from("messages")
+        .select("*")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to),
+    5000,
+    "Mensagens",
+  );
 }
 
 export async function sendMessage(conversationId: string, senderId: string, content: string) {

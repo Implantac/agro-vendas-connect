@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   Search,
@@ -491,6 +491,11 @@ function Catalogo() {
                   ? "Ajuste os filtros para ver mais resultados."
                   : "Os implementos da DDP AGRO estão sendo cadastrados. Volte em breve para ver as máquinas disponíveis."}
               </p>
+              {chips.length > 0 && (
+                <Button asChild variant="outline" className="mt-5">
+                  <Link to="/catalogo">Limpar filtros</Link>
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

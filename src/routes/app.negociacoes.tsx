@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Handshake, MessageSquare } from "lucide-react";
+import { Handshake, MessageSquare, Timer } from "lucide-react";
 import { AppPage } from "@/components/app/AppLayout";
+import { StatusBadge } from "@/components/app/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyProposals } from "@/lib/app-queries";
-import { formatBRL, PROPOSAL_STATUS_LABELS } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { formatBRL } from "@/lib/format";
+import { hoursLeft, isExpired, isOpen } from "@/lib/permissions/negotiation";
 
 export const Route = createFileRoute("/app/negociacoes")({
   head: () => ({
@@ -88,18 +89,7 @@ function Negociacoes() {
                             <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-forest">
                               {isBuyer ? "Compra" : "Venda"}
                             </span>
-                            <span
-                              className={cn(
-                                "rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                                p.status === "accepted"
-                                  ? "bg-green-100 text-green-700"
-                                  : p.status === "rejected" || p.status === "cancelled"
-                                    ? "bg-destructive/10 text-destructive"
-                                    : "bg-secondary text-forest",
-                              )}
-                            >
-                              {PROPOSAL_STATUS_LABELS[p.status] ?? p.status}
-                            </span>
+                            <StatusBadge kind="proposal" status={p.status} />
                           </div>
                           <p className="mt-2 truncate font-display text-base font-semibold text-forest">
                             {listing?.title ?? "Implemento"}
@@ -107,6 +97,14 @@ function Negociacoes() {
                           <p className="text-xs text-muted-foreground">
                             {[listing?.city, listing?.state].filter(Boolean).join(" • ")}
                           </p>
+                          {isOpen(p.status) && !isExpired(p.expires_at) && (
+                            <p className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-forest">
+                              <Timer className="h-3 w-3" aria-hidden="true" />
+                              {hoursLeft(p.expires_at) === 0
+                                ? "Expira em menos de 1 h"
+                                : `Válida por mais ${hoursLeft(p.expires_at)} h`}
+                            </p>
+                          )}
                         </div>
                         <div className="flex items-center gap-5">
                           <div className="text-right">

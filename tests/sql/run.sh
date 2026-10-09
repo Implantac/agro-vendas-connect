@@ -54,6 +54,7 @@ SUITES=(
   ataques_adicionais.sql
   ciclo_pagamento.sql
   regressao_auditoria.sql
+  integridade_negociacao.sql
 )
 
 # Padrões de falha nas saídas das suítes: linhas FAIL/FALHA, erros do psql e células booleanas "f".

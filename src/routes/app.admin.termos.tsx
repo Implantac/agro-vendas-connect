@@ -75,19 +75,12 @@ function AdminTerms() {
 
   const publish = useMutation({
     mutationFn: async () => {
-      const { error: unpublish } = await supabase
-        .from("legal_documents")
-        .update({ published: false })
-        .eq("doc_type", docType)
-        .eq("published", true);
-      if (unpublish) throw unpublish;
-      const { error } = await supabase.from("legal_documents").insert({
-        doc_type: docType,
-        title: title.trim(),
-        version: version.trim(),
-        content_md: content,
-        published: true,
-        published_at: new Date().toISOString(),
+      // Desativa a versão vigente e publica a nova numa única transação (RPC).
+      const { error } = await supabase.rpc("admin_publish_legal_document", {
+        _doc_type: docType,
+        _title: title.trim(),
+        _version: version.trim(),
+        _content_md: content,
       });
       if (error) throw error;
     },

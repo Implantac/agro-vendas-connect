@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAllRows } from "@/lib/paginate";
 
 /** Negociação unificada: proposta + histórico + conversa em uma única tela. */
 export async function fetchNegotiation(proposalId: string) {
@@ -12,7 +13,7 @@ export async function fetchNegotiation(proposalId: string) {
   if (error) throw error;
   if (!proposal) return null;
 
-  const [{ data: events }, { data: conversation }, { data: parties }] = await Promise.all([
+  const [eventsRes, conversationRes, partiesRes] = await Promise.all([
     supabase
       .from("proposal_events")
       .select("*")
@@ -24,15 +25,28 @@ export async function fetchNegotiation(proposalId: string) {
       .select("id,full_name,city,state,status,phone")
       .in("id", [proposal.buyer_id, proposal.seller_id]),
   ]);
+  // Erro de leitura não pode aparecer como negociação vazia.
+  if (eventsRes.error) throw eventsRes.error;
+  if (conversationRes.error) throw conversationRes.error;
+  if (partiesRes.error) throw partiesRes.error;
+  const events = eventsRes.data;
+  const conversation = conversationRes.data;
+  const parties = partiesRes.data;
 
   let messages: { id: string; sender_id: string; content: string; created_at: string }[] = [];
   if (conversation) {
-    const { data } = await supabase
-      .from("messages")
-      .select("id,sender_id,content,created_at")
-      .eq("conversation_id", conversation.id)
-      .order("created_at", { ascending: true });
-    messages = data ?? [];
+    messages = await fetchAllRows(
+      (from, to) =>
+        supabase
+          .from("messages")
+          .select("id,sender_id,content,created_at")
+          .eq("conversation_id", conversation.id)
+          .order("created_at", { ascending: true })
+          .order("id", { ascending: true })
+          .range(from, to),
+      5000,
+      "Mensagens da negociação",
+    );
   }
 
   const byId = new Map((parties ?? []).map((p) => [p.id, p]));

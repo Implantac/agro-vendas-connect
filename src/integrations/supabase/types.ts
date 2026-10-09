@@ -175,6 +175,32 @@ export type Database = {
           },
         ];
       };
+      conversation_reads: {
+        Row: {
+          conversation_id: string;
+          read_at: string;
+          user_id: string;
+        };
+        Insert: {
+          conversation_id: string;
+          read_at?: string;
+          user_id: string;
+        };
+        Update: {
+          conversation_id?: string;
+          read_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "conversation_reads_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       favorites: {
         Row: {
           created_at: string;
@@ -1616,6 +1642,31 @@ export type Database = {
       };
       register_listing_view: {
         Args: { _listing_id: string };
+        Returns: undefined;
+      };
+      create_proposal: {
+        Args: { _amount: number; _listing_id: string; _message?: string | null };
+        Returns: Json;
+      };
+      admin_publish_legal_document: {
+        Args: { _content_md: string; _doc_type: string; _title: string; _version: string };
+        Returns: string;
+      };
+      set_listing_cover: {
+        Args: { _listing_id: string; _media_id: string };
+        Returns: undefined;
+      };
+      conversation_last_messages: {
+        Args: { _conversation_ids: string[] };
+        Returns: {
+          conversation_id: string;
+          content: string;
+          created_at: string;
+          sender_id: string;
+        }[];
+      };
+      mark_conversation_read: {
+        Args: { _conversation_id: string };
         Returns: undefined;
       };
       respond_proposal: {

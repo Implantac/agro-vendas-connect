@@ -41,6 +41,7 @@ O `.env` local não é versionado (use `.env.example` como modelo). Nenhum valor
 - Servidor: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (somente servidor, nunca no cliente)
 - Pagamento (pendente): `ASAAS_API_KEY`, `PAYMENT_WEBHOOK_SECRET`. Sem eles, a cobrança online responde "não configurado" e o webhook devolve 503.
 - Geração de descrição por IA: `LOVABLE_API_KEY`
+- Health check: `GET /api/public/health` responde 200 com `{"status":"ok"}` (não consulta o banco)
 
 ## Desenvolvimento
 
@@ -55,7 +56,7 @@ bunx tsc --noEmit
 ## Testes
 
 ```bash
-bun run test:unit   # helpers puros (busca, escape CSV)
+bun run test:unit   # helpers puros (busca, escape CSV, paginação, caminho do storage)
 bun run test:sql    # migrations em banco novo + suítes de segurança e regressão
 ```
 
@@ -71,6 +72,7 @@ em ordem e as contas fictícias `*@example.invalid`. Cada suíte termina com ROL
 | `ataques_adicionais.sql` | Ataques deliberados com `anon` e `authenticated` (esperado: todos bloqueados) |
 | `ciclo_pagamento.sql` | Webhook, estorno e aprovação sem pagamento |
 | `regressao_auditoria.sql` | T01 a T20: TRUNCATE, guards, limpeza demo, LGPD, contato, IA, storage |
+| `integridade_negociacao.sql` | T01 a T19: proposta atômica, exclusão com negociação, troca de termos, FKs e índices, evento de pedido, capa de foto, prévia de mensagens |
 
 O CI (`.github/workflows/ci.yml`) roda as suítes SQL em Postgres 17 e, em outro job, `tsc`,
 testes unitários, lint e build. Para o build no CI, configure as variáveis `VITE_SUPABASE_*`
@@ -79,6 +81,8 @@ em *Settings > Secrets and variables > Actions > Variables*.
 Os testes E2E (`tests/e2e/run_e2e.py`, Playwright) exigem o app rodando e uma conta admin aprovada. Não rodam no CI.
 
 ## Deploy
+
+Runbook completo (variáveis, health check, checagens pós-deploy, backup, rollback): [docs/OPERACAO.md](docs/OPERACAO.md).
 
 Publicação pelo próprio Lovable (HTTPS e domínio configuráveis nas configurações do projeto).
 O banco, o storage (`listing-photos`, `seller-logos` e `machine-documents`, todos privados) e os

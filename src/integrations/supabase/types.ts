@@ -220,6 +220,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "conversations_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "conversations_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
@@ -231,6 +238,13 @@ export type Database = {
             columns: ["proposal_id"]
             isOneToOne: false
             referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1044,6 +1058,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "orders_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
@@ -1055,6 +1076,13 @@ export type Database = {
             columns: ["proposal_id"]
             isOneToOne: false
             referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1334,10 +1362,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "proposals_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "proposals_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
             referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1523,6 +1565,15 @@ export type Database = {
         Args: { _method: string; _reference: string; _request_id: string }
         Returns: undefined
       }
+      admin_publish_legal_document: {
+        Args: {
+          _content_md: string
+          _doc_type: string
+          _title: string
+          _version: string
+        }
+        Returns: string
+      }
       admin_resolve_privacy_request: {
         Args: {
           _evidence_url?: string
@@ -1574,6 +1625,19 @@ export type Database = {
       cancel_membership_request: {
         Args: { _request_id: string }
         Returns: undefined
+      }
+      conversation_last_messages: {
+        Args: { _conversation_ids: string[] }
+        Returns: {
+          content: string
+          conversation_id: string
+          created_at: string
+          sender_id: string
+        }[]
+      }
+      create_proposal: {
+        Args: { _amount: number; _listing_id: string; _message?: string }
+        Returns: Json
       }
       gateway_apply_payment: {
         Args: {
@@ -1653,6 +1717,10 @@ export type Database = {
       }
       review_machine_document: {
         Args: { _approve: boolean; _doc_id: string; _notes?: string }
+        Returns: undefined
+      }
+      set_listing_cover: {
+        Args: { _listing_id: string; _media_id: string }
         Returns: undefined
       }
       set_order_status: {

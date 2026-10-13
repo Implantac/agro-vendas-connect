@@ -22,6 +22,13 @@
       "when": 1791891645187,
       "tag": "0002_auditoria_cadastro_lgpd_contato_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791891701883,
+      "tag": "0003_auditoria_integridade_negociacao",
+      "breakpoints": true
     }
   ]
 }

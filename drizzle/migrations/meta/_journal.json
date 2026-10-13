@@ -29,6 +29,13 @@
       "when": 1791891701883,
       "tag": "0003_auditoria_integridade_negociacao",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791891731876,
+      "tag": "0004_leitura_conversas_e_machines_anon",
+      "breakpoints": true
     }
   ]
 }

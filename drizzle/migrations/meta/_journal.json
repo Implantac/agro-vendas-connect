@@ -15,6 +15,13 @@
       "when": 1791891599572,
       "tag": "0001_auditoria_membresia_pagamento",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791891645187,
+      "tag": "0002_auditoria_cadastro_lgpd_contato_storage",
+      "breakpoints": true
     }
   ]
 }

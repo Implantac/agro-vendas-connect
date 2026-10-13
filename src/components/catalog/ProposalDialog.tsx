@@ -47,7 +47,7 @@ export function ProposalDialog({
     const { data, error } = await supabase.rpc("create_proposal", {
       _listing_id: listingId,
       _amount: value,
-      _message: message.trim() || null,
+      _message: message.trim() || undefined,
     });
 
     const proposalId =

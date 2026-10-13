@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791891557589,
+      "tag": "0000_auditoria_base_seguranca",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791891599572,
+      "tag": "0001_auditoria_membresia_pagamento",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791891645187,
+      "tag": "0002_auditoria_cadastro_lgpd_contato_storage",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791891701883,
+      "tag": "0003_auditoria_integridade_negociacao",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791891731876,
+      "tag": "0004_leitura_conversas_e_machines_anon",
+      "breakpoints": true
+    }
+  ]
+}

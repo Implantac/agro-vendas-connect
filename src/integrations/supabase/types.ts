@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           key: string
@@ -136,6 +157,72 @@ export type Database = {
           },
         ]
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          details: string
+          email: string
+          handled_at: string | null
+          handled_by: string | null
+          id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details: string
+          email: string
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          email?: string
+          handled_at?: string | null
+          handled_by?: string | null
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      conversation_reads: {
+        Row: {
+          conversation_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_reads_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -166,6 +253,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "conversations_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "conversations_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
@@ -177,6 +271,13 @@ export type Database = {
             columns: ["proposal_id"]
             isOneToOne: false
             referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -766,6 +867,7 @@ export type Database = {
         Row: {
           amount: number
           applicant_notes: string | null
+          checkout_started_at: string | null
           checkout_url: string | null
           created_at: string
           gateway_payment_id: string | null
@@ -788,6 +890,7 @@ export type Database = {
         Insert: {
           amount?: number
           applicant_notes?: string | null
+          checkout_started_at?: string | null
           checkout_url?: string | null
           created_at?: string
           gateway_payment_id?: string | null
@@ -810,6 +913,7 @@ export type Database = {
         Update: {
           amount?: number
           applicant_notes?: string | null
+          checkout_started_at?: string | null
           checkout_url?: string | null
           created_at?: string
           gateway_payment_id?: string | null
@@ -987,6 +1091,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "orders_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
@@ -998,6 +1109,13 @@ export type Database = {
             columns: ["proposal_id"]
             isOneToOne: false
             referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1277,10 +1395,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "proposals_buyer_id_profile_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "proposals_listing_id_fkey"
             columns: ["listing_id"]
             isOneToOne: false
             referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_seller_id_profile_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1466,6 +1598,15 @@ export type Database = {
         Args: { _method: string; _reference: string; _request_id: string }
         Returns: undefined
       }
+      admin_publish_legal_document: {
+        Args: {
+          _content_md: string
+          _doc_type: string
+          _title: string
+          _version: string
+        }
+        Returns: string
+      }
       admin_resolve_privacy_request: {
         Args: {
           _evidence_url?: string
@@ -1518,6 +1659,19 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      conversation_last_messages: {
+        Args: { _conversation_ids: string[] }
+        Returns: {
+          content: string
+          conversation_id: string
+          created_at: string
+          sender_id: string
+        }[]
+      }
+      create_proposal: {
+        Args: { _amount: number; _listing_id: string; _message?: string }
+        Returns: Json
+      }
       gateway_apply_payment: {
         Args: {
           _amount: number
@@ -1539,6 +1693,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_approved: { Args: never; Returns: boolean }
+      is_public_listing_photo: { Args: { _name: string }; Returns: boolean }
       log_system_event:
         | {
             Args: {
@@ -1559,6 +1714,10 @@ export type Database = {
             }
             Returns: string
           }
+      mark_conversation_read: {
+        Args: { _conversation_id: string }
+        Returns: undefined
+      }
       my_member_role: {
         Args: never
         Returns: Database["public"]["Enums"]["member_role"]
@@ -1595,6 +1754,10 @@ export type Database = {
       }
       review_machine_document: {
         Args: { _approve: boolean; _doc_id: string; _notes?: string }
+        Returns: undefined
+      }
+      set_listing_cover: {
+        Args: { _listing_id: string; _media_id: string }
         Returns: undefined
       }
       set_order_status: {

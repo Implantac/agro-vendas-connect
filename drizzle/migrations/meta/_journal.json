@@ -8,6 +8,13 @@
       "when": 1791891557589,
       "tag": "0000_auditoria_base_seguranca",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791891599572,
+      "tag": "0001_auditoria_membresia_pagamento",
+      "breakpoints": true
     }
   ]
 }

@@ -8,7 +8,8 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // Valores PÚBLICOS (chave publicável) usados como reserva quando o build roda sem .env,
 // evitando o erro "Missing Supabase environment variable(s)" no site publicado.
-const PUBLIC_BACKEND_URL = process.env["VITE_SUPABASE_URL"] || "https://tlqtagyucifidozkuadj.supabase.co";
+const PUBLIC_BACKEND_URL =
+  process.env["VITE_SUPABASE_URL"] || "https://tlqtagyucifidozkuadj.supabase.co";
 const PUBLIC_BACKEND_KEY =
   process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || "sb_publishable_csj8J8qgUkbmNwFgTBAykA_ObAJY_YK";
 const PUBLIC_BACKEND_ID = process.env["VITE_SUPABASE_PROJECT_ID"] || "tlqtagyucifidozkuadj";

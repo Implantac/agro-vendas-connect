@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   MapPin,
@@ -45,24 +45,36 @@ export const Route = createFileRoute("/implementos/$slug")({
       return { listing: null, failed: true };
     }
   },
-  head: ({ params, loaderData }) => ({
-    meta: [
-      { title: `Implemento agrícola ${params.slug} | DDP AGRO` },
-      ...(loaderData && !loaderData.failed && !loaderData.listing
-        ? [{ name: "robots", content: "noindex" }]
-        : []),
-      {
-        name: "description",
-        content:
-          "Ficha técnica completa, condição, localização e envio de proposta registrada para este implemento agrícola.",
-      },
-      { property: "og:title", content: "Implemento agrícola | DDP AGRO" },
-      {
-        property: "og:description",
-        content: "Ficha técnica, condição e proposta registrada no DDP AGRO.",
-      },
-    ],
-  }),
+  head: ({ params, loaderData }) => {
+    // Título e descrição vêm do anúncio para o buscador e para a pré-visualização ao compartilhar.
+    const listing =
+      loaderData && !loaderData.failed ? (loaderData.listing as ListingData | null) : null;
+    const headline = listing
+      ? [listing.brand, listing.model].filter(Boolean).join(" ") || listing.title
+      : "";
+    const title = listing ? `${headline} | DDP AGRO` : "Implemento agrícola | DDP AGRO";
+    const description = listing
+      ? [
+          listing.title,
+          listing.city && listing.state ? `${listing.city}/${listing.state}` : null,
+          listing.description,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+          .slice(0, 160)
+      : "Ficha técnica, condição e localização de implementos agrícolas usados verificados no DDP AGRO.";
+    return {
+      meta: [
+        { title },
+        ...(loaderData && !loaderData.failed && !loaderData.listing
+          ? [{ name: "robots", content: "noindex" }]
+          : []),
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: ListingDetail,
 });
 
@@ -86,10 +98,7 @@ function ListingDetail() {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/entrar" search={{ redirect: `/implementos/${slug}` }} replace />;
-  }
-
+  // Visitante vê a ficha pública (anúncio aprovado). Login só para propor ou favoritar.
   if (isLoading) {
     return (
       <PublicLayout>
@@ -116,7 +125,8 @@ function ListingDetail() {
     );
   }
 
-  if (profile?.status !== "approved") {
+  // Membro logado que ainda não foi aprovado não vê a ficha (regra de adesão).
+  if (user && profile?.status !== "approved") {
     return (
       <PublicLayout>
         <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
@@ -138,7 +148,26 @@ function ListingDetail() {
     );
   }
 
-  return <ListingView listing={listing} userId={user.id} />;
+  return <ListingView listing={listing} userId={user?.id ?? null} slug={slug} />;
+}
+
+function GuestCta({ slug }: { slug: string }) {
+  return (
+    <div className="space-y-2">
+      <Button asChild className="w-full">
+        <Link to="/entrar" search={{ redirect: `/implementos/${slug}` }}>
+          Entrar para enviar proposta
+        </Link>
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">
+        Ainda não tem conta?{" "}
+        <Link to="/cadastro" className="font-medium text-forest underline">
+          Cadastre-se
+        </Link>
+        . Propostas são enviadas só por membros aprovados.
+      </p>
+    </div>
+  );
 }
 
 type ListingData = {
@@ -171,17 +200,28 @@ type ListingData = {
   machines?: { id: string; verification_status: string } | null;
 };
 
-function ListingView({ listing, userId }: { listing: unknown; userId: string }) {
+function ListingView({
+  listing,
+  userId,
+  slug,
+}: {
+  listing: unknown;
+  userId: string | null;
+  slug: string;
+}) {
   const l = listing as ListingData;
-  const isOwner = l.seller_id === userId;
+  const isGuest = userId === null;
+  const isOwner = !isGuest && l.seller_id === userId;
 
   useEffect(() => {
     if (!isOwner) void registerListingView(l.id);
   }, [l.id, isOwner]);
 
+  // Dados de contato e status do vendedor só são lidos por membro logado.
   const { data: sellerTrust } = useQuery({
     queryKey: ["seller-trust", l.seller_id],
     queryFn: () => fetchSellerTrust(l.seller_id),
+    enabled: !isGuest,
   });
 
   const media = (l.listing_media ?? []).slice().sort((a, b) => a.sort_order - b.sort_order);
@@ -358,6 +398,8 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                       Editar meu anúncio
                     </Link>
                   </Button>
+                ) : available && isGuest ? (
+                  <GuestCta slug={slug} />
                 ) : available ? (
                   <>
                     <ProposalDialog
@@ -429,14 +471,24 @@ function ListingView({ listing, userId }: { listing: unknown; userId: string }) 
                     {l.price_on_request ? "Sob consulta" : formatBRL(l.price)}
                   </p>
                 </div>
-                <div className="flex-[1.4]">
-                  <ProposalDialog
-                    listingId={l.id}
-                    listingTitle={l.title}
-                    suggestedAmount={l.price}
-                  />
-                </div>
-                <FavoriteButton listingId={l.id} size="default" />
+                {isGuest ? (
+                  <Button asChild className="flex-[1.4]">
+                    <Link to="/entrar" search={{ redirect: `/implementos/${slug}` }}>
+                      Entrar para propor
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <div className="flex-[1.4]">
+                      <ProposalDialog
+                        listingId={l.id}
+                        listingTitle={l.title}
+                        suggestedAmount={l.price}
+                      />
+                    </div>
+                    <FavoriteButton listingId={l.id} size="default" />
+                  </>
+                )}
               </div>
             </div>
           )}

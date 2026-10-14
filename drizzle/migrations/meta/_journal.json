@@ -36,6 +36,13 @@
       "when": 1791891731876,
       "tag": "0004_leitura_conversas_e_machines_anon",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792000000000,
+      "tag": "0005_corrige_turno_resposta_proposta",
+      "breakpoints": true
     }
   ]
 }

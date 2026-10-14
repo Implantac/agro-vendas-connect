@@ -55,6 +55,7 @@ SUITES=(
   ciclo_pagamento.sql
   regressao_auditoria.sql
   integridade_negociacao.sql
+  turno_resposta_proposta.sql
 )
 
 # Padrões de falha nas saídas das suítes: linhas FAIL/FALHA, erros do psql e células booleanas "f".

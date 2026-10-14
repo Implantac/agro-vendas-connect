@@ -34,11 +34,24 @@ function Entrar() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+
+  // Valida antes de chamar o servidor: envio vazio não gera requisição nem erro 400 sem mensagem.
+  function validate() {
+    const errors: { email?: string; password?: string } = {};
+    const mail = email.trim();
+    if (!mail) errors.email = "Informe seu e-mail.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) errors.email = "Use um e-mail válido.";
+    if (!password) errors.password = "Informe sua senha.";
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate()) return;
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
       toast.error("Não foi possível entrar", { description: error.message });
@@ -83,7 +96,7 @@ function Entrar() {
           </div>
         )}
 
-        <form onSubmit={submit} className="mt-8 space-y-4">
+        <form onSubmit={submit} noValidate className="mt-8 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
@@ -92,7 +105,14 @@ function Entrar() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(fieldErrors.email)}
+              aria-describedby={fieldErrors.email ? "email-erro" : undefined}
             />
+            {fieldErrors.email && (
+              <p id="email-erro" role="alert" className="text-xs text-destructive">
+                {fieldErrors.email}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -111,7 +131,14 @@ function Entrar() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={Boolean(fieldErrors.password)}
+              aria-describedby={fieldErrors.password ? "senha-erro" : undefined}
             />
+            {fieldErrors.password && (
+              <p id="senha-erro" role="alert" className="text-xs text-destructive">
+                {fieldErrors.password}
+              </p>
+            )}
           </div>
           <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest/90">
             {loading ? "Entrando..." : "Entrar"}

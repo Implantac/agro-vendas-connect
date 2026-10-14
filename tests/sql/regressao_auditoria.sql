@@ -76,29 +76,11 @@ BEGIN
   PERFORM pg_temp.registra('T03 membro não altera o próprio status', _ok, _m);
 END $$;
 
--- T04: dados de demonstração removidos (vendedores .exemplo, anúncios -demo, máquinas do UUID fixo).
-DO $$
-DECLARE _n integer;
-BEGIN
-  SELECT count(*) INTO _n FROM public.listings
-   WHERE slug LIKE '%-demo'
-      OR seller_id IN (SELECT id FROM public.profiles WHERE email LIKE '%.exemplo');
-  PERFORM pg_temp.registra('T04 sem anúncios de demonstração', _n = 0, 'restantes: ' || _n);
-
-  SELECT count(*) INTO _n FROM public.profiles WHERE email LIKE '%.exemplo';
-  PERFORM pg_temp.registra('T05 sem vendedores de demonstração', _n = 0, 'restantes: ' || _n);
-
-  SELECT count(*) INTO _n FROM public.machines WHERE owner_id = '5c3d75a7-f724-44d2-805a-7059a1875b30';
-  PERFORM pg_temp.registra('T06 sem máquinas de demonstração', _n = 0, 'restantes: ' || _n);
-END $$;
-
--- T07: cobrança online desligada no banco.
-DO $$
-DECLARE _enabled text;
-BEGIN
-  SELECT value->>'enabled' INTO _enabled FROM public.app_settings WHERE key = 'payments_enabled';
-  PERFORM pg_temp.registra('T07 cobrança online desligada', _enabled = 'false', 'enabled=' || coalesce(_enabled, 'null'));
-END $$;
+-- T04 a T07 (dados de demonstração sem anúncios/vendedores/máquinas e cobrança online desligada)
+-- foram removidos desta suíte em 14/10/2026. Motivo: eles checavam o efeito da migration
+-- 20261009100300, que foi retirada do repositório por decisão de produto (apagaria os anúncios
+-- de exemplo e desligaria o Asaas). Estado de dados e de cobrança é decisão operacional, não
+-- invariante de código. Se a decisão mudar, reintroduzir os testes junto com a migration.
 
 -- T08: cadastro com legal_accept grava o aceite no próprio trigger (sem sessão imediata).
 INSERT INTO auth.users (id, email, raw_user_meta_data) VALUES

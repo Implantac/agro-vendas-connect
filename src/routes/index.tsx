@@ -15,7 +15,7 @@ import {
   SecuritySection,
 } from "@/components/home/HomeSections";
 
-const SITE_URL = "https://agro-vendas-connect.lovable.app";
+const SITE_URL = "https://agro-vendas.lovable.app";
 const TITLE = "DDP AGRO | Marketplace privado de máquinas agrícolas usadas";
 const DESCRIPTION =
   "Compre e venda tratores, colheitadeiras, plantadeiras, pulverizadores e implementos agrícolas usados em um ambiente privado de negociação.";

@@ -26,6 +26,7 @@ import {
   hoursLeft,
   isExpired,
   isOpen,
+  lastCounterFrom,
   roleIn,
   TERM_FIELDS,
   termsFilled,
@@ -220,9 +221,11 @@ function NegotiationDetail() {
   } | null;
   const isSeller = p.seller_id === user?.id;
   const party = { userId: user?.id ?? "", buyerId: p.buyer_id, sellerId: p.seller_id };
-  const actions = allowedActions(p.status, p.expires_at, party);
+  // Vez de responder: em contraproposta, depende de quem fez a última (histórico de eventos).
+  const lastCounterBy = lastCounterFrom(data.events, party);
+  const actions = allowedActions(p.status, p.expires_at, party, lastCounterBy);
   const openStatus = actions.length > 0;
-  const turn = turnOf(p.status);
+  const turn = turnOf(p.status, lastCounterBy);
   const myTurn = turn === roleIn(party);
   const left = hoursLeft(p.expires_at);
   const expired = isOpen(p.status) && isExpired(p.expires_at);

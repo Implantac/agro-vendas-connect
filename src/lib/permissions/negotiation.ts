@@ -27,18 +27,55 @@ export function roleIn(p: Party): "buyer" | "seller" | null {
   return null;
 }
 
-/** Ações permitidas para o usuário na proposta atual. */
-export function allowedActions(status: string, expiresAt: string | null | undefined, p: Party) {
-  const role = roleIn(p);
-  if (!role || !isOpen(status) || isExpired(expiresAt)) return [] as const;
-  const base = ["accepted", "rejected", "countered"] as const;
-  return role === "buyer" ? ([...base, "cancelled"] as const) : base;
+export type Side = "buyer" | "seller";
+
+/**
+ * Quem deve responder agora (espelha respond_proposal, migration 20261014120000).
+ * - open: vez do vendedor.
+ * - countered: vez de quem NÃO fez a última contraproposta.
+ * Sem a última contraproposta conhecida, a vez é indefinida (null).
+ */
+export function turnOf(status: string, lastCounterBy?: Side | null): Side | null {
+  if (status === "open") return "seller";
+  if (status === "countered") {
+    if (!lastCounterBy) return null;
+    return lastCounterBy === "seller" ? "buyer" : "seller";
+  }
+  return null;
 }
 
-/** Quem deve agir agora (proposta aberta => vendedor; contraproposta => comprador). */
-export function turnOf(status: string): "buyer" | "seller" | null {
-  if (status === "open") return "seller";
-  if (status === "countered") return "buyer";
+/**
+ * Ações permitidas para o usuário na proposta atual.
+ * - aceitar, recusar e contrapor: só quem tem a vez.
+ * - cancelar: só o comprador, a qualquer momento enquanto aberta (regra do banco).
+ */
+export function allowedActions(
+  status: string,
+  expiresAt: string | null | undefined,
+  p: Party,
+  lastCounterBy?: Side | null,
+) {
+  const role = roleIn(p);
+  if (!role || !isOpen(status) || isExpired(expiresAt)) return [] as const;
+  const myTurn = turnOf(status, lastCounterBy) === role;
+  const actions: ("accepted" | "rejected" | "countered" | "cancelled")[] = [];
+  if (myTurn) actions.push("accepted", "rejected", "countered");
+  if (role === "buyer") actions.push("cancelled");
+  return actions;
+}
+
+/** Quem fez a última contraproposta, a partir do histórico (ordem cronológica). */
+export function lastCounterFrom(
+  events: { event_type: string; actor_id: string | null }[],
+  p: Party,
+): Side | null {
+  for (let i = events.length - 1; i >= 0; i--) {
+    const ev = events[i];
+    if (!ev || ev.event_type !== "countered") continue;
+    if (ev.actor_id === p.sellerId) return "seller";
+    if (ev.actor_id === p.buyerId) return "buyer";
+    return null;
+  }
   return null;
 }
 

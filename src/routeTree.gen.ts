@@ -65,6 +65,8 @@ import { Route as AppAdminTermosRouteImport } from './routes/app.admin.termos'
 import { Route as AppAdminVerificacoesRouteImport } from './routes/app.admin.verificacoes'
 import { Route as AppAnuncioIdRouteImport } from './routes/app.anuncio.$id'
 import { Route as AppNegociacaoIdRouteImport } from './routes/app.negociacao.$id'
+import { Route as ImplementosCategoriaSlugRouteImport } from './routes/implementos.categoria.$slug'
+import { Route as ImplementosUfUfRouteImport } from './routes/implementos.uf.$uf'
 import { Route as ApiPublicWebhooksPaymentsRouteImport } from './routes/api/public/webhooks/payments'
 
 const IndexRoute = IndexRouteImport.update({
@@ -347,6 +349,17 @@ const AppNegociacaoIdRoute = AppNegociacaoIdRouteImport.update({
   path: '/negociacao/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const ImplementosCategoriaSlugRoute =
+  ImplementosCategoriaSlugRouteImport.update({
+    id: '/implementos/categoria/$slug',
+    path: '/implementos/categoria/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ImplementosUfUfRoute = ImplementosUfUfRouteImport.update({
+  id: '/implementos/uf/$uf',
+  path: '/implementos/uf/$uf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksPaymentsRoute =
   ApiPublicWebhooksPaymentsRouteImport.update({
     id: '/api/public/webhooks/payments',
@@ -410,6 +423,8 @@ export interface FileRoutesByFullPath {
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
+  '/implementos/categoria/$slug': typeof ImplementosCategoriaSlugRoute
+  '/implementos/uf/$uf': typeof ImplementosUfUfRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
@@ -468,6 +483,8 @@ export interface FileRoutesByTo {
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
+  '/implementos/categoria/$slug': typeof ImplementosCategoriaSlugRoute
+  '/implementos/uf/$uf': typeof ImplementosUfUfRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
@@ -528,6 +545,8 @@ export interface FileRoutesById {
   '/app/admin/verificacoes': typeof AppAdminVerificacoesRoute
   '/app/anuncio/$id': typeof AppAnuncioIdRoute
   '/app/negociacao/$id': typeof AppNegociacaoIdRoute
+  '/implementos/categoria/$slug': typeof ImplementosCategoriaSlugRoute
+  '/implementos/uf/$uf': typeof ImplementosUfUfRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/api/public/webhooks/payments': typeof ApiPublicWebhooksPaymentsRoute
 }
@@ -589,6 +608,8 @@ export interface FileRouteTypes {
     | '/app/admin/verificacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
+    | '/implementos/categoria/$slug'
+    | '/implementos/uf/$uf'
     | '/app/admin/'
     | '/api/public/webhooks/payments'
   fileRoutesByTo: FileRoutesByTo
@@ -647,6 +668,8 @@ export interface FileRouteTypes {
     | '/app/admin/verificacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
+    | '/implementos/categoria/$slug'
+    | '/implementos/uf/$uf'
     | '/app/admin'
     | '/api/public/webhooks/payments'
   id:
@@ -706,6 +729,8 @@ export interface FileRouteTypes {
     | '/app/admin/verificacoes'
     | '/app/anuncio/$id'
     | '/app/negociacao/$id'
+    | '/implementos/categoria/$slug'
+    | '/implementos/uf/$uf'
     | '/app/admin/'
     | '/api/public/webhooks/payments'
   fileRoutesById: FileRoutesById
@@ -734,6 +759,8 @@ export interface RootRouteChildren {
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   ImplementosSlugRoute: typeof ImplementosSlugRoute
   ApiPublicHealthRoute: typeof ApiPublicHealthRoute
+  ImplementosCategoriaSlugRoute: typeof ImplementosCategoriaSlugRoute
+  ImplementosUfUfRoute: typeof ImplementosUfUfRoute
   ApiPublicWebhooksPaymentsRoute: typeof ApiPublicWebhooksPaymentsRoute
 }
 
@@ -1131,6 +1158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNegociacaoIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/implementos/categoria/$slug': {
+      id: '/implementos/categoria/$slug'
+      path: '/implementos/categoria/$slug'
+      fullPath: '/implementos/categoria/$slug'
+      preLoaderRoute: typeof ImplementosCategoriaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/implementos/uf/$uf': {
+      id: '/implementos/uf/$uf'
+      path: '/implementos/uf/$uf'
+      fullPath: '/implementos/uf/$uf'
+      preLoaderRoute: typeof ImplementosUfUfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/payments': {
       id: '/api/public/webhooks/payments'
       path: '/api/public/webhooks/payments'
@@ -1239,6 +1280,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermosDeUsoRoute: TermosDeUsoRoute,
   ImplementosSlugRoute: ImplementosSlugRoute,
   ApiPublicHealthRoute: ApiPublicHealthRoute,
+  ImplementosCategoriaSlugRoute: ImplementosCategoriaSlugRoute,
+  ImplementosUfUfRoute: ImplementosUfUfRoute,
   ApiPublicWebhooksPaymentsRoute: ApiPublicWebhooksPaymentsRoute,
 }
 export const routeTree = rootRouteImport

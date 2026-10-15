@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { BR_UFS } from "@/lib/regions";
 
 const PATHS = [
   "/",
@@ -51,6 +52,34 @@ async function approvedListingUrls(): Promise<{ slug: string; lastmod: string | 
   }
 }
 
+/**
+ * Categorias e estados com ao menos um anúncio aprovado. Página sem anúncio fica fora do
+ * sitemap (e noindex na própria rota), para não indexar conteúdo vazio.
+ */
+async function approvedLandingUrls(): Promise<{ categories: string[]; ufs: string[] }> {
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("state,categories(slug)")
+      .eq("status", "approved")
+      .limit(MAX_LISTINGS);
+    if (error || !data) return { categories: [], ufs: [] };
+    const validUfs = new Set<string>(BR_UFS.map((x) => x.uf));
+    const categories = new Set<string>();
+    const ufs = new Set<string>();
+    for (const row of data) {
+      const slug = row.categories?.slug;
+      if (slug) categories.add(slug);
+      const uf = row.state?.trim().toUpperCase();
+      if (uf && validUfs.has(uf)) ufs.add(uf);
+    }
+    return { categories: [...categories].sort(), ufs: [...ufs].sort() };
+  } catch (err) {
+    console.warn("[sitemap] falha ao listar categorias e estados", err);
+    return { categories: [], ufs: [] };
+  }
+}
+
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
@@ -65,8 +94,19 @@ export const Route = createFileRoute("/sitemap.xml")({
           ({ slug, lastmod }) =>
             `<url><loc>${escapeXml(`${origin}/implementos/${slug}`)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}<changefreq>daily</changefreq><priority>0.8</priority></url>`,
         );
+        const landings = await approvedLandingUrls();
+        const landingUrls = [
+          ...landings.categories.map(
+            (slug) =>
+              `<url><loc>${escapeXml(`${origin}/implementos/categoria/${slug}`)}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`,
+          ),
+          ...landings.ufs.map(
+            (uf) =>
+              `<url><loc>${escapeXml(`${origin}/implementos/uf/${uf}`)}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>`,
+          ),
+        ];
         return new Response(
-          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...staticUrls, ...listingUrls].join("")}</urlset>`,
+          `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...staticUrls, ...listingUrls, ...landingUrls].join("")}</urlset>`,
           { headers: { "Content-Type": "application/xml; charset=utf-8" } },
         );
       },

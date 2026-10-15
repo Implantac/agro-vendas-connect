@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
+import { postSignupDestination, requiresMembershipPayment } from "@/lib/buyer-access";
 
 export const Route = createFileRoute("/cadastro")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -81,16 +82,24 @@ function Cadastro() {
       return;
     }
     setLoading(false);
-    toast.success("Cadastro criado", {
-      description: "Agora conclua o pagamento da membresia para seguir para a análise.",
+    if (requiresMembershipPayment(role)) {
+      toast.success("Cadastro criado", {
+        description: "Agora conclua o pagamento da membresia para seguir para a análise.",
+      });
+      void navigate({ to: "/membresia", search: plano ? { plano } : {} });
+      return;
+    }
+    toast.success("Cadastro recebido", {
+      description:
+        "Comprador não paga membresia. Nossa equipe verifica seus dados e libera o acesso.",
     });
-    void navigate({ to: "/membresia", search: plano ? { plano } : {} });
+    void navigate(postSignupDestination(role));
   }
 
   return (
     <PublicLayout>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <h1 className="font-display text-3xl font-bold text-forest">Solicitar membresia</h1>
+        <h1 className="font-display text-3xl font-bold text-forest">Solicitar acesso</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           O DDP AGRO é uma plataforma fechada. O fluxo tem três etapas: cadastro, pagamento do plano
           e análise da equipe antes da liberação para negociar.
@@ -112,7 +121,7 @@ function Cadastro() {
         </ol>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Ainda não escolheu o plano?{" "}
+          Quer vender? Os planos de membresia são só para vendedores.{" "}
           <Link to="/planos" className="font-medium text-forest underline">
             Ver planos de membresia
           </Link>

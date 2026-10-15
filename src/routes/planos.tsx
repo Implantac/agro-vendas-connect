@@ -5,6 +5,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";
 import { formatBRL } from "@/lib/format";
 import { fetchMembershipPlans, planBenefits } from "@/lib/membership-queries";
+import { offeredPlans } from "@/lib/buyer-access";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -33,10 +34,12 @@ export const Route = createFileRoute("/planos")({
 function Planos() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: plans = [], isLoading } = useQuery({
+  const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ["membership", "plans"],
     queryFn: fetchMembershipPlans,
   });
+  // Comprador é gratuito: a página mostra só os planos de vendedor.
+  const plans = offeredPlans(allPlans);
 
   function choose(code: string) {
     if (user) {
@@ -56,8 +59,9 @@ function Planos() {
           Planos do DDP AGRO
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-          O DDP AGRO é um marketplace fechado. Escolha o plano, conclua o pagamento e nossa equipe
-          analisa seu cadastro antes de liberar o acesso às negociações.
+          O DDP AGRO é um marketplace fechado. Comprador navega, favorita e propõe sem assinatura.
+          Vendedor escolhe o plano, conclui o pagamento e nossa equipe analisa o cadastro antes de
+          liberar o acesso às negociações.
         </p>
 
         {isLoading && <p className="mt-10 text-sm text-muted-foreground">Carregando planos...</p>}

@@ -3,6 +3,7 @@ import { Clock, FileCheck2, ShieldCheck } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { requiresMembershipPayment } from "@/lib/buyer-access";
 
 export const Route = createFileRoute("/aguardando-aprovacao")({
   head: () => ({
@@ -10,8 +11,7 @@ export const Route = createFileRoute("/aguardando-aprovacao")({
       { title: "Cadastro em análise | DDP AGRO" },
       {
         name: "description",
-        content:
-          "Seu pedido de membresia no DDP AGRO está em análise pela nossa equipe de verificação.",
+        content: "Seu cadastro no DDP AGRO está em análise pela nossa equipe de verificação.",
       },
       { property: "og:title", content: "Cadastro em análise | DDP AGRO" },
       {
@@ -34,23 +34,26 @@ const STEPS = [
   {
     icon: ShieldCheck,
     title: "Liberação do acesso",
-    text: "Você recebe um e-mail assim que for aprovado.",
+    text: "O acesso é liberado assim que a análise for concluída.",
   },
 ];
 
 function AwaitingApproval() {
   const { profile } = useAuth();
+  const isSeller = requiresMembershipPayment(profile?.role);
+  const who = profile?.full_name ? `${profile.full_name}, seu` : "Seu";
 
   return (
     <PublicLayout>
       <div className="mx-auto max-w-2xl px-4 py-20 sm:px-6">
         <span className="text-xs font-semibold uppercase tracking-widest text-accent">
-          Membresia
+          {isSeller ? "Membresia" : "Cadastro"}
         </span>
         <h1 className="mt-2 font-display text-3xl font-bold text-forest">Cadastro em análise</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          {profile?.full_name ? `${profile.full_name}, seu` : "Seu"} pedido de membresia está sendo
-          avaliado pela equipe do DDP AGRO. O prazo médio é de 1 dia útil.
+          {isSeller
+            ? `${who} pedido de membresia está sendo avaliado pela equipe do DDP AGRO. O prazo médio é de 1 dia útil.`
+            : `${who} cadastro de comprador está sendo avaliado pela equipe do DDP AGRO. O prazo médio é de 1 dia útil. Para comprador, a análise não tem custo.`}
         </p>
 
         <ol className="mt-10 space-y-6">
@@ -66,9 +69,11 @@ function AwaitingApproval() {
         </ol>
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link to="/membresia">Ver minha solicitação</Link>
-          </Button>
+          {isSeller && (
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Link to="/membresia">Ver minha solicitação</Link>
+            </Button>
+          )}
           <Button asChild variant="outline">
             <Link to="/catalogo">Ver catálogo</Link>
           </Button>

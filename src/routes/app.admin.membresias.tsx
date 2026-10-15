@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppPage } from "@/components/app/AppLayout";
@@ -81,6 +81,13 @@ function AdminMemberships() {
       <h1 className="font-display text-2xl font-bold text-forest">Membresias</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Confira o pagamento, analise os dados e libere o acesso do novo membro.
+      </p>
+      <p className="mt-3 rounded-md border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+        Compradores não pagam membresia e não aparecem nesta fila. Aprove o cadastro deles em{" "}
+        <Link to="/app/admin/membros" className="font-medium text-forest underline">
+          Usuários
+        </Link>
+        , no filtro Pendentes.
       </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

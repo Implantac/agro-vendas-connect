@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatBRL } from "@/lib/format";
 import { fetchMembershipPlans, fetchPaymentsEnabled, planBenefits } from "@/lib/membership-queries";
+import { offeredPlans } from "@/lib/buyer-access";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,8 @@ export function PlansSection() {
     queryFn: fetchPaymentsEnabled,
   });
 
-  const plans = plansQuery.data ?? [];
+  // Comprador é gratuito: a home mostra só os planos de vendedor.
+  const plans = offeredPlans(plansQuery.data ?? []);
 
   function choose(code: string) {
     if (user) void navigate({ to: "/membresia", search: { plano: code } });
@@ -47,11 +49,11 @@ export function PlansSection() {
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">Membresia</p>
           <h2 className="mt-3 font-display text-3xl font-bold text-forest">
-            Escolha como você quer participar do DDP AGRO.
+            Comprar é grátis. Para vender, escolha um plano.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            O acesso é liberado depois do pagamento confirmado e da análise da sua solicitação pela
-            equipe DDP AGRO.
+            Comprador não paga. Vendedor libera o acesso depois do pagamento confirmado e da análise
+            da solicitação pela equipe DDP AGRO.
           </p>
           {paymentsEnabled === false && (
             <p className="mt-4 rounded-md border border-border bg-card px-4 py-3 text-sm text-muted-foreground">

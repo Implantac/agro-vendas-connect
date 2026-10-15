@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { formatBRL, formatDateTimeBR } from "@/lib/format";
+import { offeredPlans } from "@/lib/buyer-access";
 import {
   cancelMembershipRequest,
   fetchPaymentsEnabled,
@@ -76,10 +77,12 @@ function Membresia() {
     if (!loading && !user) void navigate({ to: "/entrar", search: { redirect: "/membresia" } });
   }, [loading, user, navigate]);
 
-  const { data: plans = [] } = useQuery({
+  const { data: allPlans = [] } = useQuery({
     queryKey: ["membership", "plans"],
     queryFn: fetchMembershipPlans,
   });
+  // Comprador não paga membresia: só planos de vendedor são oferecidos aqui.
+  const plans = offeredPlans(allPlans);
 
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["membership", "my-requests", user?.id],
@@ -142,6 +145,10 @@ function Membresia() {
   }, [active?.status, profile?.status, refreshProfile]);
 
   const current = stepIndex(active?.status);
+  const isBuyer = profile?.role === "buyer";
+
+  // Comprador não tem cobrança. Sem solicitação ativa, mostra o aviso em vez da etapa de pagamento.
+  if (isBuyer && !isLoading && !active) return <BuyerNoMembership />;
 
   return (
     <PublicLayout>
@@ -400,6 +407,31 @@ function Membresia() {
             </ul>
           </div>
         )}
+      </div>
+    </PublicLayout>
+  );
+}
+
+function BuyerNoMembership() {
+  return (
+    <PublicLayout>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+        <span className="text-xs font-semibold uppercase tracking-widest text-accent">
+          Comprador
+        </span>
+        <h1 className="mt-2 font-display text-3xl font-bold text-forest">Sem membresia paga</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Como comprador, você navega, favorita e propõe sem assinatura. A análise do cadastro não
+          tem custo.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button asChild className="bg-forest hover:bg-forest/90">
+            <Link to="/catalogo">Ver catálogo</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/aguardando-aprovacao">Ver análise do cadastro</Link>
+          </Button>
+        </div>
       </div>
     </PublicLayout>
   );
